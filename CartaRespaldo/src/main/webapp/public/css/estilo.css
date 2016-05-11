@@ -1,0 +1,68 @@
+@CHARSET "UTF-8";
+
+@font-face {
+	font-family: TipografiaGobBold;
+	src: url('../fonts/gobCL_Bold.otf');
+}
+
+@font-face {
+	font-family: TipografiaGobRegular;
+	src: url('../fonts/gobCL_Regular.otf');
+}
+
+.z-label, .z-radio-content, .z-checkbox-content {
+    font-size: 14px;
+}
+
+.z-tab-text {
+	font-size: 14px;
+	margin-left: 10px;
+    margin-right: 10px;
+}
+
+.z-textbox {
+	width: 90%;
+	min-height: 30px;
+	font-size: 13px;
+}
+
+ .z-datebox-input {
+ 	width:130%;
+ }
+ 
+ .z-caption {
+    font-size: 14px;
+ }
+ 
+ .botonResponsable {
+     width: 25%;
+    font-size: 14px;
+    background: #1E81C3;
+ }
+ 
+ 
+.z-combobox-input, .z-bandbox-input, .z-datebox-input, .z-timebox-input, .z-spinner-input, .z-doublespinner-input{
+	width: 90%;
+	min-height: 30px;
+	font-size: 13px;
+}
+
+.z-combobox-button, .z-bandbox-button, .z-datebox-button, .z-timebox-button, .z-spinner-button, .z-doublespinner-button {
+	    height: 30px;
+}
+
+.z-combobox-icon, .z-bandbox-icon, .z-datebox-icon, .z-timebox-icon, .z-spinner-icon, .z-doublespinner-icon {
+    font-size: 14px;
+}
+
+.z-combobox-popup, .z-bandbox-popup, .z-datebox-popup, .z-timebox-popup {
+		font-size: 13px;
+		}
+ 
+.z-listitem-selected>.z-listcell {
+    background: #E8EEF3;
+}
+
+.z-listcell-content, .z-listgroup-content, .z-listgroupfoot-content, .z-listfooter-content {
+    font-size: 13px;
+}

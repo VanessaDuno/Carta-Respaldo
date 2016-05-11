@@ -1,0 +1,163 @@
+<?page title="MINSAL - Registro de Quemados"?>
+<?link rel="stylesheet" type="text/css" href="public/bootstrap-3.3.6-dist/css/bootstrap.css"?>
+<?link type="image/x-icon" href="public/imagenes/generales/1.png" rel="shortcut icon"?>
+<?link rel="stylesheet" type="text/css" href="public/css/estilo.css"?>
+
+
+<zk xmlns:x="xhtml">
+
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+
+	<script
+		src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js">
+	</script>
+	<script
+		src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js">
+	</script>
+	<script type="text/javascript" src="public/js/carta-respaldo.js"></script>
+	<style>
+		.lista div.z-listbox-body { background-color: #4C94DB; }
+
+		.lista div.z-listcell-cnt { color:white; font-family:
+		TipografiaGobRegular; font-size: 20px; padding-bottom: 10px; }
+
+		.lista div.z-listbox-body .z-listcell { padding-top:16px
+		!important; }
+
+		.lista tr.z-listitem-seld { background-color: #4C94DB; } .lista
+		tr.z-listbox-odd { background-color: #22a4d9; }
+
+		.lista tr.z-listitem-over{ background-color: #1786B3; }
+		.z-north, .z-south, .z-west, .z-center, .z-east { border: none;
+		}
+
+		.lista tr.z-listitem-over > td.z-listcell { border: 1px solid
+		#4C94DB; } .lista tr.z-listitem { background: #4C94DB none
+		repeat scroll 0 0; }
+
+		.lista div.z-listbox-body { border-top: none; }
+		
+		.lista tr.z-listitem-over {
+		background:#00547A;
+		}
+		
+		.lista .z-listitem-selected>.z-listcell{
+		background: #4C94DB;
+		}
+		.lista .z-listcell-content{
+    	font-size: 16px;
+    	    font-weight: 600;
+    	}
+    	
+    	.lista .z-listitem .z-listcell{
+    	background: #4C94DB;
+    	}
+    	.lista .z-listcell>.z-listcell-content{
+    	color: #f5f5f5;
+    	}
+    	</style>
+
+	<borderlayout height="100%" style="background-color:#fff;"
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CInicio">
+
+		<north height="180px"
+			style="background-color: white;margin-left:55px;">
+			<borderlayout style="top:17px; margin-left: 7%;">
+				<north height="113px">
+					<div style="position: relative;width: 100%;">
+						<x:img 
+							class="img-responsive" src="public/imagenes/generales/Encabezado.png" />
+					</div>
+				</north>
+				<west size="87%" flex="true"
+					style="width: 100% !important; max-width: 100%; ">
+					<div>
+						<x:nav class="navbar  navbar-default"
+							style="background-color: #4C94DB;color:white; ">
+							<hbox width="100%" widths="80%, 20%"
+								style="width: 100%; height: 100%; max-width: 100%;">
+								<div class="container-fluid"
+									style="background-color: #4C94DB;">
+									<div
+										class="collapse navbar-collapse" id="">
+										<listbox id="lbxMenu"
+											style="background-color: #4C94DB;border:none" height="100%"
+											class="lista">
+											<template name="model">
+												<listitem 
+													style="display:inline-block !important; margin-right: 15px;border:none"
+													width="100%">
+													<listcell style="border:none"
+														id="${each.idMenu}" height="100%"
+														label="${each.nombre}">
+													</listcell>
+												</listitem>
+											</template>
+											<listitem>
+
+											</listitem>
+										</listbox>
+
+									</div>
+								</div>
+								<div
+									class="collapse navbar-collapse navbar-right"
+									style="margin-right: 20px;width: 100%; height: 100%; max-width: 100%;">
+									<a style="color: white">
+										<x:span
+											class="glyphicon glyphicon-lock">
+											<space />
+											<label id="lblUsuario"
+												style="color: white;font-weight: bold"
+												value=" ${desktop.execution.userPrincipal.name}" />
+										</x:span>
+									</a>
+									<separator></separator>
+									<a href="j_spring_security_logout"
+										style="color: white;">
+										<space />
+										<label value="Cerrar Sesion" />
+									</a>
+								</div>
+							</hbox>
+						</x:nav>
+					</div>
+
+				</west>
+			</borderlayout>
+		</north>
+		<west size="0%" style="margin-left: 55px;  margin-top: 20px;"
+			visible="false" id="westAplicacion">
+			<listbox id="lbxHijos" visible="false">
+				<listhead>
+					<listheader value="Nombre de mantenedor"></listheader>
+				</listhead>
+				<template name="model">
+					<listitem>
+						<listcell label="${each.nombre}"></listcell>
+					</listitem>
+				</template>
+			</listbox>
+		</west>
+		<center border="none">
+			<borderlayout sclass="complex-layout">
+				<center border="none"
+					style="background-image: url('public/imagenes/generales/med.jpg'); background-repeat:no-repeat;  top: 22px;background-position-x: 50%;"
+					autoscroll="true">
+
+					<include id="contenido"></include>
+
+				</center>
+			</borderlayout>
+		</center>
+		<south class="banner" border="0" height="1%"
+			collapsible="false">
+
+			<div align="center" sclass="footer"
+				style="background-image: url('public/imagenes/generales/footer1.jpg'); background-repeat:no-repeat;">
+				<separator></separator>
+			</div>
+		</south>
+	</borderlayout>
+
+</zk>

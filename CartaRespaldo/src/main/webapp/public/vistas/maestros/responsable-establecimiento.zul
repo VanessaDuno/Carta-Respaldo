@@ -1,0 +1,51 @@
+<zk xmlns:x="xhtml" xmlns:c="client">
+	<window title="Responsables Establecimento" border="normal"
+		width="75%" closable="true" id="wdwResponsables"
+		apply="ssmc.CartaRespaldo.controlador.maestros.CResponsableEstablecimiento"
+		style=" margin-left: 12.5%; width: 75%;  margin-top: 1%;margin-bottom: 2%">
+		<groupbox mold="3d">
+			<caption label="RESPONSABLES"></caption>
+			<div class="alert alert-danger"
+				style="margin-bottom: 0px;padding: 5px;margin-top: 10px;"
+				visible="false" id="divError" align="center">
+				<x:span class="glyphicon glyphicon-exclamation-sign"
+					aria-hidden="true">
+				</x:span>
+				<x:span class="sr-only">Error:</x:span>
+				<label id="lblError"></label>
+			</div>
+			<grid>
+				<columns>
+					<column width="15%"></column>
+					<column width="35%"></column>
+					<column width="15%"></column>
+					<column width="35%"></column>
+				</columns>
+				<rows>
+					<row>
+						<label value="Cantidad de firmas"></label>
+						<spinner constraint="min 0 max 3" id="spnFirmas"
+							value="0">
+						</spinner>
+					</row>
+				</rows>
+			</grid>
+			<separator></separator>
+			<div>
+				<listbox id="lbxCargos" width="60%" checkmark="true"
+					multiple="true">
+					<listhead>
+						<listheader label="Cargo"></listheader>
+					</listhead>
+					<template name="model">
+						<listitem>
+							<listcell label="${each.nombre}"></listcell>
+						</listitem>
+					</template>
+				</listbox>
+			</div>
+		</groupbox>
+		<separator></separator>
+		<div id="botoneraResponsables"></div>
+	</window>
+</zk>

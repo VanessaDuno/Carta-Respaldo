@@ -1,0 +1,341 @@
+<zk xmlns:x="xhtml" xmlns:c="client">
+	<window width="75%" closable="true" title="Carta de Respaldo"
+		id="wdwSolicitud"
+		style=" margin-left: 12.5%; width: 75%;  margin-top: 1%;margin-bottom: 2%"
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CSolicitudTraslado">
+		<div width="100%" align="center">
+			<!--Seccion de datos del establecimiento al que deriva-->
+			<groupbox mold="3d">
+				<caption label="ESTABLECIMIENTO AL QUE DERIVA"></caption>
+				<grid>
+					<columns>
+						<column width="15%"></column>
+						<column width="35%"></column>
+						<column width="15%"></column>
+						<column width="35%"></column>
+					</columns>
+					<rows>
+						<row>
+							<hbox></hbox>
+							<radiogroup id="rdgTipoEstablecimiento">
+								<radio label="Hospital o Clínica"
+									id="rdoHospital" style="margin-right: 50px;" />
+								<radio label="Laboratorio"
+									id="rdoLaboratorio" />
+							</radiogroup>
+							<hbox></hbox>
+							<hbox></hbox>
+						</row>
+						<row>
+							<label id="lblRegion" value="Región"
+								visible="false">
+							</label>
+							<combobox id="cmbRegion" readonly="true"
+								visible="false">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.codigo}">
+									</comboitem>
+								</template>
+							</combobox>
+							<label id="lblEstablecimiento"
+								value="Establecimiento" visible="false">
+							</label>
+							<combobox id="cmbEstablecimiento"
+								visible="false" readonly="true">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.id}">
+									</comboitem>
+								</template>
+							</combobox>
+						</row>
+						<row>
+							<label id="lblNombreLaboratorio"
+								value="Nombre" visible="false">
+							</label>
+							<textbox id="txtLaboratorio"
+								visible="false">
+							</textbox>
+							<hbox></hbox>
+							<hbox></hbox>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+			<separator></separator>
+			<!--Seccion de datos del paciente-->
+			<groupbox mold="3d">
+				<caption label="DATOS DEL PACIENTE"></caption>
+				<div class="alert alert-danger"
+					style="margin-bottom: 0px;padding: 5px;margin-top: 10px;"
+					visible="false" id="divErrorRutPaciente" align="center">
+					<x:span class="glyphicon glyphicon-exclamation-sign"
+						aria-hidden="true">
+					</x:span>
+					<x:span class="sr-only">Error:</x:span>
+					<label id="lblErrorRutPaciente"></label>
+				</div>
+				<separator></separator>
+				<grid>
+					<columns>
+						<column width="15%"></column>
+						<column width="35%"></column>
+						<column width="15%"></column>
+						<column width="35%"></column>
+					</columns>
+					<rows>
+						<row>
+							<label value="Rut"></label>
+							<textbox id="txtRutPaciente"></textbox>
+							<checkbox id="ckbGes"
+								label="Paciente GES">
+							</checkbox>
+							<hbox>
+								<label value="N° Ficha"></label>
+								<textbox id="txtFicha"
+									style="margin-left: 8%;">
+								</textbox>
+							</hbox>
+						</row>
+						<row>
+							<label value="Primer nombre"></label>
+							<textbox id="txtPrimerNombrePaciente"
+								c:onKeyPress="return soloLetras()">
+							</textbox>
+							<label value="Segundo nombre"></label>
+							<textbox id="txtSegundoNombrePaciente"
+								c:onKeyPress="return soloLetras()">
+							</textbox>
+						</row>
+						<row>
+							<label value="Primer apellido"></label>
+							<textbox id="txtPrimerApellidoPaciente"
+								c:onKeyPress="return soloLetras()">
+							</textbox>
+							<label value="Segundo apellido"></label>
+							<textbox id="txtSegundoApellidoPaciente"
+								c:onKeyPress="return soloLetras()">
+							</textbox>
+						</row>
+						<row>
+							<label value="Fecha de Nacimiento"></label>
+							<datebox id="dtbFechaNacPaciente"
+								readonly="true">
+							</datebox>
+							<label value="Sexo"></label>
+							<combobox id="cmbSexo" readonly="true">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.id}">
+									</comboitem>
+								</template>
+							</combobox>
+						</row>
+						<row>
+							<label value="Región"></label>
+							<combobox id="cmbRegionPaciente"
+								readonly="true">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.codigo}">
+									</comboitem>
+								</template>
+							</combobox>
+							<label value="Provincia"></label>
+							<combobox id="cmbProvincia"
+								readonly="true">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.id}">
+									</comboitem>
+								</template>
+							</combobox>
+						</row>
+						<row>
+							<label value="Comuna"></label>
+							<combobox id="cmbComuna" readonly="true">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.id}">
+									</comboitem>
+								</template>
+							</combobox>
+							<label value="Dirección"></label>
+							<textbox id="txtDireccionPaciente"></textbox>
+						</row>
+						<row>
+							<label value="Teléfono"></label>
+							<textbox id="txtTelefonoPaciente"
+								c:onKeyPress="return soloNumero()">
+							</textbox>
+							<label value="Previsión"></label>
+							<combobox id="cmbPrevisionPaciente"
+								readonly="true">
+								<comboitem label="A"></comboitem>
+								<comboitem label="B"></comboitem>
+								<comboitem label="C"></comboitem>
+								<comboitem label="D"></comboitem>
+								<comboitem label="PRAIS"></comboitem>
+							</combobox>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+			<separator></separator>
+			<groupbox mold="3d">
+				<caption label="DETALLE DE LA DERIVACIÓN"></caption>
+				<grid>
+					<columns>
+						<column width="15%"></column>
+						<column width="35%"></column>
+						<column width="15%"></column>
+						<column width="35%"></column>
+					</columns>
+					<rows>
+						<row>
+							<label value="Unidad"></label>
+							<combobox id="cmbUnidad" readonly="true">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.id}">
+									</comboitem>
+								</template>
+							</combobox>
+							<label value="Servicio clínico"></label>
+							<combobox id="cmbServicio"
+								readonly="true">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.id}">
+									</comboitem>
+								</template>
+							</combobox>
+						</row>
+						<row>
+							<label value="Diagnóstico"></label>
+							<textbox id="txtDiagnostico" rows="3"></textbox>
+							<label value="Tipo derivación"></label>
+							<combobox readonly="true"
+								id="cmbTipoDerivacion">
+								<comboitem label="UGCC"></comboitem>
+								<comboitem label="CONVENIO"></comboitem>
+								<comboitem label="SIN CONVENIO"></comboitem>
+							</combobox>
+						</row>
+						<row>
+							<checkbox id="ckbCama" label="Tipo Cama">
+							</checkbox>
+							<checkbox id="ckbPrestacion"
+								label="Prestación">
+							</checkbox>
+							<hbox></hbox>
+							<hbox></hbox>
+						</row>
+						<row>
+							<label id="lblCama" value="Cama"
+								visible="false">
+							</label>
+							<hbox>
+								<combobox id="cmbCama" readonly="true"
+									visible="false">
+									<template name="model">
+										<comboitem
+											label="${each.nombre}" context="${each.id}">
+										</comboitem>
+									</template>
+								</combobox>
+								<combobox id="cmbTipoCama"
+									visible="false" readonly="true">
+									<comboitem label="ADULTO"></comboitem>
+									<comboitem label="PEDIÁTRICA"></comboitem>
+									<comboitem label="NEONATAL"></comboitem>
+								</combobox>
+							</hbox>
+							<label value="Motivo" id="lblMotivoCama"
+								visible="false">
+							</label>
+							<combobox readonly="true" id="cmbMotivoCama"
+								visible="false">
+								<template name="model">
+									<comboitem label="${each.nombre}"
+										context="${each.id}">
+									</comboitem>
+								</template>
+							</combobox>
+						</row>
+
+						<row>
+							<label id="lblTipoPrestacion"
+								value="Tipo prestación" visible="false">
+							</label>
+							<hbox>
+								<combobox id="cmbPrestacion"
+									readonly="true" visible="false">
+									<template name="model">
+										<comboitem
+											label="${each.descripcion}" context="${each.id}">
+										</comboitem>
+									</template>
+								</combobox>
+								<combobox id="cmbTipoPrecedimiento"
+									readonly="true" visible="false">
+									<template name="model">
+										<comboitem
+											label="${each.nombre}" context="${each.id}">
+										</comboitem>
+									</template>
+								</combobox>
+							</hbox>
+
+							<checkbox id="ckbOtraPrestacion" visible="false"
+								label="Otra Prestación">
+							</checkbox>
+
+								<textbox id="txtDescripcionPrestacion"
+									rows="3" visible="false">
+								</textbox>
+		
+						</row>
+					</rows>
+				</grid>
+				<button label="Ver Prestaciones"
+					id="btnDetallePrestacion"
+					style="width: 70%;height: 25px; font-size: 14px;">
+				</button>
+				<separator></separator>
+				<listbox id="lbxPrestacionesSolicitud" height="100%"
+					width="70%" visible="false">
+					<listhead>
+						<listheader label="Prestación"></listheader>
+						<listheader label="Motivo"></listheader>
+					</listhead>
+					<template name="model">
+						<listitem>
+							<listcell
+								label="${each.prestacion.nombre}">
+							</listcell>
+							<listcell label="${each.motivo.nombre}">
+							</listcell>
+						</listitem>
+					</template>
+				</listbox>
+				<div class="alert alert-info"
+					style="margin-bottom: 0px;padding: 5px;margin-top: 10px;"
+					 id="divResponsables" align="center">
+					<x:span class="glyphicon glyphicon-exclamation-sign"
+						aria-hidden="true">
+					</x:span>
+					<x:span class="sr-only">Información:</x:span>
+					<label id="lblResponsables"></label>
+				</div>
+				<separator></separator>
+				<button label= "Médico Responsable" id="btnMedico" class= "botonResponsable"></button>
+				<button label="Funcionarios Responsables" class= "botonResponsable" id = "btnFuncionarios"></button>
+			</groupbox>
+			<separator></separator>
+			<separator></separator>
+			<div id="botoneraSolicitud"></div>
+		</div>
+	</window>
+</zk>
