@@ -12,5 +12,7 @@ import ssmc.CartaRespaldo.modelo.maestros.Paciente;
  */
 
 public interface IPacienteDAO extends JpaRepository<Paciente, Integer> {
+	
+	Paciente findByRut(String rut); 
 
 }

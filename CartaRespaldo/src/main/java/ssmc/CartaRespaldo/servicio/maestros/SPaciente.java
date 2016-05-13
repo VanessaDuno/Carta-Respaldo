@@ -31,5 +31,8 @@ public class SPaciente {
 		return iPacienteDAO.save(paciente);
 	}
 	
+	public Paciente buscarRut (String rut){
+		return iPacienteDAO.findByRut(rut); 
+	}
 	
 }

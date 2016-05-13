@@ -21,7 +21,6 @@ import org.zkoss.zul.Window;
 
 import ssmc.CartaRespaldo.controlador.maestros.CGenerico;
 import ssmc.CartaRespaldo.modelo.maestros.Responsable;
-import ssmc.CartaRespaldo.modelo.transacciones.PrestacionSolicitud;
 import ssmc.CartaRespaldo.modelo.transacciones.ResponsableSolicitud;
 
 /**
@@ -63,6 +62,8 @@ public class CModalResponsables extends CGenerico {
 			medicosResponsable = (List<Responsable>) (map.get("medicos"));
 			funcionariosResponsables = (List<Responsable>) (map
 					.get("funcionarios"));
+			medico = (boolean) map.get("isMedico"); 
+			funcionario = (boolean) map.get("isFuncionario"); 
 
 			if (medicosResponsable != null) {
 				lbxResponsables.setModel(new ListModelList<Responsable>(
@@ -92,9 +93,16 @@ public class CModalResponsables extends CGenerico {
 
 	@Listen("onOK = #txtBusquedaResponsables")
 	public void buscar() {
+		List<Responsable> responsables = new ArrayList<Responsable>();
+		if (medico){
+			responsables = medicosResponsable;
+		}
+		else if (funcionario){
+			responsables = funcionariosResponsables; 
+		}
 		if (!txtBusquedaResponsables.getValue().equals("")) {
 			List<Responsable> lista = new ArrayList<Responsable>();
-			for (Responsable detalle : medicosResponsable) {
+			for (Responsable detalle : responsables) {
 				if (detalle
 						.getNombre()
 						.toLowerCase()
@@ -110,7 +118,7 @@ public class CModalResponsables extends CGenerico {
 			lbxResponsables.renderAll();
 		} else {
 			lbxResponsables.setModel(new ListModelList<Responsable>(
-					medicosResponsable));
+					responsables));
 			lbxResponsables.setCheckmark(false);
 			lbxResponsables.setCheckmark(true);
 			lbxResponsables.renderAll();

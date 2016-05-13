@@ -94,6 +94,7 @@ public class CSolicitudTraslado extends CGenerico {
 	private List<Responsable> funcionariosResponsables = new ArrayList<Responsable>();
 	private List<CargosEstablecimiento> cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
 	private List<ResponsableSolicitud> responsablesSolicitud = new ArrayList<ResponsableSolicitud>();
+	private Paciente pacienteRegistrado = new Paciente(); 
 
 	@Wire
 	private Combobox cmbRegion;
@@ -211,8 +212,8 @@ public class CSolicitudTraslado extends CGenerico {
 	public void inicializar() throws IOException {
 		llenarCombos();
 		lblResponsables.setValue("Recuerde que debe seleccionar" + " "
-				+ usuarioActivo.getEstablecimiento().getCantidadFirmantes() + " "
-				+ "responsables de la Carta Respaldo.");
+				+ usuarioActivo.getEstablecimiento().getCantidadFirmantes()
+				+ " " + "responsables de la Carta Respaldo.");
 		botonera = new Botonera() {
 
 			@Override
@@ -226,7 +227,7 @@ public class CSolicitudTraslado extends CGenerico {
 				limpiarCampos();
 				borrarDataSesion();
 				try {
-					generarReporteQuemado(17);
+					generarReporteQuemado(20);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -235,17 +236,25 @@ public class CSolicitudTraslado extends CGenerico {
 			@Override
 			public void guardar() {
 				if (validarCampos()) {
-					prepararObjetosGuardar();
-					Messagebox.show(Constantes.mensajeRegistroGuardado,
-							"Información", Messagebox.OK,
-							Messagebox.INFORMATION);
-					try {
-						generarReporteQuemado(solicitudGuardada.getId());
-					} catch (JSONException e) {
-						e.printStackTrace();
+					if (usuarioActivo.getEstablecimiento()
+							.getCantidadFirmantes() == recuperarDataSession().size()) {
+						prepararObjetosGuardar();
+						Messagebox.show(Constantes.mensajeRegistroGuardado,
+								"Información", Messagebox.OK,
+								Messagebox.INFORMATION);
+						try {
+							generarReporteQuemado(solicitudGuardada.getId());
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						borrarDataSesion();
+						limpiarCampos();
+					} else {
+						Messagebox
+								.show("La cantidad de cargos configurados debe coincidir con el numero de cargos seleccionados como responsables",
+										"Información", Messagebox.OK,
+										Messagebox.INFORMATION);
 					}
-					borrarDataSesion();
-					limpiarCampos();
 				} else {
 					Messagebox.show(Constantes.mensajeCamposVacios,
 							"Advertencia", Messagebox.OK,
@@ -269,7 +278,20 @@ public class CSolicitudTraslado extends CGenerico {
 
 	public void borrarDataSesion() {
 		Sessions.getCurrent().setAttribute("prestacionesSolicitud", null);
+		Sessions.getCurrent().setAttribute("responsablesSolicitud", null);
 		Sessions.getCurrent().setAttribute("itemsCatalogo", null);
+	}
+
+	public List<ResponsableSolicitud> recuperarDataSession() {
+		List<ResponsableSolicitud> responsablesSolicitud = new ArrayList<ResponsableSolicitud>();
+		List<ResponsableSolicitud> responsablesSolicitud1 = new ArrayList<ResponsableSolicitud>();
+		responsablesSolicitud = (List<ResponsableSolicitud>) Sessions
+				.getCurrent().getAttribute("responsablesSolicitud");
+		if (responsablesSolicitud != null) {
+			return responsablesSolicitud;
+		} else {
+			return responsablesSolicitud1;
+		}
 	}
 
 	public void llenarCombos() {
@@ -346,6 +368,7 @@ public class CSolicitudTraslado extends CGenerico {
 				rutPaciente = true;
 				log.debug(new StringBuilder().append("No valido rut").append(
 						txtRutPaciente.getValue()));
+				limpiarCamposPaciente();
 			} else {
 				divErrorRutPaciente.setVisible(false);
 				txtRutPaciente
@@ -491,7 +514,12 @@ public class CSolicitudTraslado extends CGenerico {
 	}
 
 	public void prepararObjetosGuardar() {
+		if (pacienteRegistrado == null){
 		solicitudTraslado.setPaciente(prepararPaciente());
+		}
+		else {
+			solicitudTraslado.setPaciente(pacienteRegistrado);
+		}
 		if (rdoHospital.isChecked()) {
 			solicitudTraslado
 					.setEstablecimiento((Establecimiento) cmbEstablecimiento
@@ -676,6 +704,21 @@ public class CSolicitudTraslado extends CGenerico {
 		cmbMotivoCama.setValue("");
 	}
 
+	public void limpiarCamposPaciente(){
+		txtDireccionPaciente.setValue("");
+		txtPrimerApellidoPaciente.setValue("");
+		txtPrimerNombrePaciente.setValue("");
+		txtSegundoApellidoPaciente.setValue("");
+		txtSegundoNombrePaciente.setValue("");
+		txtTelefonoPaciente.setValue("");
+		cmbComuna.setValue("");
+		cmbPrevisionPaciente.setValue("");
+		cmbProvincia.setValue("");
+		cmbRegionPaciente.setValue("");
+		dtbFechaNacPaciente.setValue(null);
+		cmbSexo.setValue("");
+	}
+	
 	public boolean validarCampos() {
 
 		if (txtDiagnostico.getValue().equals("")
@@ -686,12 +729,12 @@ public class CSolicitudTraslado extends CGenerico {
 				|| txtSegundoApellidoPaciente.getValue().equals("")
 				|| txtSegundoNombrePaciente.getValue().equals("")
 				|| txtTelefonoPaciente.getValue().equals("")
-				|| cmbComuna.getSelectedItem() == null
-				|| cmbRegionPaciente.getSelectedItem() == null
-				|| cmbPrevisionPaciente.getSelectedItem() == null
-				|| cmbProvincia.getSelectedItem() == null
+				|| cmbComuna.getValue().equals("")
+				|| cmbRegionPaciente.getValue().equals("")
+				|| cmbPrevisionPaciente.getValue().equals("")
+				|| cmbProvincia.getValue().equals("")
 				|| cmbServicio.getSelectedItem() == null
-				|| cmbSexo.getSelectedItem() == null
+				|| cmbSexo.getValue().equals("")
 				|| cmbTipoDerivacion.getSelectedItem() == null
 				|| cmbUnidad.getSelectedItem() == null
 				|| dtbFechaNacPaciente.getValue().equals("")
@@ -739,13 +782,6 @@ public class CSolicitudTraslado extends CGenerico {
 				+ "','','top=100,left=200,height=600,width=800,scrollbars=1,resizable=1')");
 	}
 
-	public String cortarCadena(String cadena) {
-		int posicion = cadena.indexOf("(");
-		if (posicion != -1) {
-			cadena = cadena.substring(0, posicion);
-		}
-		return cadena;
-	}
 
 	public byte[] reporteTraslado(String id) throws JRException, IOException {
 		byte[] fichero = null;
@@ -820,12 +856,18 @@ public class CSolicitudTraslado extends CGenerico {
 				.getRut());
 		p.put("direccionEstablecimientoDeriva", usuarioActivo
 				.getEstablecimiento().getDireccion());
-		p.put("funcionarioUno", responsables.get(0).getResponsable().getNombre());
-		p.put("funcionarioDos", responsables.get(1).getResponsable().getNombre());
-		p.put("funcionarioTres", responsables.get(2).getResponsable().getNombre());
-		p.put("cargoUno", responsables.get(0).getResponsable().getCargo().getNombre());
-		p.put("cargoDos", responsables.get(1).getResponsable().getCargo().getNombre());
-		p.put("cargoTres", responsables.get(2).getResponsable().getCargo().getNombre());
+		
+		p.put("funcionario0", "");
+		p.put("funcionario1", "");
+		p.put("funcionario2", "");
+		p.put("cargo0", "");
+		p.put("cargo1", "");
+		p.put("cargo2","");
+		
+		for (int j = 0; j < responsables.size(); j++) {
+			p.put("funcionario"+j, responsables.get(j).getResponsable().getNombre());
+			p.put("cargo"+j, responsables.get(j).getResponsable().getCargo().getNombre()); 
+		}
 
 		p.put("telefonoHospital", usuarioActivo.getEstablecimiento()
 				.getTelefono());
@@ -855,34 +897,15 @@ public class CSolicitudTraslado extends CGenerico {
 		return idS;
 	}
 
-	public int calcularEdad(Timestamp fecha) {
-		log.info("Inicio de metodo calcularEdad()");
-		Date fechaActual = new Date();
-		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-		String hoy = formato.format(fechaActual);
-		String fechaNac = formato.format(fecha.getTime());
-		String[] dat1 = fechaNac.split("/");
-		String[] dat2 = hoy.split("/");
-		int anos = Integer.parseInt(dat2[2]) - Integer.parseInt(dat1[2]);
-		int mes = Integer.parseInt(dat2[1]) - Integer.parseInt(dat1[1]);
-		if (mes < 0) {
-			anos = anos - 1;
-		} else if (mes == 0) {
-			int dia = Integer.parseInt(dat2[0]) - Integer.parseInt(dat1[0]);
-			if (dia > 0) {
-				anos = anos - 1;
-			}
-		}
-		return anos;
-	}
-
+	
 	@Listen("onClick = #btnMedico")
 	public void buscarMedicos() {
 		medicosResponsables = servicioResponsable.buscarEstablecimientoCargo(
 				usuarioActivo.getEstablecimiento().getId(), 1);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("medicos", medicosResponsables);
-		map.put("isMedico", true); 
+		map.put("isMedico", true);
+		map.put("isFuncionario", false);
 		Sessions.getCurrent().setAttribute("itemsCatalogo", map);
 		wdwModalResponsables = (Window) Executions
 				.createComponents(
@@ -911,11 +934,57 @@ public class CSolicitudTraslado extends CGenerico {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("funcionarios", funcionariosResponsables);
 		map.put("isFuncionario", true);
+		map.put("isMedico", false);
 		Sessions.getCurrent().setAttribute("itemsCatalogo", map);
 		wdwModalResponsables = (Window) Executions
 				.createComponents(
 						"public/vistas/transacciones/modal-responsables.zul",
 						null, map);
 		wdwModalResponsables.doModal();
+	}
+	
+	@Listen("onOK = #txtRutPaciente")
+	public void buscarRut (){
+		log.info("Inicio del metodo buscarRut()");
+		String rut;
+		if (txtRutPaciente.getText().compareTo("") == 0) {
+			Messagebox.show(Constantes.mensajeIngresarIdentificacionPaciente, "Advertencia",
+					Messagebox.OK, Messagebox.EXCLAMATION);
+		} else {
+			rut = formatearRut(txtRutPaciente.getValue());
+			txtRutPaciente.setValue(rut);
+			pacienteRegistrado = servicioPaciente.buscarRut(rut);
+			if (pacienteRegistrado != null) {
+				int posicion = pacienteRegistrado.getNombres().indexOf(" ");
+				txtPrimerNombrePaciente.setValue(pacienteRegistrado.getNombres().substring(0, posicion));
+				txtSegundoNombrePaciente.setValue(pacienteRegistrado.getNombres().substring(posicion,pacienteRegistrado.getNombres().length()));
+				txtPrimerApellidoPaciente.setValue(pacienteRegistrado.getPrimerApellido());
+				txtSegundoApellidoPaciente.setValue(pacienteRegistrado.getSegundoApellido());
+				dtbFechaNacPaciente.setValue(pacienteRegistrado.getFechaNacimiento());	
+				cmbSexo.setValue(pacienteRegistrado.getSexo().getNombre()); 
+				cmbSexo.setContext(String.valueOf(pacienteRegistrado.getSexo().getId()));
+				cmbRegionPaciente.setValue(pacienteRegistrado.getComuna().getProvincia().getRegion().getNombre());
+				cmbProvincia.setValue(pacienteRegistrado.getComuna().getProvincia().getNombre());
+				cmbComuna.setValue(pacienteRegistrado.getComuna().getNombre()); 
+				cmbComuna.setContext(String.valueOf(pacienteRegistrado.getComuna().getId()));
+				txtDireccionPaciente.setValue(pacienteRegistrado.getDomicilio());
+				cmbPrevisionPaciente.setValue(pacienteRegistrado.getPrevision());
+				txtTelefonoPaciente.setValue(pacienteRegistrado.getTelefono());
+			} else {
+				if (!rutPaciente) {
+					log.debug(new StringBuilder().append("No esta registrado paciente:").append(rut));
+					Messagebox.show(
+							Constantes.mensajePacienteNoRegistrado,
+							"Advertencia", Messagebox.OK,
+							Messagebox.EXCLAMATION);
+				}
+			}
+		}
+		log.info("Fin del metodo buscarMedico()");
+	}
+	
+	@Listen("onChange = #txtRutPaciente")
+	public void buscarRutPaciente (){
+		buscarRut();
 	}
 }

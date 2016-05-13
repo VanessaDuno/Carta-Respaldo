@@ -1,5 +1,7 @@
 package ssmc.CartaRespaldo.servicio.maestros;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,10 @@ public class SBitacora {
 	 */
 	public void guardar(Bitacora bitacora) {
 		 iBitacoraDAO.save(bitacora);
+	}
+	
+	public List<Bitacora> buscarEstatus (String estatus){
+		return iBitacoraDAO.findByEstatusOrderByFechaAsc(estatus); 
 	}
 	
 	

@@ -108,6 +108,7 @@ public class CResponsableEstablecimiento extends CGenerico {
 	public void limpiarCampos() {
 		spnFirmas.setValue(0);
 		divError.setVisible(false);
+		llenarListas();
 		
 	}
 

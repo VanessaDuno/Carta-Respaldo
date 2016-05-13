@@ -69,14 +69,10 @@ public class CCambiarPassword extends CGenerico {
 
 			}
 		};
-		botonera.getChildren().get(1).setVisible(true);
-		botonera.getChildren().get(4).setVisible(true);
-		botonera.getChildren().get(0).setVisible(false);
-		botonera.getChildren().get(2).setVisible(false);
-		botonera.getChildren().get(3).setVisible(false);
-		botonera.getChildren().get(5).setVisible(true);
-		botonera.getChildren().get(6).setVisible(false);
-		botonera.getChildren().get(7).setVisible(false);
+		botonera.getChildren().get(0).setVisible(true);
+		botonera.getChildren().get(1).setVisible(false);
+		botonera.getChildren().get(2).setVisible(true);
+		botonera.getChildren().get(3).setVisible(true);
 		botoneraCambiarPassword.appendChild(botonera);
 		log.info("Fin del metodo inicializar ()");
 

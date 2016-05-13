@@ -1,5 +1,7 @@
 package ssmc.CartaRespaldo.interfacedao.maestros;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import ssmc.CartaRespaldo.modelo.transacciones.Bitacora;
@@ -12,5 +14,7 @@ import ssmc.CartaRespaldo.modelo.transacciones.Bitacora;
  */
 
 public interface IBitacoraDAO extends JpaRepository<Bitacora, Integer> {
+	
+	List<Bitacora> findByEstatusOrderByFechaAsc (String estatus);
 
 }

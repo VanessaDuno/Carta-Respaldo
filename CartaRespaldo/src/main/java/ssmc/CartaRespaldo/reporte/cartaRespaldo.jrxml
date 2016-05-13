@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cartaRespaldo" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="324da89e-ad23-436a-be7e-a098d607bf14">
 	<property name="ireport.zoom" value="1.4641000000000008"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="345"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="paciente" class="java.lang.String"/>
 	<parameter name="fecha" class="java.lang.String"/>
 	<parameter name="folio" class="java.lang.String"/>
@@ -19,12 +19,12 @@
 	<parameter name="unidadDerivadora" class="java.lang.String"/>
 	<parameter name="rutEstablecimientoDeriva" class="java.lang.String"/>
 	<parameter name="direccionEstablecimientoDeriva" class="java.lang.String"/>
-	<parameter name="funcionarioUno" class="java.lang.String"/>
-	<parameter name="funcionarioDos" class="java.lang.String"/>
-	<parameter name="funcionarioTres" class="java.lang.String"/>
-	<parameter name="cargoUno" class="java.lang.String"/>
-	<parameter name="cargoDos" class="java.lang.String"/>
-	<parameter name="cargoTres" class="java.lang.String"/>
+	<parameter name="funcionario0" class="java.lang.String"/>
+	<parameter name="funcionario1" class="java.lang.String"/>
+	<parameter name="funcionario2" class="java.lang.String"/>
+	<parameter name="cargo0" class="java.lang.String"/>
+	<parameter name="cargo1" class="java.lang.String"/>
+	<parameter name="cargo2" class="java.lang.String"/>
 	<parameter name="acronimoHospital" class="java.lang.String"/>
 	<parameter name="telefonoHospital" class="java.lang.String"/>
 	<parameter name="motivoTraslado" class="java.lang.String"/>
@@ -68,7 +68,7 @@
 				<text><![CDATA[respaldo, a paciente que se indica a continuación;]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="26" y="253" width="55" height="20" uuid="93b9ab26-8fdd-4a10-b396-eae23c3e7448"/>
+				<reportElement mode="Opaque" x="26" y="253" width="55" height="20" uuid="93b9ab26-8fdd-4a10-b396-eae23c3e7448"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
@@ -82,70 +82,70 @@
 				<text><![CDATA[CARTA DE RESPALDO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="381" y="253" width="34" height="20" uuid="faabb57f-9ebf-4498-8258-cb29735a74d1"/>
+				<reportElement mode="Opaque" x="381" y="253" width="34" height="20" uuid="faabb57f-9ebf-4498-8258-cb29735a74d1"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RUT:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="26" y="274" width="113" height="20" uuid="2bede4c5-7577-4276-80ea-1162d1fd6ada"/>
+				<reportElement mode="Opaque" x="26" y="274" width="113" height="20" uuid="2bede4c5-7577-4276-80ea-1162d1fd6ada"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Número de ficha:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="175" y="274" width="44" height="20" uuid="c446e25f-9c17-467f-859b-ae49ef536edf"/>
+				<reportElement mode="Opaque" x="175" y="274" width="44" height="20" uuid="c446e25f-9c17-467f-859b-ae49ef536edf"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Edad:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="248" y="274" width="63" height="20" uuid="06a785db-bf96-4d64-a2ee-db0a3f44a9e9"/>
+				<reportElement mode="Opaque" x="248" y="274" width="63" height="20" uuid="06a785db-bf96-4d64-a2ee-db0a3f44a9e9"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Previsión:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="408" y="274" width="67" height="20" uuid="13c0cd75-e4e7-4431-b203-3965585cb722"/>
+				<reportElement mode="Opaque" x="408" y="274" width="67" height="20" uuid="13c0cd75-e4e7-4431-b203-3965585cb722"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Teléfono: ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="26" y="295" width="65" height="20" uuid="3db24bb7-7b6a-4160-ac9a-9f2f82b729a4"/>
+				<reportElement mode="Opaque" x="26" y="295" width="65" height="20" uuid="3db24bb7-7b6a-4160-ac9a-9f2f82b729a4"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Domicilio:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="344" y="295" width="59" height="20" uuid="cd2b75d7-f2b4-488e-be07-356c66e70c86"/>
+				<reportElement mode="Opaque" x="344" y="295" width="59" height="20" uuid="cd2b75d7-f2b4-488e-be07-356c66e70c86"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Comuna:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="26" y="316" width="75" height="20" uuid="00434cb4-bab1-49bb-8a56-eafbba69a75d"/>
+				<reportElement mode="Opaque" x="26" y="316" width="75" height="20" uuid="00434cb4-bab1-49bb-8a56-eafbba69a75d"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Diagnóstico: ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="26" y="337" width="127" height="20" uuid="7646cc9b-8c7d-418b-9df7-424f8270f9d1"/>
+				<reportElement mode="Opaque" x="26" y="337" width="127" height="20" uuid="7646cc9b-8c7d-418b-9df7-424f8270f9d1"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Unidad Derivadora: ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="26" y="358" width="127" height="20" uuid="d3cf630a-2766-4803-84bf-3fa915d1ad2f"/>
+				<reportElement mode="Opaque" x="26" y="358" width="127" height="20" uuid="d3cf630a-2766-4803-84bf-3fa915d1ad2f"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
@@ -242,14 +242,14 @@
 				<textFieldExpression><![CDATA[$P{folio}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="26" y="161" width="519" height="20" uuid="ec3934ce-cc71-4dd1-ac48-6a6e540cb566"/>
+				<reportElement mode="Opaque" x="26" y="161" width="519" height="20" uuid="ec3934ce-cc71-4dd1-ac48-6a6e540cb566"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{establecimientoDestino}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="165" y="212" width="380" height="20" uuid="32a25715-1aa3-4223-9300-dcd77d77920b"/>
+				<reportElement mode="Opaque" x="165" y="212" width="380" height="20" uuid="32a25715-1aa3-4223-9300-dcd77d77920b"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
@@ -326,7 +326,7 @@
 				<textFieldExpression><![CDATA[$P{motivoTraslado}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="26" y="418" width="518" height="20" uuid="511e439a-088d-4a83-beda-749e2997b794"/>
+				<reportElement mode="Opaque" x="26" y="418" width="518" height="20" uuid="511e439a-088d-4a83-beda-749e2997b794"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
@@ -358,42 +358,42 @@
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{funcionarioUno}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{funcionario0}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="190" y="607" width="179" height="20" uuid="c2425d9f-f0a3-4dbd-b73e-6429275f147b"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{cargoDos}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cargo1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="189" y="588" width="180" height="20" uuid="df6d46aa-47f2-4937-99ec-d367cc2fa7cf"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{funcionarioDos}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{funcionario1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="370" y="588" width="169" height="20" uuid="2f82b1dd-a987-4b58-9c2e-779f3dce107f"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{funcionarioTres}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{funcionario2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="22" y="608" width="166" height="20" uuid="c54155df-c6fc-436c-96fc-1494ebb42e8c"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{cargoUno}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cargo0}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="370" y="607" width="169" height="20" uuid="46b1903f-274b-4fa9-b6e7-336655d55a3b"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{cargoTres}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cargo2}]]></textFieldExpression>
 			</textField>
 			<image>
 				<reportElement x="451" y="4" width="88" height="69" uuid="3b3bb762-1f04-4d35-bb60-481fef186e26"/>

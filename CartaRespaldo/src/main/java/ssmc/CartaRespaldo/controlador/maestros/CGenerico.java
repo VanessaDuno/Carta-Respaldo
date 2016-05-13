@@ -444,6 +444,36 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 
 	}
 	
+	public int calcularEdad(Timestamp fecha) {
+		log.info("Inicio de metodo calcularEdad()");
+		Date fechaActual = new Date();
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		String hoy = formato.format(fechaActual);
+		String fechaNac = formato.format(fecha.getTime());
+		String[] dat1 = fechaNac.split("/");
+		String[] dat2 = hoy.split("/");
+		int anos = Integer.parseInt(dat2[2]) - Integer.parseInt(dat1[2]);
+		int mes = Integer.parseInt(dat2[1]) - Integer.parseInt(dat1[1]);
+		if (mes < 0) {
+			anos = anos - 1;
+		} else if (mes == 0) {
+			int dia = Integer.parseInt(dat2[0]) - Integer.parseInt(dat1[0]);
+			if (dia > 0) {
+				anos = anos - 1;
+			}
+		}
+		return anos;
+	}
+	
+	public String cortarCadena(String cadena) {
+		int posicion = cadena.indexOf("(");
+		if (posicion != -1) {
+			cadena = cadena.substring(0, posicion);
+		}
+		return cadena;
+	}
+
+	
 	public static SSolicitudTraslado getServicioSolicitudTraslado() {
 		return applicationContext.getBean(SSolicitudTraslado.class);
 	}

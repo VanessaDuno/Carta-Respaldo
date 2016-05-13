@@ -1,6 +1,6 @@
 <zk xmlns:x="xhtml" xmlns:c="client">
 	<window width="75%" closable="true" title="Carta de Respaldo"
-		id="wdwSolicitud"
+		id="wdwSolicitud" border="normal"
 		style=" margin-left: 12.5%; width: 75%;  margin-top: 1%;margin-bottom: 2%"
 		apply="ssmc.CartaRespaldo.controlador.transacciones.CSolicitudTraslado">
 		<div width="100%" align="center">
