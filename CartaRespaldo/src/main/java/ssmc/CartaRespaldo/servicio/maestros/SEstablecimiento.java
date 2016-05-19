@@ -57,4 +57,6 @@ public class SEstablecimiento {
 		return iEstablecimientoDAO.findByRegionIdOrderByNombreAsc(region); 
 	}
 	
+
+	
 }

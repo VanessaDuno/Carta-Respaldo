@@ -16,5 +16,5 @@ import ssmc.CartaRespaldo.modelo.maestros.CargosEstablecimiento;
 public interface ICargoEstablecimientoDAO extends JpaRepository<CargosEstablecimiento, Integer> {
 	
 	List<CargosEstablecimiento> findByEstablecimientoId (int idEstablecimiento); 
-
+	
 }

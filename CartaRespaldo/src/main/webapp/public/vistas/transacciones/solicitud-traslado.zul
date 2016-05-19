@@ -27,17 +27,17 @@
 							<hbox></hbox>
 						</row>
 						<row>
-							<label id="lblRegion" value="Región"
-								visible="false">
-							</label>
-							<combobox id="cmbRegion" readonly="true"
-								visible="false">
-								<template name="model">
-									<comboitem label="${each.nombre}"
-										context="${each.codigo}">
-									</comboitem>
-								</template>
-							</combobox>
+<!-- 							<label id="lblRegion" value="Región" -->
+<!-- 								visible="false"> -->
+<!-- 							</label> -->
+<!-- 							<combobox id="cmbRegion" readonly="true" -->
+<!-- 								visible="false"> -->
+<!-- 								<template name="model"> -->
+<!-- 									<comboitem label="${each.nombre}" -->
+<!-- 										context="${each.codigo}"> -->
+<!-- 									</comboitem> -->
+<!-- 								</template> -->
+<!-- 							</combobox> -->
 							<label id="lblEstablecimiento"
 								value="Establecimiento" visible="false">
 							</label>
@@ -194,7 +194,7 @@
 					</columns>
 					<rows>
 						<row>
-							<label value="Unidad"></label>
+							<label value="Unidad o Servicio clínico"></label>
 							<combobox id="cmbUnidad" readonly="true">
 								<template name="model">
 									<comboitem label="${each.nombre}"
@@ -202,15 +202,15 @@
 									</comboitem>
 								</template>
 							</combobox>
-							<label value="Servicio clínico"></label>
-							<combobox id="cmbServicio"
-								readonly="true">
-								<template name="model">
-									<comboitem label="${each.nombre}"
-										context="${each.id}">
-									</comboitem>
-								</template>
-							</combobox>
+<!-- 							<label value="Servicio clínico"></label> -->
+<!-- 							<combobox id="cmbServicio" -->
+<!-- 								readonly="true"> -->
+<!-- 								<template name="model"> -->
+<!-- 									<comboitem label="${each.nombre}" -->
+<!-- 										context="${each.id}"> -->
+<!-- 									</comboitem> -->
+<!-- 								</template> -->
+<!-- 							</combobox> -->
 						</row>
 						<row>
 							<label value="Diagnóstico"></label>
@@ -218,7 +218,9 @@
 							<label value="Tipo derivación"></label>
 							<combobox readonly="true"
 								id="cmbTipoDerivacion">
-								<comboitem label="UGCC"></comboitem>
+								<comboitem label="UGCC Centralizada"></comboitem>
+								<comboitem label="UGCC GRD"></comboitem>
+								<comboitem label="DFL 36"></comboitem>
 								<comboitem label="CONVENIO"></comboitem>
 								<comboitem label="SIN CONVENIO"></comboitem>
 							</combobox>

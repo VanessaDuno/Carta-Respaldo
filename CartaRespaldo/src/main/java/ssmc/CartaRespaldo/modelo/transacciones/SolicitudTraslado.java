@@ -55,9 +55,9 @@ public class SolicitudTraslado implements Serializable{
 	@Column(name="isges")
 	private boolean isGes;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="id_servicio_clinico")
-	private ServicioClinico servicioClinico; 
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="id_servicio_clinico")
+//	private ServicioClinico servicioClinico; 
 	
 	@Column(name="ficha")
 	private String  ficha; 
@@ -114,13 +114,13 @@ public class SolicitudTraslado implements Serializable{
 		this.isGes = isGes;
 	}
 
-	public ServicioClinico getServicioClinico() {
-		return servicioClinico;
-	}
-
-	public void setServicioClinico(ServicioClinico servicioClinico) {
-		this.servicioClinico = servicioClinico;
-	}
+//	public ServicioClinico getServicioClinico() {
+//		return servicioClinico;
+//	}
+//
+//	public void setServicioClinico(ServicioClinico servicioClinico) {
+//		this.servicioClinico = servicioClinico;
+//	}
 
 	@Override
 	public String toString() {
@@ -139,8 +139,8 @@ public class SolicitudTraslado implements Serializable{
 		builder.append(tipoDerivacion);
 		builder.append(", isGes=");
 		builder.append(isGes);
-		builder.append(", servicioClinico=");
-		builder.append(servicioClinico);
+//		builder.append(", servicioClinico=");
+//		builder.append(servicioClinico);
 		builder.append(", ficha=");
 		builder.append(ficha);
 		builder.append(", unidad=");

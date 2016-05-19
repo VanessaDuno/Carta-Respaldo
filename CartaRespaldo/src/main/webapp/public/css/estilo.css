@@ -104,3 +104,14 @@
    50% { opacity: 0.0; }
   100% { opacity: 1.0; }
 }
+
+.panel-vistas{
+	width: 94.7%;
+	margin-left: 3.5%;
+}
+
+.panel-vistas-mantenedores {
+    width: 75%;
+    margin-left: 14.5%;
+    margin-top: 20px;
+}

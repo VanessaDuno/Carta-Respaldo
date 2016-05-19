@@ -23,12 +23,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Textbox;
 
 import ssmc.CartaRespaldo.componentes.Constantes;
 import ssmc.CartaRespaldo.controlador.maestros.CGenerico;
@@ -52,23 +55,44 @@ public class CHistoricoTraslado extends CGenerico {
 
 	@Wire
 	private Listbox lbxTraslado;
+	@Wire
+	private Textbox txtDestino;
+	@Wire
+	private Textbox txtOrigen;
+	@Wire
+	private Datebox dtbFechaInicio;
+	@Wire
+	private Datebox dtbFechaFin;
+	@Wire
+	private Combobox cmbEstatus;
 	private boolean rescate;
 	private int contador;
+	Usuario usuario = new Usuario();
 
 	@Override
 	public void inicializar() throws IOException {
-
+		usuario = usuarioActivo();
 		llenarLista();
-		if (rescate) {
-			Messagebox.show("Tiene" + " " + contador + " "
-					+ "pacientes que debe rescatar.", "Advertencia",
-					Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+
 	}
 
 	public void llenarLista() {
-		historicoTraslado = servicioBitacora.buscarEstatus("Creada");
-		lbxTraslado.setModel(new ListModelList<Bitacora>(historicoTraslado));
+		if (usuario.getEstablecimiento().getId() == 500) {
+			historicoTraslado = servicioBitacora.buscarTodos();
+			lbxTraslado
+					.setModel(new ListModelList<Bitacora>(historicoTraslado));
+			if (rescate) {
+				Messagebox.show("Tiene" + " " + contador + " "
+						+ "pacientes que debe rescatar.", "Advertencia",
+						Messagebox.OK, Messagebox.EXCLAMATION);
+			}
+		} else {
+			historicoTraslado = servicioBitacora
+					.buscarPorEstablecimiento(usuario.getEstablecimiento()
+							.getId());
+			lbxTraslado
+					.setModel(new ListModelList<Bitacora>(historicoTraslado));
+		}
 		semaforoLista();
 	}
 
@@ -79,9 +103,11 @@ public class CHistoricoTraslado extends CGenerico {
 		if (listItem.size() != 0) {
 			for (int i = 0; i < listItem.size(); i++) {
 				Bitacora bitacora = listItem.get(i).getValue();
-				String otraPrestacion= bitacora.getTraslado().getDescripcion(); 
-				((Label) ((listItem.get(i).getChildren().get(4)))
-						.getFirstChild()).setValue(consultarPrestacionesSolicitud(bitacora.getTraslado().getId()) + otraPrestacion);
+				String otraPrestacion = bitacora.getTraslado().getDescripcion();
+				((Label) ((listItem.get(i).getChildren().get(3)))
+						.getFirstChild())
+						.setValue(consultarPrestacionesSolicitud(bitacora
+								.getTraslado().getId()) + otraPrestacion);
 				int dia = diferenciaEnDias(fechaHora, bitacora.getFecha());
 				Listcell lc = (Listcell) listItem.get(i).getChildren().get(5);
 				if (dia > 15) {
@@ -184,9 +210,9 @@ public class CHistoricoTraslado extends CGenerico {
 		p.put("direccionEstablecimientoDeriva", usuarioActivo
 				.getEstablecimiento().getDireccion());
 
-		p.put("funcionario0", "");
-		p.put("funcionario1", "");
-		p.put("funcionario2", "");
+		p.put("funcionario0", "NO APLICA");
+		p.put("funcionario1", "NO APLICA");
+		p.put("funcionario2", "NO APLICA");
 		p.put("cargo0", "");
 		p.put("cargo1", "");
 		p.put("cargo2", "");
@@ -240,21 +266,96 @@ public class CHistoricoTraslado extends CGenerico {
 		for (int i = 0; i < prestacionesSolicitud.size(); i++) {
 			if (prestacionesPaciente.equals("")) {
 				prestacionesPaciente = prestacionesPaciente
-						+ prestacionesSolicitud.get(i).getPrestacion().getPrestacion()
-								.getDescripcion()
+						+ prestacionesSolicitud.get(i).getPrestacion()
+								.getPrestacion().getDescripcion()
 						+ " "
-						+ cortarCadena(prestacionesSolicitud.get(i).getPrestacion()
-								.getNombre());
+						+ cortarCadena(prestacionesSolicitud.get(i)
+								.getPrestacion().getNombre());
 			} else {
 				prestacionesPaciente = prestacionesPaciente
 						+ ", "
-						+ prestacionesSolicitud.get(i).getPrestacion().getPrestacion()
-								.getDescripcion()
+						+ prestacionesSolicitud.get(i).getPrestacion()
+								.getPrestacion().getDescripcion()
 						+ " "
-						+ cortarCadena(prestacionesSolicitud.get(i).getPrestacion()
-								.getNombre());
+						+ cortarCadena(prestacionesSolicitud.get(i)
+								.getPrestacion().getNombre());
 			}
 		}
-		return prestacionesPaciente; 
+		return prestacionesPaciente;
 	}
+	
+	@Listen("onOK = #txtDestino")
+	public void buscarEstablecimientoDestino() {
+
+		if (!txtDestino.getValue().equals("")) {
+			List<Bitacora> lista = new ArrayList<Bitacora>();
+			for (Bitacora bitacora : historicoTraslado) {
+				if (bitacora.getTraslado().getEstablecimiento()
+						.getNombre()
+						.toLowerCase()
+						.contains(
+								txtDestino.getValue()
+										.toLowerCase())) {
+					lista.add(bitacora);
+				}
+			}
+			lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
+			lbxTraslado.renderAll();
+		} else {
+			lbxTraslado.setModel(new ListModelList<Bitacora>(
+					historicoTraslado));
+			lbxTraslado.renderAll();
+		}
+		semaforoLista();
+	}
+	
+	@Listen("onOK = #txtOrigen")
+	public void buscarEstablecimientoOrigen() {
+
+		if (!txtOrigen.getValue().equals("")) {
+			List<Bitacora> lista = new ArrayList<Bitacora>();
+			for (Bitacora bitacora : historicoTraslado) {
+				if (bitacora.getTraslado().getUnidad().getEstablecimiento()
+						.getNombre()
+						.toLowerCase()
+						.contains(
+								txtOrigen.getValue()
+										.toLowerCase())) {
+					lista.add(bitacora);
+				}
+			}
+			lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
+			lbxTraslado.renderAll();
+		} else {
+			lbxTraslado.setModel(new ListModelList<Bitacora>(
+					historicoTraslado));
+			lbxTraslado.renderAll();
+			
+		}
+		semaforoLista();
+	}
+	
+	@Listen("onOK = #dtbFechaInicio")
+	public void buscarFechaInicio() {
+
+		if (dtbFechaInicio.getValue() != null) {
+			List<Bitacora> lista = new ArrayList<Bitacora>();
+			for (Bitacora bitacora : historicoTraslado) {				  
+				if (String.valueOf(formatoFecha.format(bitacora.getFecha()))
+						.contains(
+								String.valueOf(formatoFecha.format(dtbFechaInicio.getValue().getTime())))) {
+					lista.add(bitacora);
+				}
+			}
+			lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
+			lbxTraslado.renderAll();
+		} else {
+			lbxTraslado.setModel(new ListModelList<Bitacora>(
+					historicoTraslado));
+			lbxTraslado.renderAll();
+			
+		}
+		semaforoLista();
+	}
+
 }

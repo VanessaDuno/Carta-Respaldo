@@ -1,4 +1,4 @@
-<?page title="MINSAL - Registro de Quemados"?>
+<?page title="Carta Respaldo"?>
 <?link rel="stylesheet" type="text/css" href="public/bootstrap-3.3.6-dist/css/bootstrap.css"?>
 <?link type="image/x-icon" href="public/imagenes/generales/1.png" rel="shortcut icon"?>
 <?link rel="stylesheet" type="text/css" href="public/css/estilo.css"?>
@@ -65,8 +65,7 @@
 			<borderlayout style="top:17px; margin-left: 7%;">
 				<north height="113px">
 					<div style="position: relative;width: 100%;">
-						<x:img 
-							class="img-responsive" src="public/imagenes/generales/Encabezado.png" />
+						<image id = "imgEncabezado" />
 					</div>
 				</north>
 				<west size="87%" flex="true"
@@ -126,7 +125,7 @@
 				</west>
 			</borderlayout>
 		</north>
-		<west size="0%" style="margin-left: 55px;  margin-top: 20px;"
+		<west size="0%" style="margin-left: 168px;  margin-top: 20px;"
 			visible="false" id="westAplicacion">
 			<listbox id="lbxHijos" visible="false">
 				<listhead>

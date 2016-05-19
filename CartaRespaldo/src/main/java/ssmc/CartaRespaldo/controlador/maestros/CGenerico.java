@@ -39,6 +39,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 
 import ssmc.CartaRespaldo.componentes.Constantes;
+import ssmc.CartaRespaldo.controlador.seguridad.LogActividad;
 import ssmc.CartaRespaldo.modelo.seguridad.Usuario;
 import ssmc.CartaRespaldo.servicio.maestros.SBitacora;
 import ssmc.CartaRespaldo.servicio.maestros.SCargo;
@@ -65,7 +66,7 @@ import ssmc.CartaRespaldo.servicio.seguridad.SUsuarioGrupo;
 import ssmc.CartaRespaldo.servicio.transacciones.SPrestacionSolicitud;
 import ssmc.CartaRespaldo.servicio.transacciones.SResponsableSolicitud;
 import ssmc.CartaRespaldo.servicio.transacciones.SSolicitudTraslado;
-
+import ssmc.CartaRespaldo.servicio.seguridad.SLog;
 
 /**
  * Controlador CGenerico
@@ -93,7 +94,7 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 	@WireVariable("SUsuarioGrupo")
 	protected SUsuarioGrupo servicioUsuarioGrupo;
 	@WireVariable("SMenuGrupo")
-	protected SMenuGrupo servicioMenuGrupo;	
+	protected SMenuGrupo servicioMenuGrupo;
 	@WireVariable("SRegion")
 	protected SRegion servicioRegion;
 	@WireVariable("SEstablecimiento")
@@ -134,8 +135,9 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 	protected SResponsable servicioResponsable;
 	@WireVariable("SResponsableSolicitud")
 	protected SResponsableSolicitud servicioResponsableSolicitud;
-	
-	
+	@WireVariable("SLog")
+	protected SLog servicioLog;
+
 	public Tabbox tabBox;
 	public Include contenido;
 	protected SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
@@ -172,6 +174,7 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 		log.debug(new StringBuilder().append(
 				"Fin del metodo nombreUsuarioSesion(), retorna:").append(
 				sesion.getName()));
+		ipValida("123123123123");
 		return sesion.getName();
 	}
 
@@ -269,8 +272,6 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 		arreglo.add(ds.getUrl());
 		return arreglo;
 	}
-
-	
 
 	/**
 	 * usuarioActivo: Metodo que obtiene el usuario activo logueado
@@ -376,14 +377,15 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 	 * 
 	 * @param Recibe
 	 *            la clave a verificar
-	 * @return Retorna exito o no de la operacion 
+	 * @return Retorna exito o no de la operacion
 	 * 
 	 * @throws No
 	 *             dispara ninguna excepción.
 	 * 
 	 */
 	public boolean completitudClave(String clave) {
-		log.debug(new StringBuilder().append("Inicio del metodo completitudClave"));
+		log.debug(new StringBuilder()
+				.append("Inicio del metodo completitudClave"));
 		boolean contieneNumero = false;
 		boolean contieneLetrasMinusculas = false;
 		boolean contieneLetrasMayusculas = false;
@@ -435,15 +437,17 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 
 		if (contieneCaracteres && contieneLetrasMinusculas && contieneNumero
 				&& contieneLetrasMayusculas) {
-			log.debug(new StringBuilder().append("Fin de metodo completitudClave con resultado exitoso"));
+			log.debug(new StringBuilder()
+					.append("Fin de metodo completitudClave con resultado exitoso"));
 			return true;
 		} else {
-			log.debug(new StringBuilder().append("Fin de metodo completitudClave con resultado fallido"));
+			log.debug(new StringBuilder()
+					.append("Fin de metodo completitudClave con resultado fallido"));
 			return false;
 		}
 
 	}
-	
+
 	public int calcularEdad(Timestamp fecha) {
 		log.info("Inicio de metodo calcularEdad()");
 		Date fechaActual = new Date();
@@ -464,7 +468,7 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 		}
 		return anos;
 	}
-	
+
 	public String cortarCadena(String cadena) {
 		int posicion = cadena.indexOf("(");
 		if (posicion != -1) {
@@ -473,7 +477,6 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 		return cadena;
 	}
 
-	
 	public static SSolicitudTraslado getServicioSolicitudTraslado() {
 		return applicationContext.getBean(SSolicitudTraslado.class);
 	}
@@ -485,9 +488,54 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 	public static SUsuario getServicioUsuario() {
 		return applicationContext.getBean(SUsuario.class);
 	}
-	
+
 	public static SResponsableSolicitud getServicioResponsableSolicitud() {
 		return applicationContext.getBean(SResponsableSolicitud.class);
 	}
 
+	/**
+	 * prepararLog: Metodo que guarda log de la acrividades realizadas por un
+	 * usuario en base de datos
+	 * 
+	 * @param Recibe
+	 *            String actividad, String descripcion
+	 * @return No retorna ningun parametro ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
+	public void prepararLog(String actividad, String descripcion) {
+		java.util.Date fecha = new Date();
+		Timestamp fechaSistema = new Timestamp(fecha.getTime());
+		LogActividad log = new LogActividad();
+		log.setActividad(actividad);
+		log.setDescripcion(descripcion);
+		log.setLoginUsuario(auth.getName());
+		log.setFecha(fechaSistema);
+		servicioLog.guardar(log);
+	}
+
+	public void ipValida(String cadena) {
+		String n1 = "";
+		String n2 = "";
+		String n3 = "";
+		String n4 = "";
+		int tamannoCadena = cadena.length();
+		if (tamannoCadena == 12) {
+			n1 = cadena.substring(0, 2);
+			n2 = cadena.substring(3, 5);
+			n3 = cadena.substring(6, 8);
+			n4 = cadena.substring(9, 11);
+			if (Integer.valueOf(n1) <= 255 && Integer.valueOf(n2) <= 255
+					&& Integer.valueOf(n3) <= 255 && Integer.valueOf(n4) <= 255) {
+				System.out.println(n1 + "." + n2 + "." + n3  + "." + n4 );
+			}
+		}
+		else {
+		for (int i = 0; i < cadena.length(); i++) {
+		
+		}
+		}
+	}
 }

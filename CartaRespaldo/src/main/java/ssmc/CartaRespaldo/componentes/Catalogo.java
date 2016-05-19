@@ -17,6 +17,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -38,12 +39,12 @@ public abstract class Catalogo<Clase> extends Window {
 	Label labelBuscado;
 
 
-
 	public Catalogo(final Component cGenerico, String titulo,
 			List<Clase> lista,
 			String... campos) {
-	//	super("", "2", false);
-		//this.setId("cmpCatalogo" + titulo);
+		super("", "2", false);
+		this.setId("cmpCatalogo" + titulo);
+		this.setStyle("background-header:#FF7925; background: #f4f2f2");
 		crearLista(lista, campos);
 		lsbCatalogo.addEventListener(Events.ON_SELECT,
 				new EventListener<Event>() {
@@ -56,6 +57,7 @@ public abstract class Catalogo<Clase> extends Window {
 	}
 
 	public void crearLista(List<Clase> lista, String[] campos) {
+
 		lsbCatalogo = new Listbox();
 		lsbCatalogo.setMold("paging");
 		lsbCatalogo.setPagingPosition("top");
@@ -91,18 +93,20 @@ public abstract class Catalogo<Clase> extends Window {
 			cajaTexto.setPlaceholder("Buscar....");
 			cajaTexto
 					.setTooltiptext("Presione Enter para Filtrar la Informacion");
-//			cajaTexto.setClass("text-catalogo");
-//			cajaTexto.setZclass("none");
+			cajaTexto.setClass("text-catalogo");
+			cajaTexto.setStyle("width: 70% !important;margin-left: 5%;"); 
+			cajaTexto.setZclass("none");
 			Auxheader cabeceraFila = new Auxheader(campos[i]);
 			cabecera.appendChild(cabeceraFila);
 			cabeceraFila.appendChild(cajaTexto);
-
+	
 		}
 		lsbCatalogo.appendChild(lhdEncabezado);
-//		lsbCatalogo.appendChild(cabecera);
+		lsbCatalogo.appendChild(cabecera);
 
 		lsbCatalogo.setSizedByContent(true);
-		//cabecera.setVisible(true);
+		lsbCatalogo.setSpan("true");
+		cabecera.setVisible(true);
 		lhdEncabezado.setVisible(true);
 		lsbCatalogo.setModel(new ListModelList<Clase>(lista));
 		lsbCatalogo.setItemRenderer(new ListitemRenderer<Clase>() {
@@ -119,13 +123,15 @@ public abstract class Catalogo<Clase> extends Window {
 			}
 		});
 
+			Space espacio = new Space();
+			espacio.setHeight("10px");
+			espacio.setStyle("background:white");
+
 			this.setWidth("auto");
 			this.setClosable(false);
+
 			this.appendChild(lsbCatalogo);
 		}
-
-
-
 
 	/**
 	 * Metodo que permite llamar un servicio dependiendo el controlador que

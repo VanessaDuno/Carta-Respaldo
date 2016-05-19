@@ -14,9 +14,9 @@ public class Constantes {
 	
 	public static String mensajeCorreo = "Se ha remitido un paciente gran quemado ingrese a la siguiente dirección para ver los antecedentes http://192.168.128.19:8080/RegistroQuemados/"; 
 	public static String correoDireccionQuemados = "nicolas.damelio@redsalud.gob.cl";
-	public static String asuntoNotificacion = "Notificación de Gran Quemado";
-	public static String correoNotificacion = "registroquemados@redsalud.gob.cl";
-	public static String passwordNotificacion = "rq.123456"; 
+	public static String asuntoNotificacion = "Notificación de Carta Respaldo";
+	public static String correoNotificacion = "notificacion.ssmc@redsalud.gob.cl";
+	public static String passwordNotificacion = "ns.123456"; 
 	public static String passwordNoCoinciden = "Los password no coinciden";
 	public static String expresionRegularClave = "(?=^.{8,}$)((?=.*d)|(?=.*W+))(?![.n])(?=.*[A-Z])(?=.*[a-z]).*$";
 	public static String expresionRegularClaveEspeciales = "[^0-9A-Za-z]+";
@@ -73,6 +73,19 @@ public class Constantes {
 	
 	public static String nombreProcedimientoTraumatologia = "PROCEDIMIENTOS TRAUMATOLOGIA"; 
 	public static String nombreIntervencionTraumatologia = "CIRUGIA TRAUMATOLOGIA"; 
+	
+	/** Definición de actividades de log **/
+	
+	public static String inicioSesion = "Entrada al sistema";
+	public static String finSesion = "Salida del sistema";
+	public static String creacionUsuario = "Se crea un usuario";
+	public static String edicionUsuario = "Se edita un usuario";
+	public static String cambioClave = "Clave de ingreso al sistema cambiada";
+	public static String recordarClave = "Olvidó clave de ingreso al sistema cambiada";
+	public static String registroQuemado = "Registrado gran quemado";
+	public static String edicionQuemado = "Editado registro gran quemado";
+	public static String consultaQuemado = "Consulta de ficha gran quemado";
+	public static String fotoQuemado = "Consulta de fotos de gran quemado";
 	
 	
 }

@@ -37,5 +37,7 @@ public class SCargoEstablecimiento {
 		return iCargoEstablecimientoDAO.findByEstablecimientoId(idEstablecimiento); 
 	}
 	
-	
+	public void eliminarCargos (List<CargosEstablecimiento> cargos){
+		iCargoEstablecimientoDAO.delete(cargos);
+	}
 }

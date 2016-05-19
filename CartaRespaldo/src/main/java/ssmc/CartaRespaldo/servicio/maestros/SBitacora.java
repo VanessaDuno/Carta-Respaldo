@@ -37,5 +37,13 @@ public class SBitacora {
 		return iBitacoraDAO.findByEstatusOrderByFechaAsc(estatus); 
 	}
 	
+	public List<Bitacora> buscarTodos (){
+		return iBitacoraDAO.findAll();
+	}
+	
+	public List<Bitacora> buscarPorEstablecimiento(int idEstablecimiento) {
+		return iBitacoraDAO.findByTrasladoUnidadEstablecimientoIdOrderByFechaAsc(idEstablecimiento);
+	}
+	
 	
 }

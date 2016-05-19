@@ -16,5 +16,7 @@ import ssmc.CartaRespaldo.modelo.transacciones.Bitacora;
 public interface IBitacoraDAO extends JpaRepository<Bitacora, Integer> {
 	
 	List<Bitacora> findByEstatusOrderByFechaAsc (String estatus);
+	
+	List<Bitacora> findByTrasladoUnidadEstablecimientoIdOrderByFechaAsc (int id);
 
 }

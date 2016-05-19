@@ -5,59 +5,93 @@
 	SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
 ]]>
 		</zscript>
-		<style>
-			.historico .z-listcell-content {
-  				  font-size: 14px;
-   				  line-height: 1.5em;
-			}
-			.historico .z-listheader-content {
-  			  	font-size: 13px;
-  			  }
-		</style>
-	<window title="Histórico de Traslados" border="normal" width="80%" closable="true"
+	<style>
+		.historico .z-listcell-content { font-size: 14px; line-height:
+		1.5em; } .historico .z-listheader-content { font-size: 13px; }
+	</style>
+	<window title="Histórico de Traslados" border="normal" width="80%"
+		closable="true"
 		style=" margin-left: 10.8%; width: 95%;  margin-top: 1%;margin-bottom: 2%"
 		apply="ssmc.CartaRespaldo.controlador.transacciones.CHistoricoTraslado">
 
-				<div>
-					<separator></separator>
-					<listbox id="lbxTraslado" class="historico"
-						mold="paging" pageSize="15">
-						<listhead>
-							<listheader label="Ficha" width="7%">
-							</listheader>
-							<listheader label="Fecha solicitud"
-								width="10%">
-							</listheader>
-							<listheader label="Establecimiento" width="35%">
-							</listheader>
-							<listheader label="Diagnóstico" width="15%">
-							</listheader>
-							<listheader label="Motivo" width="38%">
-							</listheader>
-							<listheader label="Estado" width="6%">
-							</listheader>
-						</listhead>
+		<div>
+			<separator></separator>
+			<grid>
+				<rows>
+					<row>
+<!-- 						<datebox id="dtbFechaInicio" -->
+<!-- 							placeholder="Fecha inicio" width="100%"> -->
+<!-- 						</datebox> -->
+						<combobox id="cmbMeses" placeholder="Fecha"
+							width="100%">
+							<comboitem label="Enero" context="1"></comboitem>
+							<comboitem label="Febrero" context="2"></comboitem>
+							<comboitem label="Marzo" context="3"></comboitem>
+							<comboitem label="Abril" context="4"></comboitem>
+							<comboitem label="Mayo" context="5"></comboitem>
+							<comboitem label="Junio" context="6"></comboitem>
+							<comboitem label="Julio" context="7"></comboitem>
+							<comboitem label="Agosto" context="8"></comboitem>
+							<comboitem label="Septiembre" context="9"></comboitem>
+							<comboitem label="Octubre" context="10"></comboitem>
+							<comboitem label="Noviembre" context="11"></comboitem>
+							<comboitem label="Diciembre" context="12"></comboitem>
+						</combobox>
+						<textbox id="txtDestino"
+							placeholder="Establecimiento destino" width="100%">
+						</textbox>
+						<textbox id="txtOrigen"
+							placeholder="Establecimiento origen" width="100%">
+						</textbox>
+						<combobox id="cmbEstatus" placeholder="Estatus"
+							width="100%">
+							<comboitem label="Creada" context="1"></comboitem>
+							<comboitem label="Traslado" context="2"></comboitem>
+							<comboitem label="Anulada" context="3"></comboitem>
+							<comboitem label="Cierre Clinico" context="4"></comboitem>
+							<comboitem label="Cierre Administrativo" context="5"></comboitem>
+						</combobox>
+					</row>
+				</rows>
+			</grid>
+			<listbox id="lbxTraslado" class="historico" mold="paging"
+				pageSize="15">
+				<listhead>
+					<listheader label="Fecha solicitud" width="10%">
+					</listheader>
+					<listheader label="Establecimiento Origen"
+						width="30%">
+					</listheader>
+					<listheader label="Establecimiento Destino"
+						width="30%">
+					</listheader>
+					<listheader label="Motivo" width="38%"></listheader>
+					<listheader label="Estado" width="10%"></listheader>
+					<listheader label="Días" width="6%"></listheader>
+				</listhead>
 
-						<template name="model">
-							<listitem>
-								<listcell
-									label="${each.traslado.ficha}">
-								</listcell>
-								<listcell label="${sdf.format(each.fecha)}">
-								</listcell>
-								<listcell
-									label="${each.traslado.establecimiento.nombre}">
-								</listcell>
-								<listcell
-									label="${each.traslado.diagnostico}">
-								</listcell>
-								<listcell>
-								<label></label>
-								</listcell>
-								<listcell></listcell>
-							</listitem>
-						</template>
-					</listbox>
-				</div>
+				<template name="model">
+					<listitem>
+						<listcell label="${sdf.format(each.fecha)}">
+						</listcell>
+						<listcell
+							label="${each.traslado.unidad.establecimiento.nombre}">
+						</listcell>
+						<listcell
+							label="${each.traslado.establecimiento.nombre}">
+						</listcell>
+						<listcell>
+							<label></label>
+						</listcell>
+						<listcell
+							label="${each.estatus}">
+						</listcell>
+						<listcell>
+							<!-- 								<label></label> -->
+						</listcell>
+					</listitem>
+				</template>
+			</listbox>
+		</div>
 	</window>
 </zk>

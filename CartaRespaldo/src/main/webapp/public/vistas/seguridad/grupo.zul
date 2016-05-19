@@ -1,0 +1,51 @@
+<?page title="Grupo" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<div class="panel panel-default panel-vistas-mantenedores">
+		<div class="panel-heading">Grupo</div>
+		<div class="panel-body">
+			<div
+				apply="ssmc.CartaRespaldo.controlador.seguridad.CGrupo">
+				<div class="panel panel-default">
+					<div class="panel-body" style="padding: 8px;">
+						<div width="50%" id="botoneraGrupo"
+							align="left" />
+					</div>
+				</div>
+				<groupbox width="100%">
+					<caption class="captionGroupbox"
+						label="Datos del grupo" />
+					<grid width="100%" zclass="none">
+						<columns visible="false">
+							<column label="" width="15%" />
+							<column label="" width="35%" />
+							<column label="" width="15%" />
+							<column label="" width="35%" />
+						</columns>
+						<rows>
+							<row>
+								<label value="Nombre:" />
+								<textbox id="txtNombreGrupo" hflex="1"
+									maxlength="100" tooltiptext="Ingrese el Nombre del grupo" />
+								<hbox></hbox>
+								<hbox></hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+				<groupbox width="100%" mold="3d">
+					<caption class="captionGroupbox"
+						label="Grupos Registrados"  />
+					<listbox id="lbxGrupo" mold="paging"
+						pageSize="15">
+						<template name="model">
+							<listitem>
+								<listcell label="${each.nombre}">
+								</listcell>
+							</listitem>
+						</template>
+					</listbox>
+				</groupbox>
+			</div>
+		</div>
+	</div>
+</zk>

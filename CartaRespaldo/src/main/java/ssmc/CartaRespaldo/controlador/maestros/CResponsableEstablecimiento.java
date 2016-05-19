@@ -24,6 +24,7 @@ import ssmc.CartaRespaldo.componentes.Constantes;
 import ssmc.CartaRespaldo.modelo.maestros.Cargo;
 import ssmc.CartaRespaldo.modelo.maestros.CargosEstablecimiento;
 import ssmc.CartaRespaldo.modelo.maestros.Establecimiento;
+import ssmc.CartaRespaldo.modelo.seguridad.Usuario;
 
 /**
  * CResponsableEstablecimiento
@@ -55,6 +56,8 @@ public class CResponsableEstablecimiento extends CGenerico {
 			.getLogger(ssmc.CartaRespaldo.controlador.maestros.CResponsableEstablecimiento.class);
 	private List<Cargo> listaCargos = new ArrayList<Cargo>();
 	private List<CargosEstablecimiento> cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
+	List<CargosEstablecimiento> cargosRegistrados = new ArrayList<CargosEstablecimiento>(); 
+	Usuario usuario= new Usuario();
 
 	Establecimiento establecimiento = new Establecimiento();
 
@@ -62,6 +65,7 @@ public class CResponsableEstablecimiento extends CGenerico {
 	public void inicializar() throws IOException {
 		llenarListas();
 		establecimiento = usuarioActivo().getEstablecimiento();
+		buscarCargos();marcarCargos();
 		botonera = new Botonera() {
 
 			@Override
@@ -96,6 +100,8 @@ public class CResponsableEstablecimiento extends CGenerico {
 		listaCargos = servicioCargo.buscarTodos();
 		lbxCargos.setModel(new ListModelList<Cargo>(listaCargos));
 		multiple();
+		usuario = usuarioActivo(); 
+		spnFirmas.setValue(usuario.getEstablecimiento().getCantidadFirmantes());
 	}
 
 	public void multiple() {
@@ -134,6 +140,7 @@ public class CResponsableEstablecimiento extends CGenerico {
 	}
 
 	public void guardarCargos() {
+		eliminarCargos();
 		obtenerCargos();
 		if (validarCampos()) {
 			int cantidadCargos = spnFirmas.getValue();
@@ -148,7 +155,7 @@ public class CResponsableEstablecimiento extends CGenerico {
 				Messagebox.show(Constantes.mensajeRegistroGuardado,
 						"Información", Messagebox.OK, Messagebox.INFORMATION);
 
-				limpiarCampos();
+				//limpiarCampos();
 			}
 			else {
 				divError.setVisible(true);
@@ -160,5 +167,29 @@ public class CResponsableEstablecimiento extends CGenerico {
 			lblError.setValue(Constantes.mensajeCamposVacios);
 		}
 		cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
+	}
+	
+	public void buscarCargos (){
+		cargosRegistrados = new ArrayList<CargosEstablecimiento>(); 
+		cargosRegistrados = servicioCargoEstablecimiento.cargosEstablecimientos(usuario.getEstablecimiento().getId()); 
+	}
+	
+	public void marcarCargos (){
+		lbxCargos.renderAll();
+		for (int i = 0; i < cargosRegistrados.size(); i++) {
+			Cargo cargo = cargosRegistrados.get(i).getCargo(); 
+			
+			for (int g = 0; g < lbxCargos.getItemCount(); g++) {
+				Listitem listItem = lbxCargos.getItemAtIndex(g);
+				Cargo c = listItem.getValue();
+				if (c.getId() == cargo.getId()){
+					listItem.setSelected(true);
+				}
+				}
+			}
+		}
+	
+	public void eliminarCargos (){
+		servicioCargoEstablecimiento.eliminarCargos(cargosRegistrados);
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
@@ -40,12 +41,16 @@ public class CInicio extends CGenerico {
 	private Include contenido;
 	@Wire
 	private Label lblUsuario;
+	@Wire
+	private Image imgEncabezado;
 
 	List<OpcionMenu> listaHijos2 = new ArrayList<OpcionMenu>();
 	HttpServletResponse response;
 	@Wire
 	private West westAplicacion;
 	String ruta = null;
+
+	Usuario usuario = new Usuario();
 
 	@Override
 	public void inicializar() throws IOException {
@@ -57,7 +62,7 @@ public class CInicio extends CGenerico {
 			Executions.sendRedirect("/index.zul");
 			return;
 		} else {
-			Usuario usuario = usuarioActivo();
+			usuario = usuarioActivo();
 			lblUsuario.setValue(usuario.getNombre());
 			if (usuario.isCambiada()) {
 				List<OpcionMenu> listaM = new ArrayList<OpcionMenu>();
@@ -75,6 +80,7 @@ public class CInicio extends CGenerico {
 			}
 
 		}
+		encabezadoEstablecimiento();
 		log.info("Fin del metodo inicializar()");
 
 	}
@@ -174,7 +180,9 @@ public class CInicio extends CGenerico {
 			for (int i = 0; i < listItem.size(); i++) {
 				if (listItem.get(i).isSelected()) {
 					OpcionMenu menu = listItem.get(i).getValue();
-					log.debug(new StringBuilder().append("Opcion de menu seleccionada:").append(menu.toString()));
+					log.debug(new StringBuilder().append(
+							"Opcion de menu seleccionada:").append(
+							menu.toString()));
 					int item = Integer.valueOf(menu.getIdMenu());
 					abrir = true;
 					menuItem = servicioMenu.buscarId(item);
@@ -183,19 +191,34 @@ public class CInicio extends CGenerico {
 			if (abrir) {
 				String ruta = "/public/vistas/" + menuItem.getUrl() + ".zul";
 				contenido.setSrc(ruta);
-				log.debug(new StringBuilder().append("Abrir opcion: ").append(ruta));
+				log.debug(new StringBuilder().append("Abrir opcion: ").append(
+						ruta));
 			}
 		}
 		log.info("Fin del metodo seleccionarOpcionHija()");
 	}
-	
+
 	@Listen("onClick = #lblUsuario")
-	public void abrirCambioClave (){
+	public void abrirCambioClave() {
 		contenido.setSrc(null);
 		ruta = "/public/vistas/seguridad/cambiar-password.zul";
 		contenido.setSrc(ruta);
-		log.debug(new StringBuilder().append("Abrir opcion: ")
-					.append(ruta));
+		log.debug(new StringBuilder().append("Abrir opcion: ").append(ruta));
+	}
+
+	public void encabezadoEstablecimiento() {
+		if (usuario.getEstablecimiento().getId() == 25) {
+			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoSanborja.png");
+		}
+		else if (usuario.getEstablecimiento().getId() == 26) {
+			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoHec.png");
+		}
+		else if (usuario.getEstablecimiento().getId() == 27) {
+			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoHuap.png");
+		}
+		else if (usuario.getEstablecimiento().getId() == 500) {
+			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoSsmc.png");
+		}
 	}
 
 }
