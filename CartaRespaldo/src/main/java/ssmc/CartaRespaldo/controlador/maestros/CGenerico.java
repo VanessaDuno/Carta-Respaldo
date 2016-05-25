@@ -141,6 +141,7 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 	public Tabbox tabBox;
 	public Include contenido;
 	protected SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
+	protected SimpleDateFormat formatoFechaMeses = new SimpleDateFormat("MM");
 	public List<Tab> tabs = new ArrayList<Tab>();
 	protected DateFormat df = new SimpleDateFormat("HH:mm:ss");
 	public final Calendar calendario = Calendar.getInstance();
@@ -473,6 +474,15 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 		int posicion = cadena.indexOf("(");
 		if (posicion != -1) {
 			cadena = cadena.substring(0, posicion);
+		}
+		return cadena;
+	}
+
+	public String cortarCadenaParentesis(String cadena) {
+		int posicion = cadena.indexOf("(");
+		int posicionCierre = cadena.indexOf(")");
+		if (posicion != -1) {
+			cadena = cadena.substring(posicion, posicionCierre);
 		}
 		return cadena;
 	}

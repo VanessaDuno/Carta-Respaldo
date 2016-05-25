@@ -18,28 +18,28 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.json.JSONException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
 import ssmc.CartaRespaldo.componentes.Constantes;
 import ssmc.CartaRespaldo.controlador.maestros.CGenerico;
+import ssmc.CartaRespaldo.modelo.maestros.Establecimiento;
 import ssmc.CartaRespaldo.modelo.seguridad.Usuario;
 import ssmc.CartaRespaldo.modelo.transacciones.Bitacora;
 import ssmc.CartaRespaldo.modelo.transacciones.PrestacionSolicitud;
 import ssmc.CartaRespaldo.modelo.transacciones.ResponsableSolicitud;
 import ssmc.CartaRespaldo.modelo.transacciones.SolicitudTraslado;
+import ssmc.CartaRespaldo.preparedstatement.ConsultarPrestacionesSolicitud;
 
 /**
  * @author Vanessa Maria Duno
@@ -52,73 +52,106 @@ public class CHistoricoTraslado extends CGenerico {
 	 */
 	private static final long serialVersionUID = 1L;
 	private List<Bitacora> historicoTraslado = new ArrayList<Bitacora>();
+	private List<Establecimiento> establecimientosOrigen = new ArrayList<>();
+	List<Bitacora> lista = new ArrayList<Bitacora>();
 
 	@Wire
 	private Listbox lbxTraslado;
 	@Wire
 	private Textbox txtDestino;
 	@Wire
-	private Textbox txtOrigen;
-	@Wire
-	private Datebox dtbFechaInicio;
-	@Wire
-	private Datebox dtbFechaFin;
+	private Combobox cmbOrigen;
 	@Wire
 	private Combobox cmbEstatus;
-	private boolean rescate;
-	private int contador;
+	@Wire
+	private Combobox cmbMeses;
+	@Wire
+	private Listheader lhdEstablecimientoOrigen;
+	@Wire
+	private Grid gdFiltros;
+	// private boolean rescate;
+	// private int contador;
 	Usuario usuario = new Usuario();
+	ConsultarPrestacionesSolicitud cs = new ConsultarPrestacionesSolicitud();
+	boolean isSsmc = false;
 
 	@Override
 	public void inicializar() throws IOException {
 		usuario = usuarioActivo();
 		llenarLista();
-
 	}
 
 	public void llenarLista() {
-		if (usuario.getEstablecimiento().getId() == 500) {
+		if (usuario.getEstablecimiento().getId() == 4) {
+			isSsmc = true;
 			historicoTraslado = servicioBitacora.buscarTodos();
 			lbxTraslado
 					.setModel(new ListModelList<Bitacora>(historicoTraslado));
-			if (rescate) {
-				Messagebox.show("Tiene" + " " + contador + " "
-						+ "pacientes que debe rescatar.", "Advertencia",
-						Messagebox.OK, Messagebox.EXCLAMATION);
-			}
+			lhdEstablecimientoOrigen.setVisible(true);
+
+			// if (rescate) {
+			// Messagebox.show("Tiene" + " " + contador + " "
+			// + "pacientes que debe rescatar.", "Advertencia",
+			// Messagebox.OK, Messagebox.EXCLAMATION);
+			// }
 		} else {
+			isSsmc = false;
 			historicoTraslado = servicioBitacora
 					.buscarPorEstablecimiento(usuario.getEstablecimiento()
 							.getId());
 			lbxTraslado
 					.setModel(new ListModelList<Bitacora>(historicoTraslado));
 		}
+		establecimientosOrigen = servicioEstablecimiento
+				.buscarEstablecimientosOrigen(true);
+		cmbOrigen.setModel(new ListModelList<Establecimiento>(
+				establecimientosOrigen));
 		semaforoLista();
+
 	}
 
 	public void semaforoLista() {
-		lbxTraslado.renderAll();
-		contador = 0;
+		// contador = 0;
 		List<Listitem> listItem = lbxTraslado.getItems();
+
 		if (listItem.size() != 0) {
 			for (int i = 0; i < listItem.size(); i++) {
+				lbxTraslado.renderItem(listItem.get(i));
 				Bitacora bitacora = listItem.get(i).getValue();
 				String otraPrestacion = bitacora.getTraslado().getDescripcion();
 				((Label) ((listItem.get(i).getChildren().get(3)))
-						.getFirstChild())
-						.setValue(consultarPrestacionesSolicitud(bitacora
-								.getTraslado().getId()) + otraPrestacion);
+						.getFirstChild()).setValue(cs
+						.consultarPrestaciones(bitacora.getTraslado().getId())
+						+ " " + otraPrestacion);
+
 				int dia = diferenciaEnDias(fechaHora, bitacora.getFecha());
-				Listcell lc = (Listcell) listItem.get(i).getChildren().get(5);
+				Label lc = ((Label) ((listItem.get(i).getChildren().get(5)))
+						.getFirstChild());
+				if (isSsmc) {
+					Listcell lcc = (Listcell) listItem.get(i).getChildren()
+							.get(1);
+					lcc.setVisible(true);
+					gdFiltros.setVisible(true);
+				}
+				String dias = "";
+				if (dia < 10) {
+					dias = "0" + dia;
+				} else {
+					dias = String.valueOf(dia);
+				}
+				((Label) ((listItem.get(i).getChildren().get(5)))
+						.getFirstChild()).setValue(String.valueOf(dias));
 				if (dia > 15) {
-					lc.setStyle("background: rgba(220, 86, 86, 1)");
+					lc.setStyle("background: rgba(220, 86, 86, 1); color:white");
 					lc.setClass("parpadea text");
-					rescate = true;
-					contador++;
+					// rescate = true;
+					// contador++;
 				} else if (dia > 10 && dia <= 15) {
 					lc.setStyle("background: rgba(249, 253, 86, 1)");
+					lc.setClass("text");
 				} else if (dia <= 10) {
 					lc.setStyle("background: rgba(86, 220, 97, 1)");
+					lc.setClass("text");
 				}
 			}
 		}
@@ -131,7 +164,7 @@ public class CHistoricoTraslado extends CGenerico {
 	}
 
 	public void generarReporteQuemado(int id) throws JSONException {
-		Clients.evalJavaScript("window.open('/CartaRespaldo/Reportero?valor1="
+		Clients.evalJavaScript("window.open('/CartaRespaldo/Reportero?valor2="
 				+ id
 				+ "','','top=100,left=200,height=600,width=800,scrollbars=1,resizable=1')");
 	}
@@ -145,12 +178,6 @@ public class CHistoricoTraslado extends CGenerico {
 				.prestacionesPorSolicitud(idSolicitud);
 		List<ResponsableSolicitud> responsables = getServicioResponsableSolicitud()
 				.responsablesSolicitud(idSolicitud);
-		Usuario usuarioActivo = new Usuario();
-		Authentication auth = SecurityContextHolder.getContext()
-				.getAuthentication();
-		usuarioActivo = getServicioUsuario().buscarUsuarioPorNombre(
-				auth.getName());
-
 		Map<String, Object> p = new HashMap<String, Object>();
 		String prestacionesPaciente = "";
 		if (solicitudTraslado.getDescripcion() != null) {
@@ -190,8 +217,8 @@ public class CHistoricoTraslado extends CGenerico {
 		p.put("folio", solicitudTraslado.getFolio());
 		p.put("establecimientoDestino", solicitudTraslado.getEstablecimiento()
 				.getNombre());
-		p.put("establecimientoOrigen", usuarioActivo.getEstablecimiento()
-				.getNombre());
+		p.put("establecimientoOrigen", solicitudTraslado.getUnidad()
+				.getEstablecimiento().getNombre());
 		p.put("rutPaciente", solicitudTraslado.getPaciente().getRut());
 		p.put("numeroFicha", solicitudTraslado.getFicha());
 		p.put("edadPaciente", calcularEdad(solicitudTraslado.getPaciente()
@@ -205,9 +232,9 @@ public class CHistoricoTraslado extends CGenerico {
 				.getNombre());
 		p.put("diagnosticoPaciente", solicitudTraslado.getDiagnostico());
 		p.put("unidadDerivadora", solicitudTraslado.getUnidad().getNombre());
-		p.put("rutEstablecimientoDeriva", usuarioActivo.getEstablecimiento()
-				.getRut());
-		p.put("direccionEstablecimientoDeriva", usuarioActivo
+		p.put("rutEstablecimientoDeriva", solicitudTraslado.getUnidad()
+				.getEstablecimiento().getRut());
+		p.put("direccionEstablecimientoDeriva", solicitudTraslado.getUnidad()
 				.getEstablecimiento().getDireccion());
 
 		p.put("funcionario0", "NO APLICA");
@@ -224,17 +251,17 @@ public class CHistoricoTraslado extends CGenerico {
 					.getNombre());
 		}
 
-		p.put("telefonoHospital", usuarioActivo.getEstablecimiento()
-				.getTelefono());
+		p.put("telefonoHospital", solicitudTraslado.getUnidad()
+				.getEstablecimiento().getTelefono());
 		p.put("motivoTraslado", prestacionesPaciente);
-		if (usuarioActivo.getEstablecimiento().getId() == 27) {
+		if (solicitudTraslado.getUnidad().getEstablecimiento().getId() == 3) {
 			p.put("logoEstablecimiento", "/ssmc/CartaRespaldo/reporte/huap.jpg");
 			p.put("acronimoHospital", "HUAP");
-		} else if (usuarioActivo.getEstablecimiento().getId() == 25) {
+		} else if (solicitudTraslado.getUnidad().getEstablecimiento().getId() == 1) {
 			p.put("logoEstablecimiento",
 					"/ssmc/CartaRespaldo/reporte/sanborja.jpg");
 			p.put("acronimoHospital", "HCSBA");
-		} else if (usuarioActivo.getEstablecimiento().getId() == 26) {
+		} else if (solicitudTraslado.getUnidad().getEstablecimiento().getId() == 2) {
 			p.put("logoEstablecimiento", "/ssmc/CartaRespaldo/reporte/gec.jpg");
 			p.put("acronimoHospital", "HEC");
 		}
@@ -283,78 +310,55 @@ public class CHistoricoTraslado extends CGenerico {
 		}
 		return prestacionesPaciente;
 	}
-	
+
 	@Listen("onOK = #txtDestino")
 	public void buscarEstablecimientoDestino() {
-
-		if (!txtDestino.getValue().equals("")) {
-			List<Bitacora> lista = new ArrayList<Bitacora>();
-			for (Bitacora bitacora : historicoTraslado) {
-				if (bitacora.getTraslado().getEstablecimiento()
-						.getNombre()
-						.toLowerCase()
-						.contains(
-								txtDestino.getValue()
-										.toLowerCase())) {
-					lista.add(bitacora);
-				}
-			}
-			lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
-			lbxTraslado.renderAll();
-		} else {
-			lbxTraslado.setModel(new ListModelList<Bitacora>(
-					historicoTraslado));
-			lbxTraslado.renderAll();
-		}
-		semaforoLista();
+		filtrarLista();
 	}
-	
-	@Listen("onOK = #txtOrigen")
-	public void buscarEstablecimientoOrigen() {
 
-		if (!txtOrigen.getValue().equals("")) {
-			List<Bitacora> lista = new ArrayList<Bitacora>();
-			for (Bitacora bitacora : historicoTraslado) {
-				if (bitacora.getTraslado().getUnidad().getEstablecimiento()
-						.getNombre()
-						.toLowerCase()
-						.contains(
-								txtOrigen.getValue()
-										.toLowerCase())) {
-					lista.add(bitacora);
-				}
-			}
-			lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
-			lbxTraslado.renderAll();
-		} else {
-			lbxTraslado.setModel(new ListModelList<Bitacora>(
-					historicoTraslado));
-			lbxTraslado.renderAll();
-			
-		}
-		semaforoLista();
+	@Listen("onChange = #cmbMeses")
+	public void filtrarPorMeses() {
+		filtrarLista();
 	}
-	
-	@Listen("onOK = #dtbFechaInicio")
-	public void buscarFechaInicio() {
 
-		if (dtbFechaInicio.getValue() != null) {
-			List<Bitacora> lista = new ArrayList<Bitacora>();
-			for (Bitacora bitacora : historicoTraslado) {				  
-				if (String.valueOf(formatoFecha.format(bitacora.getFecha()))
-						.contains(
-								String.valueOf(formatoFecha.format(dtbFechaInicio.getValue().getTime())))) {
-					lista.add(bitacora);
-				}
+	@Listen("onChange = #cmbOrigen")
+	public void filtrarPorEstablecimientoOrigen() {
+		filtrarLista();
+	}
+
+	@Listen("onChange = #cmbEstatus")
+	public void filtrarPorEstatus() {
+		filtrarLista();
+	}
+
+	@Listen("onClick = #btnLimpiar")
+	public void limpiarFiltros() {
+		llenarLista();
+		cmbOrigen.setValue("");
+		txtDestino.setValue("");
+		cmbEstatus.setValue("");
+		cmbMeses.setValue("");
+	}
+
+	public void filtrarLista() {
+
+		List<Bitacora> lista = new ArrayList<Bitacora>();
+		for (Bitacora bitacora : historicoTraslado) {
+			if (bitacora.getEstatus().contains(cmbEstatus.getValue())
+					&& bitacora.getTraslado().getUnidad().getEstablecimiento()
+							.getNombre().contains(cmbOrigen.getValue())
+					&& Integer.valueOf(formatoFechaMeses.format(bitacora
+							.getFecha())) == Integer.valueOf(cmbMeses
+							.getSelectedItem().getContext())
+					&& bitacora.getTraslado().getEstablecimiento().getNombre()
+							.toLowerCase()
+							.contains(txtDestino.getValue().toLowerCase())) {
+				lista.add(bitacora);
 			}
-			lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
-			lbxTraslado.renderAll();
-		} else {
-			lbxTraslado.setModel(new ListModelList<Bitacora>(
-					historicoTraslado));
-			lbxTraslado.renderAll();
-			
 		}
+		lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
+		lbxTraslado.renderAll();
+
 		semaforoLista();
 	}
 

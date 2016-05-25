@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ssmc.CartaRespaldo.controlador.transacciones.CHistoricoTraslado;
 import ssmc.CartaRespaldo.controlador.transacciones.CSolicitudTraslado;
 import net.sf.jasperreports.engine.JRException;
 
@@ -41,12 +42,17 @@ public class Reportero extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		CSolicitudTraslado traslado = new CSolicitudTraslado(); 
+		CHistoricoTraslado historico = new CHistoricoTraslado(); 
 		ServletOutputStream out;
 		String par2 = request.getParameter("valor1");
+		String par1 = request.getParameter("valor2");
 		byte[] fichero = null;
 		try {
 			if (par2 != null){
 				fichero = traslado.reporteTraslado(par2);
+			}
+			if (par1 != null){
+				fichero = historico.reporteTraslado(par1); 
 			}
 			
 		} catch (JRException e1) {

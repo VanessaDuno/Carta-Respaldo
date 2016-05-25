@@ -16,12 +16,16 @@
 
 		<div>
 			<separator></separator>
-			<grid>
+			<grid id= "gdFiltros" visible="false">
+				<columns>
+					<column width="20%"></column>
+					<column width="20%"></column>
+					<column width="30%"></column>
+					<column width="20%"></column>
+					<column width="10%"></column>
+				</columns>
 				<rows>
 					<row>
-<!-- 						<datebox id="dtbFechaInicio" -->
-<!-- 							placeholder="Fecha inicio" width="100%"> -->
-<!-- 						</datebox> -->
 						<combobox id="cmbMeses" placeholder="Fecha"
 							width="100%">
 							<comboitem label="Enero" context="1"></comboitem>
@@ -40,17 +44,29 @@
 						<textbox id="txtDestino"
 							placeholder="Establecimiento destino" width="100%">
 						</textbox>
-						<textbox id="txtOrigen"
+						<combobox id="cmbOrigen"
 							placeholder="Establecimiento origen" width="100%">
-						</textbox>
+							<template name="model">
+								<comboitem label="${each.nombre}"
+									context="${each.id}">
+								</comboitem>
+							</template>
+						</combobox>
 						<combobox id="cmbEstatus" placeholder="Estatus"
 							width="100%">
 							<comboitem label="Creada" context="1"></comboitem>
 							<comboitem label="Traslado" context="2"></comboitem>
 							<comboitem label="Anulada" context="3"></comboitem>
-							<comboitem label="Cierre Clinico" context="4"></comboitem>
-							<comboitem label="Cierre Administrativo" context="5"></comboitem>
+							<comboitem label="Cierre Clinico"
+								context="4">
+							</comboitem>
+							<comboitem label="Cierre Administrativo"
+								context="5">
+							</comboitem>
 						</combobox>
+						<button label="Limpiar" id="btnLimpiar"
+							style="font-size: 14px; height: 30px; width: 115px; background-color: #4C94DB;">
+						</button>
 					</row>
 				</rows>
 			</grid>
@@ -60,21 +76,21 @@
 					<listheader label="Fecha solicitud" width="10%">
 					</listheader>
 					<listheader label="Establecimiento Origen"
-						width="30%">
+						visible="false" id="lhdEstablecimientoOrigen" width="30%">
 					</listheader>
 					<listheader label="Establecimiento Destino"
 						width="30%">
 					</listheader>
 					<listheader label="Motivo" width="38%"></listheader>
 					<listheader label="Estado" width="10%"></listheader>
-					<listheader label="Días" width="6%"></listheader>
+					<listheader label="Días" width="5%"></listheader>
 				</listhead>
 
 				<template name="model">
 					<listitem>
 						<listcell label="${sdf.format(each.fecha)}">
 						</listcell>
-						<listcell
+						<listcell visible="false"
 							label="${each.traslado.unidad.establecimiento.nombre}">
 						</listcell>
 						<listcell
@@ -83,11 +99,9 @@
 						<listcell>
 							<label></label>
 						</listcell>
-						<listcell
-							label="${each.estatus}">
-						</listcell>
+						<listcell label="${each.estatus}"></listcell>
 						<listcell>
-							<!-- 								<label></label> -->
+							<label></label>
 						</listcell>
 					</listitem>
 				</template>

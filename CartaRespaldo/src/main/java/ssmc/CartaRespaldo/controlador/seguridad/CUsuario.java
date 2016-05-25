@@ -476,7 +476,7 @@ public class CUsuario extends CGenerico {
 			Integer idRegion = Integer.parseInt(cmbRegion.getSelectedItem()
 					.getContext());
 			establecimientos = servicioEstablecimiento
-					.buscarRegion(idRegion);
+					.buscarRegion(idRegion, false);
 			cmbEstablecimientoUsuario.setModel(new ListModelList<Establecimiento>(
 					establecimientos));
 		}

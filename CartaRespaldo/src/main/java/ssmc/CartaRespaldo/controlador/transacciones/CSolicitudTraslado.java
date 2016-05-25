@@ -52,7 +52,6 @@ import ssmc.CartaRespaldo.modelo.maestros.Prestacion;
 import ssmc.CartaRespaldo.modelo.maestros.Provincia;
 import ssmc.CartaRespaldo.modelo.maestros.Region;
 import ssmc.CartaRespaldo.modelo.maestros.Responsable;
-import ssmc.CartaRespaldo.modelo.maestros.ServicioClinico;
 import ssmc.CartaRespaldo.modelo.maestros.Sexo;
 import ssmc.CartaRespaldo.modelo.maestros.Unidad;
 import ssmc.CartaRespaldo.modelo.seguridad.Usuario;
@@ -82,7 +81,6 @@ public class CSolicitudTraslado extends CGenerico {
 	private List<Region> regionesPaciente = new ArrayList<Region>();
 	private List<DetallePrestacion> camas = new ArrayList<DetallePrestacion>();
 	private List<Unidad> unidades = new ArrayList<Unidad>();
-	private List<ServicioClinico> servicios = new ArrayList<ServicioClinico>();
 	private List<Motivo> motivos = new ArrayList<Motivo>();
 	private List<Prestacion> prestaciones = new ArrayList<Prestacion>();
 
@@ -97,8 +95,6 @@ public class CSolicitudTraslado extends CGenerico {
 	private List<ResponsableSolicitud> responsablesSolicitud = new ArrayList<ResponsableSolicitud>();
 	private Paciente pacienteRegistrado = new Paciente(); 
 
-//	@Wire
-//	private Combobox cmbRegion;
 	@Wire
 	private Combobox cmbProvincia;
 	@Wire
@@ -135,8 +131,6 @@ public class CSolicitudTraslado extends CGenerico {
 	private Combobox cmbProcedimiento;
 	@Wire
 	private Combobox cmbUnidad;
-//	@Wire
-//	private Combobox cmbServicio;
 	@Wire
 	private Label lblHospitalizacion;
 	@Wire
@@ -201,6 +195,8 @@ public class CSolicitudTraslado extends CGenerico {
 	private Label lblResponsables;
 	@Wire
 	private Combobox cmbMotivoCama;
+	@Wire
+	private Textbox txtOtroEstablecimiento; 
 	private boolean rutPaciente = false;
 	private boolean isConsulta = false;
 
@@ -298,7 +294,6 @@ public class CSolicitudTraslado extends CGenerico {
 	public void llenarCombos() {
 		usuarioActivo = usuarioActivo();
 		regiones = servicioRegion.buscarTodos();
-		//cmbRegion.setModel(new ListModelList<Region>(regiones));
 		sexos = servicioSexo.buscarTodos();
 		cmbSexo.setModel(new ListModelList<Sexo>(sexos));
 		regionesPaciente = servicioRegion.buscarTodos();
@@ -316,17 +311,6 @@ public class CSolicitudTraslado extends CGenerico {
 		cmbMotivoCama.setModel(new ListModelList<Motivo>(motivos));
 
 	}
-
-//	@Listen("onChange = #cmbEstablecimiento")
-//	public void cargarEstablecimientos() {
-//		if (!cmbRegion.getValue().equals("")) {
-//			int idRegion = Integer.valueOf(cmbRegion.getSelectedItem()
-//					.getContext());
-//			establecimientos = servicioEstablecimiento.buscarRegion(idRegion);
-//			cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(
-//					establecimientos));
-//		}
-//	}
 
 	@Listen("onChange = #cmbRegionPaciente")
 	public void cargarProvincias() {
@@ -348,15 +332,6 @@ public class CSolicitudTraslado extends CGenerico {
 		}
 	}
 
-//	@Listen("onChange = #cmbUnidad")
-//	public void cargarServicios() {
-//		if (!cmbUnidad.getValue().equals("")) {
-//			int idUnidad = Integer.valueOf(cmbUnidad.getSelectedItem()
-//					.getContext());
-//			servicios = servicioServicioClinico.buscarPorUnidad(idUnidad);
-//			cmbServicio.setModel(new ListModelList<ServicioClinico>(servicios));
-//		}
-//	}
 
 	@Listen("onChange = #txtRutPaciente")
 	public void validarRutPaciente() {
@@ -436,24 +411,37 @@ public class CSolicitudTraslado extends CGenerico {
 
 	@Listen("onClick = #rdoHospital")
 	public void destinoClinicaHospital() {
-		//cmbRegion.setVisible(true);
 		cmbEstablecimiento.setVisible(true);
-		//lblRegion.setVisible(true);
 		lblEstablecimiento.setVisible(true);
 		lblNombreLaboratorio.setVisible(false);
 		txtLaboratorio.setVisible(false);
-		establecimientos = servicioEstablecimiento.buscarRegion(13);
+		establecimientos = servicioEstablecimiento.buscarRegion(13, false);
+		Establecimiento es = new Establecimiento();
+		es.setNombre("Otro");
+		es.setId(500);
+		establecimientos.add(es);
 		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(establecimientos));
+	}
+	
+	@Listen ("onChange = #cmbEstablecimiento")
+	public void comboEstablecimiento (){
+		if (cmbEstablecimiento.getSelectedItem() != null){
+			if (cmbEstablecimiento.getValue().equals("Otro")){
+				txtOtroEstablecimiento.setVisible(true); 
+			}
+			else {
+				txtOtroEstablecimiento.setVisible(false); 
+			}
+		}
 	}
 
 	@Listen("onClick = #rdoLaboratorio")
 	public void destinoLaboratorio() {
 		lblNombreLaboratorio.setVisible(true);
 		txtLaboratorio.setVisible(true);
-		//cmbRegion.setVisible(false);
 		cmbEstablecimiento.setVisible(false);
-		//lblRegion.setVisible(false);
 		lblEstablecimiento.setVisible(false);
+		txtOtroEstablecimiento.setVisible(false); 
 	}
 
 	public Paciente prepararPaciente() {
@@ -525,20 +513,32 @@ public class CSolicitudTraslado extends CGenerico {
 			solicitudTraslado.setPaciente(pacienteRegistrado);
 		}
 		if (rdoHospital.isChecked()) {
+			if (cmbEstablecimiento.getValue().equals("Otro")){
+				Establecimiento establecimiento = new Establecimiento();
+				Establecimiento establecimientoGuardado = new Establecimiento();
+				establecimiento.setNombre(txtOtroEstablecimiento.getValue());
+				establecimiento.setDestino(false);
+				establecimiento.setRegion(usuarioActivo.getEstablecimiento().getRegion());
+				establecimientoGuardado = servicioEstablecimiento
+						.guardarRetorno(establecimiento);
+				solicitudTraslado.setEstablecimiento(establecimientoGuardado);
+			}
+			else {
 			solicitudTraslado
 					.setEstablecimiento((Establecimiento) cmbEstablecimiento
 							.getSelectedItem().getValue());
+			}
 		} else if (rdoLaboratorio.isChecked()) {
 			Establecimiento establecimiento = new Establecimiento();
 			Establecimiento establecimientoGuardado = new Establecimiento();
 			establecimiento.setNombre(txtLaboratorio.getValue());
 			establecimiento.setDestino(false);
+			establecimiento.setRegion(usuarioActivo.getEstablecimiento().getRegion());
 			establecimientoGuardado = servicioEstablecimiento
 					.guardarRetorno(establecimiento);
 			solicitudTraslado.setEstablecimiento(establecimientoGuardado);
 		}
-//		solicitudTraslado.setServicioClinico((ServicioClinico) cmbServicio
-//				.getSelectedItem().getValue());
+
 		solicitudTraslado.setDiagnostico(txtDiagnostico.getValue());
 		solicitudTraslado.setTipoDerivacion(cmbTipoDerivacion.getValue());
 		solicitudTraslado.setFicha(txtFicha.getValue());
@@ -668,10 +668,7 @@ public class CSolicitudTraslado extends CGenerico {
 		cmbPrestacion.setValue("");
 		cmbPrevisionPaciente.setValue("");
 		cmbProvincia.setValue("");
-		//cmbRegion.setValue("");
 		cmbRegionPaciente.setValue("");
-//		
-
 		cmbSexo.setValue("");
 		cmbTipoCama.setValue("");
 		cmbTipoDerivacion.setValue("");
@@ -690,8 +687,6 @@ public class CSolicitudTraslado extends CGenerico {
 		}
 		lblNombreLaboratorio.setVisible(false);
 		txtLaboratorio.setVisible(false);
-		//lblRegion.setVisible(false);
-		//cmbRegion.setVisible(false);
 		lblEstablecimiento.setVisible(false);
 		cmbEstablecimiento.setVisible(false);
 		lblCama.setVisible(false);
@@ -707,6 +702,8 @@ public class CSolicitudTraslado extends CGenerico {
 		lblMotivoCama.setVisible(false);
 		cmbMotivoCama.setVisible(false);
 		cmbMotivoCama.setValue("");
+		txtOtroEstablecimiento.setValue("");
+		txtOtroEstablecimiento.setVisible(false); 
 	}
 
 	public void limpiarCamposPaciente(){
@@ -738,7 +735,6 @@ public class CSolicitudTraslado extends CGenerico {
 				|| cmbRegionPaciente.getValue().equals("")
 				|| cmbPrevisionPaciente.getValue().equals("")
 				|| cmbProvincia.getValue().equals("")
-//				|| cmbServicio.getSelectedItem() == null
 				|| cmbSexo.getValue().equals("")
 				|| cmbTipoDerivacion.getSelectedItem() == null
 				|| cmbUnidad.getSelectedItem() == null
@@ -876,14 +872,14 @@ public class CSolicitudTraslado extends CGenerico {
 		p.put("telefonoHospital", usuarioActivo.getEstablecimiento()
 				.getTelefono());
 		p.put("motivoTraslado", prestacionesPaciente);
-		if (usuarioActivo.getEstablecimiento().getId() == 27) {
+		if (usuarioActivo.getEstablecimiento().getId() == 3) {
 			p.put("logoEstablecimiento", "/ssmc/CartaRespaldo/reporte/huap.jpg");
 			p.put("acronimoHospital", "HUAP");
-		} else if (usuarioActivo.getEstablecimiento().getId() == 25) {
+		} else if (usuarioActivo.getEstablecimiento().getId() == 1) {
 			p.put("logoEstablecimiento",
 					"/ssmc/CartaRespaldo/reporte/sanborja.jpg");
 			p.put("acronimoHospital", "HCSBA");
-		} else if (usuarioActivo.getEstablecimiento().getId() == 26) {
+		} else if (usuarioActivo.getEstablecimiento().getId() == 2) {
 			p.put("logoEstablecimiento", "/ssmc/CartaRespaldo/reporte/gec.jpg");
 			p.put("acronimoHospital", "HEC");
 		}

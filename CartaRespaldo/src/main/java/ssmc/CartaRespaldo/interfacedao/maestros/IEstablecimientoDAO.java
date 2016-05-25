@@ -17,6 +17,8 @@ import ssmc.CartaRespaldo.modelo.maestros.Establecimiento;
 
 public interface IEstablecimientoDAO extends JpaRepository<Establecimiento, Integer> {
 
-	List<Establecimiento> findByRegionIdOrderByNombreAsc(int region);
+	List<Establecimiento> findByRegionIdAndIsDestinoOrderByNombreAsc(int region, boolean destino);
+	
+	List<Establecimiento> findByIsDestino (boolean estado); 
 	
 }

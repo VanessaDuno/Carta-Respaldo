@@ -68,12 +68,12 @@
 }
 
 .text {
-  font-size:28px;
-  font-family:helvetica;
-  font-weight:bold;
-  color:#71d90b;
+  font-size:14px;
+  color:black;
   text-transform:uppercase;
+  padding: 35%;
 }
+  
 .parpadea {
   
   animation-name: parpadeo;

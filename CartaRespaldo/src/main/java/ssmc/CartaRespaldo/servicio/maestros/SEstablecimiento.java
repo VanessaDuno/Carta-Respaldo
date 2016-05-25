@@ -53,10 +53,13 @@ public class SEstablecimiento {
 		return iEstablecimientoDAO.findOne(id);
 	}
 	
-	public List<Establecimiento> buscarRegion (int region){
-		return iEstablecimientoDAO.findByRegionIdOrderByNombreAsc(region); 
+	public List<Establecimiento> buscarRegion (int region, boolean destino){
+		return iEstablecimientoDAO.findByRegionIdAndIsDestinoOrderByNombreAsc(region, destino); 
 	}
 	
+	public List<Establecimiento> buscarEstablecimientosOrigen (boolean estado){
+		return iEstablecimientoDAO.findByIsDestino(estado); 
+	}
 
 	
 }

@@ -11,8 +11,8 @@
 					<columns>
 						<column width="15%"></column>
 						<column width="35%"></column>
-						<column width="15%"></column>
 						<column width="35%"></column>
+						<column width="15%"></column>
 					</columns>
 					<rows>
 						<row>
@@ -27,21 +27,10 @@
 							<hbox></hbox>
 						</row>
 						<row>
-<!-- 							<label id="lblRegion" value="Región" -->
-<!-- 								visible="false"> -->
-<!-- 							</label> -->
-<!-- 							<combobox id="cmbRegion" readonly="true" -->
-<!-- 								visible="false"> -->
-<!-- 								<template name="model"> -->
-<!-- 									<comboitem label="${each.nombre}" -->
-<!-- 										context="${each.codigo}"> -->
-<!-- 									</comboitem> -->
-<!-- 								</template> -->
-<!-- 							</combobox> -->
 							<label id="lblEstablecimiento"
 								value="Establecimiento" visible="false">
 							</label>
-							<combobox id="cmbEstablecimiento"
+							<combobox id="cmbEstablecimiento" width="100%"
 								visible="false" readonly="true">
 								<template name="model">
 									<comboitem label="${each.nombre}"
@@ -49,6 +38,8 @@
 									</comboitem>
 								</template>
 							</combobox>
+							<textbox id ="txtOtroEstablecimiento" visible="false" width="100%"></textbox>
+							<hbox></hbox>
 						</row>
 						<row>
 							<label id="lblNombreLaboratorio"
@@ -215,11 +206,11 @@
 						<row>
 							<label value="Diagnóstico"></label>
 							<textbox id="txtDiagnostico" rows="3"></textbox>
-							<label value="Tipo derivación"></label>
+							<label value="Tipo de convenio"></label>
 							<combobox readonly="true"
 								id="cmbTipoDerivacion">
-								<comboitem label="UGCC Centralizada"></comboitem>
-								<comboitem label="UGCC GRD"></comboitem>
+								<comboitem label="UGCC día cama integral"></comboitem>
+								<comboitem label="UGCC paquete GRD"></comboitem>
 								<comboitem label="DFL 36"></comboitem>
 								<comboitem label="CONVENIO"></comboitem>
 								<comboitem label="SIN CONVENIO"></comboitem>

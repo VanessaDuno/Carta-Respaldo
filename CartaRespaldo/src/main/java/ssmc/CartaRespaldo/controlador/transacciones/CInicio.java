@@ -207,16 +207,16 @@ public class CInicio extends CGenerico {
 	}
 
 	public void encabezadoEstablecimiento() {
-		if (usuario.getEstablecimiento().getId() == 25) {
+		if (usuario.getEstablecimiento().getId() == 1) {
 			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoSanborja.png");
 		}
-		else if (usuario.getEstablecimiento().getId() == 26) {
+		else if (usuario.getEstablecimiento().getId() == 2) {
 			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoHec.png");
 		}
-		else if (usuario.getEstablecimiento().getId() == 27) {
+		else if (usuario.getEstablecimiento().getId() == 3) {
 			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoHuap.png");
 		}
-		else if (usuario.getEstablecimiento().getId() == 500) {
+		else if (usuario.getEstablecimiento().getId() == 4) {
 			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoSsmc.png");
 		}
 	}
