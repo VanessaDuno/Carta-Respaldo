@@ -62,8 +62,8 @@ public class CModalResponsables extends CGenerico {
 			medicosResponsable = (List<Responsable>) (map.get("medicos"));
 			funcionariosResponsables = (List<Responsable>) (map
 					.get("funcionarios"));
-			medico = (boolean) map.get("isMedico"); 
-			funcionario = (boolean) map.get("isFuncionario"); 
+			medico = (boolean) map.get("isMedico");
+			funcionario = (boolean) map.get("isFuncionario");
 
 			if (medicosResponsable != null) {
 				lbxResponsables.setModel(new ListModelList<Responsable>(
@@ -75,12 +75,12 @@ public class CModalResponsables extends CGenerico {
 			if (funcionariosResponsables != null) {
 				lbxResponsables.setModel(new ListModelList<Responsable>(
 						funcionariosResponsables));
-				funcionario = true; 
+				funcionario = true;
 				multiple();
 			}
 
 		}
-		// marcarPrestaciones();
+		marcarPrestaciones();
 	}
 
 	public void multiple() {
@@ -94,11 +94,10 @@ public class CModalResponsables extends CGenerico {
 	@Listen("onOK = #txtBusquedaResponsables")
 	public void buscar() {
 		List<Responsable> responsables = new ArrayList<Responsable>();
-		if (medico){
+		if (medico) {
 			responsables = medicosResponsable;
-		}
-		else if (funcionario){
-			responsables = funcionariosResponsables; 
+		} else if (funcionario) {
+			responsables = funcionariosResponsables;
 		}
 		if (!txtBusquedaResponsables.getValue().equals("")) {
 			List<Responsable> lista = new ArrayList<Responsable>();
@@ -131,16 +130,17 @@ public class CModalResponsables extends CGenerico {
 	}
 
 	@Listen("onClick = #btnAceptar")
-	public void rescatarPrestaciones() {
-		responsablesSolicitud = (List<ResponsableSolicitud>) Sessions.getCurrent().getAttribute("responsablesSolicitud");
-		if (responsablesSolicitud == null){
+	public void rescatarResponsables() {
+		responsablesSolicitud = (List<ResponsableSolicitud>) Sessions
+				.getCurrent().getAttribute("responsablesSolicitud");
+		if (responsablesSolicitud == null) {
 			responsablesSolicitud = new ArrayList<ResponsableSolicitud>();
 		}
-		if (medico){
-		obtenerMedico();
+		if (medico) {
+			obtenerMedico();
 		}
-		if (funcionario){
-		obtenerFuncionarios();
+		if (funcionario) {
+			obtenerFuncionarios();
 		}
 		Sessions.getCurrent().setAttribute("responsablesSolicitud",
 				responsablesSolicitud);
@@ -177,22 +177,21 @@ public class CModalResponsables extends CGenerico {
 	}
 
 	public void marcarPrestaciones() {
-		// for (int i = 0; i < listaPrestacionesSolicitud.size(); i++) {
-		// DetallePrestacion prestacion =
-		// listaPrestacionesSolicitud.get(i).getPrestacion();
-		// Motivo motivo = listaPrestacionesSolicitud.get(i).getMotivo();
-		//
-		// for (int j = 0; j < lbxResponsables.getItemCount(); j++) {
-		// Listitem listItem = lbxResponsables
-		// .getItemAtIndex(j);
-		// DetallePrestacion dp = listItem.getValue();
-		// if (prestacion.getId() == dp.getId()){
-		// listItem.setSelected(true);
-		// ((Combobox) ((listItem.getChildren().get(1)))
-		// .getFirstChild()).setValue(motivo.getNombre());
-		// }
-		// }
-		// }
+		responsablesSolicitud = (List<ResponsableSolicitud>) Sessions
+				.getCurrent().getAttribute("responsablesSolicitud");
+		if (responsablesSolicitud != null) {
+			for (int i = 0; i < responsablesSolicitud.size(); i++) {
+				Responsable responsable = responsablesSolicitud.get(i)
+						.getResponsable();
+				lbxResponsables.renderAll();
+				for (int j = 0; j < lbxResponsables.getItemCount(); j++) {
+					Listitem listItem = lbxResponsables.getItemAtIndex(j);
+					Responsable dp = listItem.getValue();
+					if (responsable.getId() == dp.getId()) {
+						listItem.setSelected(true);
+					}
+				}
+			}
+		}
 	}
-
 }

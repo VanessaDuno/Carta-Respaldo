@@ -18,8 +18,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
@@ -59,6 +61,7 @@ import ssmc.CartaRespaldo.modelo.transacciones.Bitacora;
 import ssmc.CartaRespaldo.modelo.transacciones.PrestacionSolicitud;
 import ssmc.CartaRespaldo.modelo.transacciones.ResponsableSolicitud;
 import ssmc.CartaRespaldo.modelo.transacciones.SolicitudTraslado;
+import ssmc.CartaRespaldo.componentes.Validador;
 
 /**
  * CSolicitudTraslado Controlador encargado de registrar solicitudes de traslado
@@ -94,6 +97,7 @@ public class CSolicitudTraslado extends CGenerico {
 	private List<CargosEstablecimiento> cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
 	private List<ResponsableSolicitud> responsablesSolicitud = new ArrayList<ResponsableSolicitud>();
 	private Paciente pacienteRegistrado = new Paciente(); 
+	private Media media;
 
 	@Wire
 	private Combobox cmbProvincia;
@@ -192,13 +196,23 @@ public class CSolicitudTraslado extends CGenerico {
 	@Wire
 	private Label lblMotivoCama;
 	@Wire
+	private Label  lblFiltrosEstableciminto;
+	@Wire
 	private Label lblResponsables;
+	@Wire
+	private Label lblNombreArchivo;
 	@Wire
 	private Combobox cmbMotivoCama;
 	@Wire
 	private Textbox txtOtroEstablecimiento; 
 	private boolean rutPaciente = false;
 	private boolean isConsulta = false;
+	@Wire
+	private Textbox txtIdUgcc;
+	@Wire
+	private Textbox txtBusquedaEstablecimiento;
+	@Wire
+	private Textbox  txtBusquedaRutEstablecimiento;
 
 	Botonera botonera;
 	List<PrestacionSolicitud> prestacionesSolicitud = new ArrayList<PrestacionSolicitud>();
@@ -223,11 +237,6 @@ public class CSolicitudTraslado extends CGenerico {
 			public void limpiar() {
 				limpiarCampos();
 				borrarDataSesion();
-				try {
-					generarReporteQuemado(20);
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
 			}
 
 			@Override
@@ -413,6 +422,9 @@ public class CSolicitudTraslado extends CGenerico {
 	public void destinoClinicaHospital() {
 		cmbEstablecimiento.setVisible(true);
 		lblEstablecimiento.setVisible(true);
+		txtBusquedaEstablecimiento.setVisible(true);
+		txtBusquedaRutEstablecimiento.setVisible(true); 
+		lblFiltrosEstableciminto.setVisible(true); 
 		lblNombreLaboratorio.setVisible(false);
 		txtLaboratorio.setVisible(false);
 		establecimientos = servicioEstablecimiento.buscarRegion(13, false);
@@ -441,7 +453,10 @@ public class CSolicitudTraslado extends CGenerico {
 		txtLaboratorio.setVisible(true);
 		cmbEstablecimiento.setVisible(false);
 		lblEstablecimiento.setVisible(false);
-		txtOtroEstablecimiento.setVisible(false); 
+		txtOtroEstablecimiento.setVisible(false);
+		txtBusquedaEstablecimiento.setVisible(false);
+		txtBusquedaRutEstablecimiento.setVisible(false); 
+		lblFiltrosEstableciminto.setVisible(false);
 	}
 
 	public Paciente prepararPaciente() {
@@ -547,6 +562,8 @@ public class CSolicitudTraslado extends CGenerico {
 		solicitudTraslado.setUnidad((Unidad) cmbUnidad.getSelectedItem()
 				.getValue());
 		solicitudTraslado.setDescripcion(txtDescripcionPrestacion.getValue());
+		solicitudTraslado.setIdUgcc(txtIdUgcc.getValue());
+		solicitudTraslado.setDocumentoUgcc(media.getByteData());
 		if (ckbGes.isChecked()) {
 			solicitudTraslado.setGes(true);
 		} else {
@@ -704,6 +721,12 @@ public class CSolicitudTraslado extends CGenerico {
 		cmbMotivoCama.setValue("");
 		txtOtroEstablecimiento.setValue("");
 		txtOtroEstablecimiento.setVisible(false); 
+		txtIdUgcc.setValue("");
+		txtBusquedaEstablecimiento.setVisible(false);
+		txtBusquedaRutEstablecimiento.setVisible(false);
+		txtBusquedaEstablecimiento.setValue("");
+		txtBusquedaRutEstablecimiento.setValue("");
+		lblNombreArchivo.setValue("");
 	}
 
 	public void limpiarCamposPaciente(){
@@ -739,7 +762,9 @@ public class CSolicitudTraslado extends CGenerico {
 				|| cmbTipoDerivacion.getSelectedItem() == null
 				|| cmbUnidad.getSelectedItem() == null
 				|| dtbFechaNacPaciente.getValue().equals("")
-				|| txtFicha.getValue().equals("")) {
+				|| txtFicha.getValue().equals("")
+				|| txtIdUgcc.getValue().equals("")
+				|| media == null) {
 			return false;
 		} else {
 			if (rdoHospital.isChecked()) {
@@ -986,5 +1011,48 @@ public class CSolicitudTraslado extends CGenerico {
 	@Listen("onChange = #txtRutPaciente")
 	public void buscarRutPaciente (){
 		buscarRut();
+	}
+	
+	@Listen("onChange= #txtBusquedaEstablecimiento")
+	public void filtrarEstablecimiento (){
+		cmbEstablecimiento.setValue("");
+		List<Establecimiento> lista = new ArrayList<Establecimiento>();
+		for (Establecimiento establecimiento : establecimientos) {
+			if (establecimiento.getNombre().toLowerCase().contains(txtBusquedaEstablecimiento.getValue().toLowerCase())) {
+				lista.add(establecimiento);
+			}
+		}
+		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(lista));
+		cmbEstablecimiento.setStyle("height: 350px !important;");
+	}
+	
+	//@Listen("onChange= #txtBusquedaRutEstablecimiento")
+	public void filtrarRutEstablecimiento () {
+		cmbEstablecimiento.setValue("");
+		List<Establecimiento> lista = new ArrayList<Establecimiento>();
+		for (Establecimiento establecimiento : establecimientos) {
+			if (establecimiento.getRut().toLowerCase().contains(formatearRut(txtBusquedaRutEstablecimiento.getValue().toLowerCase()))) {
+				lista.add(establecimiento);
+			}
+		}
+		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(lista));
+		cmbEstablecimiento.setStyle("height: 350px !important;");
+		
+	}
+	
+	@Listen("onUpload = #btnIdUgcc")
+	public void capturarIdUgcc(UploadEvent event) throws IOException {
+		log.debug(new StringBuilder().append(
+				"Inicio del metodo capturarIdUgcc con objeto Event-").append(
+				event));
+		media = event.getMedia();
+		if (Validador.validarTipoImagen(media)
+				&& Validador.validarTamannoImagen(media)) {
+		lblNombreArchivo.setValue(media.getName());
+		}
+		else {
+			Messagebox.show(Constantes.imagenNoValida, "Alerta", Messagebox.OK,
+					Messagebox.EXCLAMATION);
+		}
 	}
 }

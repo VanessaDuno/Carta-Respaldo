@@ -4,6 +4,7 @@ package ssmc.CartaRespaldo.interfacedao.maestros;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import ssmc.CartaRespaldo.modelo.maestros.Establecimiento;
 
@@ -19,6 +20,7 @@ public interface IEstablecimientoDAO extends JpaRepository<Establecimiento, Inte
 
 	List<Establecimiento> findByRegionIdAndIsDestinoOrderByNombreAsc(int region, boolean destino);
 	
-	List<Establecimiento> findByIsDestino (boolean estado); 
+	@Query (value = "select * from establecimiento where isdestino = true and id_establecimiento between 1 and 3;", nativeQuery=true)
+	List<Establecimiento> findByIsDestino (); 
 	
 }

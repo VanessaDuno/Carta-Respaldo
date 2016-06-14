@@ -14,7 +14,6 @@ import javax.persistence.Table;
 
 import ssmc.CartaRespaldo.modelo.maestros.Establecimiento;
 import ssmc.CartaRespaldo.modelo.maestros.Paciente;
-import ssmc.CartaRespaldo.modelo.maestros.ServicioClinico;
 import ssmc.CartaRespaldo.modelo.maestros.Unidad;
 
 /**
@@ -55,10 +54,6 @@ public class SolicitudTraslado implements Serializable{
 	@Column(name="isges")
 	private boolean isGes;
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name="id_servicio_clinico")
-//	private ServicioClinico servicioClinico; 
-	
 	@Column(name="ficha")
 	private String  ficha; 
 	
@@ -68,6 +63,12 @@ public class SolicitudTraslado implements Serializable{
 	
 	@Column(name = "descripcion")
 	private String descripcion; 
+	
+	@Column(name= "id_ugcc")
+	private String idUgcc; 
+	
+	@Column(name ="documento_ugcc")
+	private byte [] documentoUgcc; 
 	
 	public SolicitudTraslado() {
 	}
@@ -113,15 +114,6 @@ public class SolicitudTraslado implements Serializable{
 	public void setGes(boolean isGes) {
 		this.isGes = isGes;
 	}
-
-//	public ServicioClinico getServicioClinico() {
-//		return servicioClinico;
-//	}
-//
-//	public void setServicioClinico(ServicioClinico servicioClinico) {
-//		this.servicioClinico = servicioClinico;
-//	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -139,14 +131,16 @@ public class SolicitudTraslado implements Serializable{
 		builder.append(tipoDerivacion);
 		builder.append(", isGes=");
 		builder.append(isGes);
-//		builder.append(", servicioClinico=");
-//		builder.append(servicioClinico);
 		builder.append(", ficha=");
 		builder.append(ficha);
 		builder.append(", unidad=");
 		builder.append(unidad);
 		builder.append(", descripcion=");
 		builder.append(descripcion);
+		builder.append(", idUgcc=");
+		builder.append(idUgcc);
+		builder.append(", documentoUgcc=");
+		builder.append(documentoUgcc);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -189,5 +183,25 @@ public class SolicitudTraslado implements Serializable{
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+
+	public String getIdUgcc() {
+		return idUgcc;
+	}
+
+	public void setIdUgcc(String idUgcc) {
+		this.idUgcc = idUgcc;
+	}
+
+	public byte [] getDocumentoUgcc() {
+		return documentoUgcc;
+	}
+
+	public void setDocumentoUgcc(byte [] documentoUgcc) {
+		this.documentoUgcc = documentoUgcc;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

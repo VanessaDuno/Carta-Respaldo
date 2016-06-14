@@ -84,7 +84,7 @@ public class CUsuario extends CGenerico {
 	public void inicializar() throws IOException {
 		log.info("Metodo inicializar()");
 		llenarListas();
-		mostrarCatalogo();
+		//mostrarCatalogo();
 		botonera = new Botonera() {
 
 

@@ -1,4 +1,4 @@
-<zk xmlns:x="xhtml">
+<zk xmlns:x="xhtml" xmlns:c="client">
 	<zscript>
 			<![CDATA[
 	import java.text.SimpleDateFormat;
@@ -16,17 +16,19 @@
 
 		<div>
 			<separator></separator>
-			<grid id= "gdFiltros" visible="false">
+			<grid id= "gdFiltros" >
 				<columns>
-					<column width="20%"></column>
-					<column width="20%"></column>
-					<column width="30%"></column>
-					<column width="20%"></column>
-					<column width="10%"></column>
+					<column id= "columna1"></column>
+					<column id= "columna2"></column>
+					<column id= "columna3"></column>
+					<column id= "columna4"></column>
+					<column id= "columna5"></column>
+					<column id= "columna6"></column>
+					<column id= "columna7"></column>
 				</columns>
 				<rows>
 					<row>
-						<combobox id="cmbMeses" placeholder="Fecha"
+						<combobox id="cmbMeses" placeholder="Fecha" readonly="true"
 							width="100%">
 							<comboitem label="Enero" context="1"></comboitem>
 							<comboitem label="Febrero" context="2"></comboitem>
@@ -44,7 +46,7 @@
 						<textbox id="txtDestino"
 							placeholder="Establecimiento destino" width="100%">
 						</textbox>
-						<combobox id="cmbOrigen"
+						<combobox id="cmbOrigen" readonly="true"
 							placeholder="Establecimiento origen" width="100%">
 							<template name="model">
 								<comboitem label="${each.nombre}"
@@ -52,7 +54,7 @@
 								</comboitem>
 							</template>
 						</combobox>
-						<combobox id="cmbEstatus" placeholder="Estatus"
+						<combobox id="cmbEstatus" placeholder="Estatus" readonly="true"
 							width="100%">
 							<comboitem label="Creada" context="1"></comboitem>
 							<comboitem label="Traslado" context="2"></comboitem>
@@ -64,6 +66,8 @@
 								context="5">
 							</comboitem>
 						</combobox>
+						<textbox id="txtFiltroRut" placeholder="Rut paciente" width="100%" ></textbox>
+						<textbox id="txtFiltroId" width="100%" placeholder="Id de la carta" c:onKeyPress="return soloNumero()"></textbox>
 						<button label="Limpiar" id="btnLimpiar"
 							style="font-size: 14px; height: 30px; width: 115px; background-color: #4C94DB;">
 						</button>
@@ -82,6 +86,7 @@
 						width="30%">
 					</listheader>
 					<listheader label="Motivo" width="38%"></listheader>
+					<listheader label="Diagnóstico" width="10%"></listheader>
 					<listheader label="Estado" width="10%"></listheader>
 					<listheader label="Días" width="5%"></listheader>
 				</listhead>
@@ -99,6 +104,7 @@
 						<listcell>
 							<label></label>
 						</listcell>
+						<listcell label="${each.traslado.diagnostico}"></listcell>
 						<listcell label="${each.estatus}"></listcell>
 						<listcell>
 							<label></label>

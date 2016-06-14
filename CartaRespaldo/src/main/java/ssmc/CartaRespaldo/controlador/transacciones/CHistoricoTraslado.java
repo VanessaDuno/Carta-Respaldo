@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Column;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -66,11 +67,27 @@ public class CHistoricoTraslado extends CGenerico {
 	@Wire
 	private Combobox cmbMeses;
 	@Wire
+	private Textbox txtFiltroRut;
+	@Wire
+	private Textbox txtFiltroId;
+	@Wire
 	private Listheader lhdEstablecimientoOrigen;
 	@Wire
 	private Grid gdFiltros;
-	// private boolean rescate;
-	// private int contador;
+	@Wire
+	private Column columna1;
+	@Wire
+	private Column columna2;
+	@Wire
+	private Column columna3;
+	@Wire
+	private Column columna4;
+	@Wire
+	private Column columna5;
+	@Wire
+	private Column columna6;
+	@Wire
+	private Column columna7;
 	Usuario usuario = new Usuario();
 	ConsultarPrestacionesSolicitud cs = new ConsultarPrestacionesSolicitud();
 	boolean isSsmc = false;
@@ -88,12 +105,6 @@ public class CHistoricoTraslado extends CGenerico {
 			lbxTraslado
 					.setModel(new ListModelList<Bitacora>(historicoTraslado));
 			lhdEstablecimientoOrigen.setVisible(true);
-
-			// if (rescate) {
-			// Messagebox.show("Tiene" + " " + contador + " "
-			// + "pacientes que debe rescatar.", "Advertencia",
-			// Messagebox.OK, Messagebox.EXCLAMATION);
-			// }
 		} else {
 			isSsmc = false;
 			historicoTraslado = servicioBitacora
@@ -103,7 +114,7 @@ public class CHistoricoTraslado extends CGenerico {
 					.setModel(new ListModelList<Bitacora>(historicoTraslado));
 		}
 		establecimientosOrigen = servicioEstablecimiento
-				.buscarEstablecimientosOrigen(true);
+				.buscarEstablecimientosOrigen();
 		cmbOrigen.setModel(new ListModelList<Establecimiento>(
 				establecimientosOrigen));
 		semaforoLista();
@@ -111,7 +122,6 @@ public class CHistoricoTraslado extends CGenerico {
 	}
 
 	public void semaforoLista() {
-		// contador = 0;
 		List<Listitem> listItem = lbxTraslado.getItems();
 
 		if (listItem.size() != 0) {
@@ -125,13 +135,15 @@ public class CHistoricoTraslado extends CGenerico {
 						+ " " + otraPrestacion);
 
 				int dia = diferenciaEnDias(fechaHora, bitacora.getFecha());
-				Label lc = ((Label) ((listItem.get(i).getChildren().get(5)))
+				Label lc = ((Label) ((listItem.get(i).getChildren().get(6)))
 						.getFirstChild());
 				if (isSsmc) {
 					Listcell lcc = (Listcell) listItem.get(i).getChildren()
 							.get(1);
 					lcc.setVisible(true);
-					gdFiltros.setVisible(true);
+					filtrosSsmc();
+				} else {
+					filtrosEstablecimientos();
 				}
 				String dias = "";
 				if (dia < 10) {
@@ -139,13 +151,11 @@ public class CHistoricoTraslado extends CGenerico {
 				} else {
 					dias = String.valueOf(dia);
 				}
-				((Label) ((listItem.get(i).getChildren().get(5)))
+				((Label) ((listItem.get(i).getChildren().get(6)))
 						.getFirstChild()).setValue(String.valueOf(dias));
 				if (dia > 15) {
 					lc.setStyle("background: rgba(220, 86, 86, 1); color:white");
 					lc.setClass("parpadea text");
-					// rescate = true;
-					// contador++;
 				} else if (dia > 10 && dia <= 15) {
 					lc.setStyle("background: rgba(249, 253, 86, 1)");
 					lc.setClass("text");
@@ -155,6 +165,37 @@ public class CHistoricoTraslado extends CGenerico {
 				}
 			}
 		}
+	}
+
+	public void filtrosSsmc() {
+		txtDestino.setVisible(true);
+		cmbMeses.setVisible(true);
+		cmbOrigen.setVisible(true);
+		cmbEstatus.setVisible(true);
+		txtFiltroId.setVisible(false);
+		txtFiltroRut.setVisible(false);
+		columna1.setWidth("20%");
+		columna2.setWidth("20%");
+		columna3.setWidth("30%");
+		columna4.setWidth("20%");
+		columna7.setWidth("10%");
+		columna5.setVisible(false);
+		columna6.setVisible(false);
+	}
+
+	public void filtrosEstablecimientos() {
+		cmbMeses.setVisible(false);
+		cmbOrigen.setVisible(false);
+		cmbEstatus.setVisible(false);
+		txtFiltroId.setVisible(true);
+		txtFiltroRut.setVisible(true);
+		columna1.setVisible(false);
+		columna3.setVisible(false);
+		columna4.setVisible(false);
+		columna5.setWidth("30%");
+		columna6.setWidth("30%");
+		columna2.setWidth("30%");
+		columna7.setWidth("10%");
 	}
 
 	public int diferenciaEnDias(Timestamp fechaMayor, Timestamp fechaMenor) {
@@ -313,7 +354,11 @@ public class CHistoricoTraslado extends CGenerico {
 
 	@Listen("onOK = #txtDestino")
 	public void buscarEstablecimientoDestino() {
-		filtrarLista();
+		if (isSsmc) {
+			filtrarLista();
+		} else {
+			filtrarListaEstablecimiento();
+		}
 	}
 
 	@Listen("onChange = #cmbMeses")
@@ -331,6 +376,16 @@ public class CHistoricoTraslado extends CGenerico {
 		filtrarLista();
 	}
 
+	@Listen("onOK = #txtFiltroId")
+	public void filtrarPorId() {
+		filtrarListaEstablecimiento();
+	}
+
+	@Listen("onOK = #txtFiltroRut")
+	public void filtrarPorRut() {
+		filtrarListaEstablecimiento();
+	}
+
 	@Listen("onClick = #btnLimpiar")
 	public void limpiarFiltros() {
 		llenarLista();
@@ -338,12 +393,14 @@ public class CHistoricoTraslado extends CGenerico {
 		txtDestino.setValue("");
 		cmbEstatus.setValue("");
 		cmbMeses.setValue("");
+		txtFiltroRut.setValue("");
+		txtFiltroId.setValue("");
 	}
 
 	public void filtrarLista() {
-
 		List<Bitacora> lista = new ArrayList<Bitacora>();
 		for (Bitacora bitacora : historicoTraslado) {
+			if (cmbMeses.getSelectedItem() != null){
 			if (bitacora.getEstatus().contains(cmbEstatus.getValue())
 					&& bitacora.getTraslado().getUnidad().getEstablecimiento()
 							.getNombre().contains(cmbOrigen.getValue())
@@ -355,6 +412,17 @@ public class CHistoricoTraslado extends CGenerico {
 							.contains(txtDestino.getValue().toLowerCase())) {
 				lista.add(bitacora);
 			}
+			}
+			else{
+				if (bitacora.getEstatus().contains(cmbEstatus.getValue())
+						&& bitacora.getTraslado().getUnidad().getEstablecimiento()
+								.getNombre().contains(cmbOrigen.getValue())
+						&& bitacora.getTraslado().getEstablecimiento().getNombre()
+								.toLowerCase()
+								.contains(txtDestino.getValue().toLowerCase())) {
+					lista.add(bitacora);
+				}	
+			}
 		}
 		lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
 		lbxTraslado.renderAll();
@@ -362,4 +430,33 @@ public class CHistoricoTraslado extends CGenerico {
 		semaforoLista();
 	}
 
+	public void filtrarListaEstablecimiento() {
+		List<Bitacora> lista = new ArrayList<Bitacora>();
+		for (Bitacora bitacora : historicoTraslado) {
+			if (!txtFiltroId.getValue().equals("")){
+			if (bitacora.getTraslado().getPaciente().getRut()
+					.contains(formatearRut(txtFiltroRut.getValue()))
+					&& bitacora.getTraslado().getId() == Integer
+							.valueOf(txtFiltroId.getValue())
+					&& bitacora.getTraslado().getEstablecimiento().getNombre()
+							.toLowerCase()
+							.contains(txtDestino.getValue().toLowerCase())) {
+				lista.add(bitacora);
+			}
+			}
+			else{
+				if (bitacora.getTraslado().getPaciente().getRut()
+						.contains(formatearRut(txtFiltroRut.getValue()))
+						&& bitacora.getTraslado().getEstablecimiento().getNombre()
+								.toLowerCase()
+								.contains(txtDestino.getValue().toLowerCase())) {
+					lista.add(bitacora);
+			}
+		}
+		lbxTraslado.setModel(new ListModelList<Bitacora>(lista));
+		lbxTraslado.renderAll();
+
+		semaforoLista();
+	}
+	}
 }

@@ -1,4 +1,7 @@
 <zk xmlns:x="xhtml" xmlns:c="client">
+	<style>
+
+	</style>
 	<window width="75%" closable="true" title="Carta de Respaldo"
 		id="wdwSolicitud" border="normal"
 		style=" margin-left: 12.5%; width: 75%;  margin-top: 1%;margin-bottom: 2%"
@@ -27,19 +30,26 @@
 							<hbox></hbox>
 						</row>
 						<row>
+							<label id = "lblFiltrosEstableciminto" value="Filtros establecimiento" visible="false"></label>
+							<textbox id="txtBusquedaEstablecimiento" placeholder="Nombre del establecimiento" visible="false"></textbox>
+							<textbox id="txtBusquedaRutEstablecimiento" placeholder="Rut del establecimiento" visible="false"></textbox>
+							<hbox></hbox>
+						</row>
+						<row>
 							<label id="lblEstablecimiento"
 								value="Establecimiento" visible="false">
 							</label>
-							<combobox id="cmbEstablecimiento" width="100%"
-								visible="false" readonly="true">
+							<combobox id="cmbEstablecimiento" readonly="true"
+								width="100%" visible="false" class="combo">
 								<template name="model">
 									<comboitem label="${each.nombre}"
 										context="${each.id}">
 									</comboitem>
 								</template>
 							</combobox>
-							<textbox id ="txtOtroEstablecimiento" visible="false" width="100%"></textbox>
-							<hbox></hbox>
+							<textbox id="txtOtroEstablecimiento"
+								visible="false" width="100%">
+							</textbox>
 						</row>
 						<row>
 							<label id="lblNombreLaboratorio"
@@ -193,28 +203,47 @@
 									</comboitem>
 								</template>
 							</combobox>
-<!-- 							<label value="Servicio clínico"></label> -->
-<!-- 							<combobox id="cmbServicio" -->
-<!-- 								readonly="true"> -->
-<!-- 								<template name="model"> -->
-<!-- 									<comboitem label="${each.nombre}" -->
-<!-- 										context="${each.id}"> -->
-<!-- 									</comboitem> -->
-<!-- 								</template> -->
-<!-- 							</combobox> -->
+							<!-- 							<label value="Servicio clínico"></label> -->
+							<!-- 							<combobox id="cmbServicio" -->
+							<!-- 								readonly="true"> -->
+							<!-- 								<template name="model"> -->
+							<!-- 									<comboitem label="${each.nombre}" -->
+							<!-- 										context="${each.id}"> -->
+							<!-- 									</comboitem> -->
+							<!-- 								</template> -->
+							<!-- 							</combobox> -->
+							<hbox></hbox>
+							<hbox></hbox>
 						</row>
 						<row>
 							<label value="Diagnóstico"></label>
 							<textbox id="txtDiagnostico" rows="3"></textbox>
+							<hbox></hbox>
+							<hbox></hbox>
+						</row>
+						<row>
 							<label value="Tipo de convenio"></label>
 							<combobox readonly="true"
 								id="cmbTipoDerivacion">
-								<comboitem label="UGCC día cama integral"></comboitem>
+								<comboitem
+									label="UGCC día cama integral">
+								</comboitem>
 								<comboitem label="UGCC paquete GRD"></comboitem>
 								<comboitem label="DFL 36"></comboitem>
 								<comboitem label="CONVENIO"></comboitem>
 								<comboitem label="SIN CONVENIO"></comboitem>
 							</combobox>
+							<label value="ID de UGCC"></label>
+							<hbox>
+								<textbox id="txtIdUgcc"></textbox>
+								<button id="btnIdUgcc"
+									class="botonAdjuntar" label="Adjuntar"
+									upload="true,maxsize=6144, multiple=true" >
+								</button>
+								<label  id= "lblNombreArchivo" 
+								style="color: #a94442;font-weight: 600; font-size: 13px;margin-left: 5px;"></label>
+							</hbox>
+
 						</row>
 						<row>
 							<checkbox id="ckbCama" label="Tipo Cama">
@@ -281,14 +310,14 @@
 								</combobox>
 							</hbox>
 
-							<checkbox id="ckbOtraPrestacion" visible="false"
-								label="Otra Prestación">
+							<checkbox id="ckbOtraPrestacion"
+								visible="false" label="Otra Prestación">
 							</checkbox>
 
-								<textbox id="txtDescripcionPrestacion"
-									rows="3" visible="false">
-								</textbox>
-		
+							<textbox id="txtDescripcionPrestacion"
+								rows="3" visible="false">
+							</textbox>
+
 						</row>
 					</rows>
 				</grid>
@@ -315,7 +344,7 @@
 				</listbox>
 				<div class="alert alert-info"
 					style="margin-bottom: 0px;padding: 5px;margin-top: 10px;"
-					 id="divResponsables" align="center">
+					id="divResponsables" align="center">
 					<x:span class="glyphicon glyphicon-exclamation-sign"
 						aria-hidden="true">
 					</x:span>
@@ -323,8 +352,12 @@
 					<label id="lblResponsables"></label>
 				</div>
 				<separator></separator>
-				<button label= "Médico Responsable" id="btnMedico" class= "botonResponsable"></button>
-				<button label="Funcionarios Responsables" class= "botonResponsable" id = "btnFuncionarios"></button>
+				<button label="Médico Responsable" id="btnMedico"
+					class="botonResponsable">
+				</button>
+				<button label="Funcionarios Responsables"
+					class="botonResponsable" id="btnFuncionarios">
+				</button>
 			</groupbox>
 			<separator></separator>
 			<separator></separator>

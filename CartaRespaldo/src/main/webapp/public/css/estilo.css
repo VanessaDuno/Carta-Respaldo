@@ -115,3 +115,13 @@
     margin-left: 14.5%;
     margin-top: 20px;
 }
+
+.botonAdjuntar {
+    font-size: 13px;
+    background: #1e81c3;
+    height: 29px;
+}
+
+ .z-button:hover {
+    background: #1e81c3;
+}
