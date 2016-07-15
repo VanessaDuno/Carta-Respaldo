@@ -236,12 +236,12 @@
 							<label value="ID de UGCC"></label>
 							<hbox>
 								<textbox id="txtIdUgcc"></textbox>
-								<button id="btnIdUgcc"
-									class="botonAdjuntar" label="Adjuntar"
-									upload="true,maxsize=6144, multiple=true" >
-								</button>
-								<label  id= "lblNombreArchivo" 
-								style="color: #a94442;font-weight: 600; font-size: 13px;margin-left: 5px;"></label>
+<!-- 								<button id="btnIdUgcc" -->
+<!-- 									class="botonAdjuntar" label="Adjuntar" -->
+<!-- 									upload="true,maxsize=6144, multiple=true" > -->
+<!-- 								</button> -->
+<!-- 								<label  id= "lblNombreArchivo"  -->
+<!-- 								style="color: #a94442;font-weight: 600; font-size: 13px;margin-left: 5px;"></label> -->
 							</hbox>
 
 						</row>

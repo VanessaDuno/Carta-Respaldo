@@ -58,8 +58,7 @@ public abstract class Validador {
 	 */
 	public static boolean validarTipoDocumento(Media media) {
 		String tipoImagen = media.getFormat();
-		if (tipoImagen.equals("pdf") || tipoImagen.equals("odt")
-				|| tipoImagen.equals("doc") || tipoImagen.equals("docx"))
+		if (tipoImagen.equals("pdf") )
 			return true;
 		else
 			return false;

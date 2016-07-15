@@ -41,9 +41,16 @@ public class SBitacora {
 		return iBitacoraDAO.findAll();
 	}
 	
-	public List<Bitacora> buscarPorEstablecimiento(int idEstablecimiento) {
-		return iBitacoraDAO.findByTrasladoUnidadEstablecimientoIdOrderByFechaAsc(idEstablecimiento);
+	public List<Bitacora> buscarPorEstablecimiento(int idEstablecimiento, boolean activo) {
+		return iBitacoraDAO.findByTrasladoUnidadEstablecimientoIdAndActivoOrderByFechaAsc(idEstablecimiento, activo);
 	}
 	
+	public Bitacora buscarEstadoActivo(int idTraslado, boolean activo){
+		return iBitacoraDAO.findByTrasladoIdAndActivo(idTraslado, activo);
+	}
+	
+	public Bitacora buscarTrasladooEstado (int idTraslado, String estado){
+		return iBitacoraDAO.findByTrasladoIdAndEstatus(idTraslado, estado); 
+	}
 	
 }

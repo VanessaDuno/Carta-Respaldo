@@ -13,23 +13,35 @@
 		closable="true"
 		style=" margin-left: 10.8%; width: 95%;  margin-top: 1%;margin-bottom: 2%"
 		apply="ssmc.CartaRespaldo.controlador.transacciones.CHistoricoTraslado">
-
+		<div>
+			<button id="btnCarta" visible="true" label="Ver carta"
+				class="btn btn-default" image="/public/imagenes/botones/ver.png">
+			</button>
+			<button id="btnCambiarEstado" label="Cambiar Estado"
+				class="btn btn-default"
+				image="/public/imagenes/botones/aceptar.png">
+			</button>
+			<button id="btnSalir" label="Salir" class="btn btn-default"
+				image="/public/imagenes/botones/salir.png">
+			</button>
+		</div>
+		
 		<div>
 			<separator></separator>
-			<grid id= "gdFiltros" >
+			<grid id="gdFiltros">
 				<columns>
-					<column id= "columna1"></column>
-					<column id= "columna2"></column>
-					<column id= "columna3"></column>
-					<column id= "columna4"></column>
-					<column id= "columna5"></column>
-					<column id= "columna6"></column>
-					<column id= "columna7"></column>
+					<column id="columna1"></column>
+					<column id="columna2"></column>
+					<column id="columna3"></column>
+					<column id="columna4"></column>
+					<column id="columna5"></column>
+					<column id="columna6"></column>
+					<column id="columna7"></column>
 				</columns>
 				<rows>
 					<row>
-						<combobox id="cmbMeses" placeholder="Fecha" readonly="true"
-							width="100%">
+						<combobox id="cmbMeses" placeholder="Fecha"
+							readonly="true" width="100%">
 							<comboitem label="Enero" context="1"></comboitem>
 							<comboitem label="Febrero" context="2"></comboitem>
 							<comboitem label="Marzo" context="3"></comboitem>
@@ -54,8 +66,8 @@
 								</comboitem>
 							</template>
 						</combobox>
-						<combobox id="cmbEstatus" placeholder="Estatus" readonly="true"
-							width="100%">
+						<combobox id="cmbEstatus" placeholder="Estatus"
+							readonly="true" width="100%">
 							<comboitem label="Creada" context="1"></comboitem>
 							<comboitem label="Traslado" context="2"></comboitem>
 							<comboitem label="Anulada" context="3"></comboitem>
@@ -66,8 +78,13 @@
 								context="5">
 							</comboitem>
 						</combobox>
-						<textbox id="txtFiltroRut" placeholder="Rut paciente" width="100%" ></textbox>
-						<textbox id="txtFiltroId" width="100%" placeholder="Id de la carta" c:onKeyPress="return soloNumero()"></textbox>
+						<textbox id="txtFiltroRut"
+							placeholder="Rut paciente" width="100%">
+						</textbox>
+						<textbox id="txtFiltroId" width="100%"
+							placeholder="Id de la carta"
+							c:onKeyPress="return soloNumero()">
+						</textbox>
 						<button label="Limpiar" id="btnLimpiar"
 							style="font-size: 14px; height: 30px; width: 115px; background-color: #4C94DB;">
 						</button>
@@ -75,7 +92,7 @@
 				</rows>
 			</grid>
 			<listbox id="lbxTraslado" class="historico" mold="paging"
-				pageSize="15">
+				pageSize="10">
 				<listhead>
 					<listheader label="Fecha solicitud" width="10%">
 					</listheader>
@@ -104,7 +121,9 @@
 						<listcell>
 							<label></label>
 						</listcell>
-						<listcell label="${each.traslado.diagnostico}"></listcell>
+						<listcell
+							label="${each.traslado.diagnostico}">
+						</listcell>
 						<listcell label="${each.estatus}"></listcell>
 						<listcell>
 							<label></label>

@@ -11,9 +11,9 @@ package ssmc.CartaRespaldo.enums;
  */
 public enum EnumEstadoSolicitud {
 
-	CREADA("Creada", 1), TRASLADO("Traslado", 2), ANULADA(
-			"Anulada", 3), CIERRECLINICO("Cierre Clinico", 4), CIERREADMINISTRATIVO(
-			"Cierre Administrativo", 675);
+	CREADA("Creada", 1), PORVALIDAR("Por validar", 2),  TRASLADO("Traslado", 3), ANULADA(
+			"Anulada", 4), CIERRECLINICO("Cierre Clinico", 5), CIERREADMINISTRATIVO(
+			"Cierre Administrativo", 6);
 
 	private final String estado;
 	private final int id;

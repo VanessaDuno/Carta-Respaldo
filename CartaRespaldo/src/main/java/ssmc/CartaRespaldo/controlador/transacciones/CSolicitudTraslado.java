@@ -1,6 +1,7 @@
 package ssmc.CartaRespaldo.controlador.transacciones;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,10 +19,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
-import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
@@ -61,7 +60,10 @@ import ssmc.CartaRespaldo.modelo.transacciones.Bitacora;
 import ssmc.CartaRespaldo.modelo.transacciones.PrestacionSolicitud;
 import ssmc.CartaRespaldo.modelo.transacciones.ResponsableSolicitud;
 import ssmc.CartaRespaldo.modelo.transacciones.SolicitudTraslado;
-import ssmc.CartaRespaldo.componentes.Validador;
+import ws.cl.gov.fonasa.certificadorprevisional.CertificadorPrevisionalSoapProxy;
+import ws.cl.gov.fonasa.certificadorprevisional.QueryCertificadorPrevisionalTO;
+import ws.cl.gov.fonasa.certificadorprevisional.QueryTO;
+import ws.cl.gov.fonasa.certificadorprevisional.ReplyCertificadorPrevisionalTO;
 
 /**
  * CSolicitudTraslado Controlador encargado de registrar solicitudes de traslado
@@ -97,7 +99,7 @@ public class CSolicitudTraslado extends CGenerico {
 	private List<CargosEstablecimiento> cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
 	private List<ResponsableSolicitud> responsablesSolicitud = new ArrayList<ResponsableSolicitud>();
 	private Paciente pacienteRegistrado = new Paciente(); 
-	private Media media;
+	//private Media media;
 
 	@Wire
 	private Combobox cmbProvincia;
@@ -199,8 +201,8 @@ public class CSolicitudTraslado extends CGenerico {
 	private Label  lblFiltrosEstableciminto;
 	@Wire
 	private Label lblResponsables;
-	@Wire
-	private Label lblNombreArchivo;
+//	@Wire
+//	private Label lblNombreArchivo;
 	@Wire
 	private Combobox cmbMotivoCama;
 	@Wire
@@ -225,6 +227,7 @@ public class CSolicitudTraslado extends CGenerico {
 		lblResponsables.setValue("Recuerde que debe seleccionar" + " "
 				+ usuarioActivo.getEstablecimiento().getCantidadFirmantes()
 				+ " " + "responsables de la Carta Respaldo.");
+		consumirWsFonasa();
 		botonera = new Botonera() {
 
 			@Override
@@ -483,6 +486,7 @@ public class CSolicitudTraslado extends CGenerico {
 		bitacora.setEstatus(EnumEstadoSolicitud.CREADA.getEstado());
 		bitacora.setTraslado(solicitudTraslado);
 		bitacora.setUsuario(usuarioActivo);
+		bitacora.setValidada(false);
 		servicioBitacora.guardar(bitacora);
 	}
 
@@ -563,7 +567,7 @@ public class CSolicitudTraslado extends CGenerico {
 				.getValue());
 		solicitudTraslado.setDescripcion(txtDescripcionPrestacion.getValue());
 		solicitudTraslado.setIdUgcc(txtIdUgcc.getValue());
-		solicitudTraslado.setDocumentoUgcc(media.getByteData());
+//		solicitudTraslado.setDocumentoUgcc(media.getByteData());
 		if (ckbGes.isChecked()) {
 			solicitudTraslado.setGes(true);
 		} else {
@@ -726,7 +730,7 @@ public class CSolicitudTraslado extends CGenerico {
 		txtBusquedaRutEstablecimiento.setVisible(false);
 		txtBusquedaEstablecimiento.setValue("");
 		txtBusquedaRutEstablecimiento.setValue("");
-		lblNombreArchivo.setValue("");
+		//lblNombreArchivo.setValue("");
 	}
 
 	public void limpiarCamposPaciente(){
@@ -763,8 +767,7 @@ public class CSolicitudTraslado extends CGenerico {
 				|| cmbUnidad.getSelectedItem() == null
 				|| dtbFechaNacPaciente.getValue().equals("")
 				|| txtFicha.getValue().equals("")
-				|| txtIdUgcc.getValue().equals("")
-				|| media == null) {
+				|| txtIdUgcc.getValue().equals("")) {
 			return false;
 		} else {
 			if (rdoHospital.isChecked()) {
@@ -1040,19 +1043,28 @@ public class CSolicitudTraslado extends CGenerico {
 		
 	}
 	
-	@Listen("onUpload = #btnIdUgcc")
-	public void capturarIdUgcc(UploadEvent event) throws IOException {
-		log.debug(new StringBuilder().append(
-				"Inicio del metodo capturarIdUgcc con objeto Event-").append(
-				event));
-		media = event.getMedia();
-		if (Validador.validarTipoImagen(media)
-				&& Validador.validarTamannoImagen(media)) {
-		lblNombreArchivo.setValue(media.getName());
+	
+	public void consumirWsFonasa (){
+		CertificadorPrevisionalSoapProxy cf = new CertificadorPrevisionalSoapProxy();
+		QueryCertificadorPrevisionalTO query = new QueryCertificadorPrevisionalTO();
+		query.setCanal(Constantes.canal);
+		query.setClaveEntidad(2222);
+		query.setDgvBeneficiario("7");
+		query.setEntidad(22222222);
+		query.setRutBeneficiario(6647071);
+		QueryTO qto = new QueryTO();
+		qto.setTipoEmisor(Constantes.tipoEmisor);
+		qto.setTipoUsuario(Constantes.tipoUsuario);
+		query.setQueryTO(qto);
+		try {
+			ReplyCertificadorPrevisionalTO respuesta  = new ReplyCertificadorPrevisionalTO();
+			respuesta =	cf.getCertificadoPrevisional(query);
+			System.out.println(respuesta.toString());
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
-		else {
-			Messagebox.show(Constantes.imagenNoValida, "Alerta", Messagebox.OK,
-					Messagebox.EXCLAMATION);
-		}
+		
+		
 	}
 }

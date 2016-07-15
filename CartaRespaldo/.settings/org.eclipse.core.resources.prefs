@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/AfiliadoTO.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/BeneficiarioTO.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/CargasTO.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/CertificadorPrevisionalSoap.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/CertificadorPrevisionalSoapSoapBindingStub.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/QueryCertificadorPrevisionalTO.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/QueryTO.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/ReplyCertificadorPrevisionalTO.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/ReplyTO.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/SONDACertificadoPrevisional.java=UTF-8
+encoding//src/main/java/ws/cl/gov/fonasa/certificadorprevisional/SONDACertificadoPrevisionalLocator.java=UTF-8

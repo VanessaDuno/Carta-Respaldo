@@ -67,8 +67,8 @@ public class SolicitudTraslado implements Serializable{
 	@Column(name= "id_ugcc")
 	private String idUgcc; 
 	
-	@Column(name ="documento_ugcc")
-	private byte [] documentoUgcc; 
+//	@Column(name ="documento_ugcc")
+//	private byte [] documentoUgcc; 
 	
 	public SolicitudTraslado() {
 	}
@@ -139,8 +139,6 @@ public class SolicitudTraslado implements Serializable{
 		builder.append(descripcion);
 		builder.append(", idUgcc=");
 		builder.append(idUgcc);
-		builder.append(", documentoUgcc=");
-		builder.append(documentoUgcc);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -193,13 +191,13 @@ public class SolicitudTraslado implements Serializable{
 		this.idUgcc = idUgcc;
 	}
 
-	public byte [] getDocumentoUgcc() {
-		return documentoUgcc;
-	}
-
-	public void setDocumentoUgcc(byte [] documentoUgcc) {
-		this.documentoUgcc = documentoUgcc;
-	}
+//	public byte [] getDocumentoUgcc() {
+//		return documentoUgcc;
+//	}
+//
+//	public void setDocumentoUgcc(byte [] documentoUgcc) {
+//		this.documentoUgcc = documentoUgcc;
+//	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;

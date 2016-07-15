@@ -2,7 +2,9 @@ package ssmc.CartaRespaldo.modelo.transacciones;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Arrays;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,8 +12,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.zkoss.image.AImage;
+import org.zkoss.util.media.Media;
 
 import ssmc.CartaRespaldo.modelo.maestros.Motivo;
 import ssmc.CartaRespaldo.modelo.seguridad.Usuario;
@@ -51,6 +57,29 @@ public class Bitacora implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_usuario")
 	private Usuario usuario;
+	
+	@Column (name="observacion_cierre_clinico")
+	private String observacionCierreClinico;
+	
+	@Column (name= "cuenta")
+	private String cuenta; 
+	
+	@Column (name= "epicrisis")
+	private String epicrisis; 
+	
+	private byte[] carta;
+	
+	private byte[] archivoCuenta;
+	
+	@Column (name = "validada")
+	private boolean validada; 
+	
+	@Column(name= "activo")
+	private boolean activo; 
+	
+	@Column(name= "motivo_anulacion")
+	private String motivoAnulacion; 
+	
 
 	public Bitacora() {
 	}
@@ -102,6 +131,22 @@ public class Bitacora implements Serializable {
 		builder.append(motivo);
 		builder.append(", usuario=");
 		builder.append(usuario);
+		builder.append(", observacionCierreClinico=");
+		builder.append(observacionCierreClinico);
+		builder.append(", cuenta=");
+		builder.append(cuenta);
+		builder.append(", epicrisis=");
+		builder.append(epicrisis);
+		builder.append(", carta=");
+		builder.append(Arrays.toString(carta));
+		builder.append(", archivoCuenta=");
+		builder.append(Arrays.toString(archivoCuenta));
+		builder.append(", validada=");
+		builder.append(validada);
+		builder.append(", activo=");
+		builder.append(activo);
+		builder.append(", motivoAnulacion=");
+		builder.append(motivoAnulacion);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -120,6 +165,70 @@ public class Bitacora implements Serializable {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public byte[] getCarta() {
+		return carta;
+	}
+
+	public void setCarta(byte[] carta) {
+		this.carta = carta;
+	}
+
+	public boolean isValidada() {
+		return validada;
+	}
+
+	public void setValidada(boolean validada) {
+		this.validada = validada;
+	}
+
+	public boolean isActivo() {
+		return activo;
+	}
+
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
+
+	public String getObservacionCierreClinico() {
+		return observacionCierreClinico;
+	}
+
+	public void setObservacionCierreClinico(String observacionCierreClinico) {
+		this.observacionCierreClinico = observacionCierreClinico;
+	}
+
+	public String getCuenta() {
+		return cuenta;
+	}
+
+	public void setCuenta(String cuenta) {
+		this.cuenta = cuenta;
+	}
+
+	public String getEpicrisis() {
+		return epicrisis;
+	}
+
+	public void setEpicrisis(String epicrisis) {
+		this.epicrisis = epicrisis;
+	}
+
+	public byte[] getArchivoCuenta() {
+		return archivoCuenta;
+	}
+
+	public void setArchivoCuenta(byte[] archivoCuenta) {
+		this.archivoCuenta = archivoCuenta;
+	}
+
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
 	}
 
 }

@@ -50,6 +50,7 @@ public class Constantes {
 							+ "• Con quemaduras eléctricas por alta tensión.\n"
 							+ "• Quemados con patologías graves asociadas.";
 	public static String imagenNoValida = "Imagen no es válida";
+	public static String documentoNoValido = "Documento no es válido, debe ser en formato PDF";
 	public static String mensajeRegistroSinFotos = "Las fotografías son requeridas para el estudio y aceptación de la derivación. ¿Desea enviar?"; 
 	public static String mensajeEdicionExitosa = "Se ha editado el registro exitosamente"; 
 	public static String mensajeEliminadoExitoso = "Registro eliminado exitosamente"; 
@@ -85,7 +86,14 @@ public class Constantes {
 	public static String registroQuemado = "Registrado gran quemado";
 	public static String edicionQuemado = "Editado registro gran quemado";
 	public static String consultaQuemado = "Consulta de ficha gran quemado";
-	public static String fotoQuemado = "Consulta de fotos de gran quemado";
+	public static String fotoQuemado = "Consulta de foto"
+			+ "s de gran quemado";
+	
+	
+	/** Constantes WS Fonasa **/
+	public static int canal = 1;
+	public static int tipoEmisor = 1;
+	public static int tipoUsuario = 1; 
 	
 	
 }

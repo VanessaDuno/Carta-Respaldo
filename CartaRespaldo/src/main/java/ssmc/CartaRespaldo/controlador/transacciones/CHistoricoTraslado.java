@@ -18,6 +18,9 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.json.JSONException;
+import org.zkoss.zhtml.Messagebox;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
@@ -31,6 +34,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
 
 import ssmc.CartaRespaldo.componentes.Constantes;
 import ssmc.CartaRespaldo.controlador.maestros.CGenerico;
@@ -88,6 +92,8 @@ public class CHistoricoTraslado extends CGenerico {
 	private Column columna6;
 	@Wire
 	private Column columna7;
+	@Wire
+	private Window wdwEstadoTraslado;
 	Usuario usuario = new Usuario();
 	ConsultarPrestacionesSolicitud cs = new ConsultarPrestacionesSolicitud();
 	boolean isSsmc = false;
@@ -109,7 +115,7 @@ public class CHistoricoTraslado extends CGenerico {
 			isSsmc = false;
 			historicoTraslado = servicioBitacora
 					.buscarPorEstablecimiento(usuario.getEstablecimiento()
-							.getId());
+							.getId(), true);
 			lbxTraslado
 					.setModel(new ListModelList<Bitacora>(historicoTraslado));
 		}
@@ -153,14 +159,18 @@ public class CHistoricoTraslado extends CGenerico {
 				}
 				((Label) ((listItem.get(i).getChildren().get(6)))
 						.getFirstChild()).setValue(String.valueOf(dias));
-				if (dia > 15) {
+				if (dia > 21) {
 					lc.setStyle("background: rgba(220, 86, 86, 1); color:white");
 					lc.setClass("parpadea text");
-				} else if (dia > 10 && dia <= 15) {
+				} else if (dia > 14 && dia <= 21) {
 					lc.setStyle("background: rgba(249, 253, 86, 1)");
 					lc.setClass("text");
-				} else if (dia <= 10) {
+				} else if (dia <= 7) {
 					lc.setStyle("background: rgba(86, 220, 97, 1)");
+					lc.setClass("text");
+				}
+				if (bitacora.getTraslado().getTipoDerivacion().toUpperCase().contains("GRD")){
+					lc.setStyle("background: white");
 					lc.setClass("text");
 				}
 			}
@@ -314,7 +324,7 @@ public class CHistoricoTraslado extends CGenerico {
 		return fichero;
 	}
 
-	@Listen("onClick = #lbxTraslado")
+	@Listen("onClick = #btnCarta")
 	public void generarReporte() {
 		try {
 			Listitem listitem = lbxTraslado.getSelectedItem();
@@ -458,5 +468,27 @@ public class CHistoricoTraslado extends CGenerico {
 
 		semaforoLista();
 	}
+	}
+	
+	@Listen("onClick = #btnCambiarEstado")
+	public void cambiarEstado() {
+		if (lbxTraslado.getSelectedItem() != null){
+		Bitacora bitacora = lbxTraslado.getSelectedItem().getValue();
+		if (bitacora != null ) {
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("bitacora", bitacora);
+			Label label = (Label) lbxTraslado.getSelectedItem().getChildren().get(3).getFirstChild();
+			map.put("motivo", label.getValue());
+			Sessions.getCurrent().setAttribute("itemsCatalogo", map);
+			wdwEstadoTraslado = (Window) Executions.createComponents(
+					"public/vistas/transacciones/estados-traslado.zul", null,
+					map);
+			wdwEstadoTraslado.doModal();
+		}
+		}
+		else {
+			Messagebox.show(Constantes.mensajeSeleccionarRegistro, "Alerta",
+					Messagebox.OK, Messagebox.EXCLAMATION);
+		}
 	}
 }

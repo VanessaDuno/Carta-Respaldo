@@ -125,3 +125,17 @@
  .z-button:hover {
     background: #1e81c3;
 }
+
+.label-fechaEstado {
+	font-size: 14px; 
+	color: #960309; 
+	font-weight: 600;
+	margin-left: 18%;
+}
+
+.label-validar {
+	font-style: italic;
+    font-weight: bold;
+    font-size: 13px;
+    padding-top: 10px;
+}

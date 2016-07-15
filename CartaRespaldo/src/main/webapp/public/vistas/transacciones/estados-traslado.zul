@@ -1,0 +1,164 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window title="Seguimiento del caso" border="normal"
+		id="wdwEstadoTraslado" closable="true" width="800px" height="100%"
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CEstadosSolicitud">
+		<separator></separator>
+		<separator></separator>
+		<groupbox>
+			<caption label="Datos del Paciente"
+				style=" font-size: 16px; font-style: italic; font-weight: 600;">
+			</caption>
+			<grid zclass="none">
+				<columns>
+					<column width="15%"></column>
+					<column width="35%"></column>
+					<column width="15%"></column>
+					<column width="35%"></column>
+				</columns>
+				<rows>
+					<row>
+						<label value="Nombre:"
+							style="font-weight: 600;">
+						</label>
+						<label id="lblPaciente"></label>
+						<label value="Rut:" style="font-weight: 600;"></label>
+						<label id="lblRut"></label>
+
+					</row>
+					<row>
+						<label value="Motivo:"
+							style="font-weight: 600;">
+						</label>
+						<label id="lblMotivo"></label>
+						<label value="Diagnóstico:"
+							style="font-weight: 600;">
+						</label>
+						<label id="lblDiagnostico"></label>
+					</row>
+				</rows>
+			</grid>
+		</groupbox>
+		<separator></separator>
+		<hbox widths="20%,20%,20%,20%,20%" width="100%">
+			<div class="alert alert-info" id="divPrimerEstado"
+				style=" margin-right: 10px;padding: 10px;">
+				<label id="lblPrimerEstado"></label>
+			</div>
+			<div class="alert alert-info" id="divSegundoEstado"
+				style=" margin-right: 10px;padding: 10px;">
+				<label id="lblSegundoEstado"></label>
+			</div>
+			<div class="alert alert-info" id="divTercerEstado"
+				style=" margin-right: 10px;padding: 10px;">
+				<label id="lblTercerEstado"></label>
+			</div>
+			<div class="alert alert-info" id="divCuartoEstado"
+				style=" margin-right: 10px;padding: 10px;">
+				<label id="lblCuartoEstado"></label>
+			</div>
+			<div class="alert alert-info" id="divQuintoEstado"
+				style=" margin-right: 10px;padding: 10px;">
+				<label id="lblQuintoEstado"
+					style="    font-size: 13px;">
+				</label>
+			</div>
+		</hbox>
+		<hbox widths="20%,20%,20%,20%, 20%" width="100%">
+			<label class="label-fechaEstado"
+				id="lblFechaPrimerEstado">
+			</label>
+			<label class="label-fechaEstado"
+				id="lblFechaSegundoEstado">
+			</label>
+			<label class="label-fechaEstado"
+				id="lblFechaTercerEstado">
+			</label>
+			<label class="label-fechaEstado"
+				id="lblFechaCuartoEstado">
+			</label>
+			<label class="label-fechaEstado"
+				id="lblFechaQuintoEstado">
+			</label>
+		</hbox>
+		<image id="imgEstado" style="width: 763px;"></image>
+		<separator></separator>
+		<separator></separator>
+		<groupbox>
+			<caption label="Cambio de Estado"></caption>
+			<grid>
+				<rows>
+					<row id="rowAnulacion" visible="false">
+						<label class="etiqueta"
+							value="Ingrese del motivo en caso de anulación:" />
+						<textbox id="txtMotivoAnulacion" rows="2"></textbox>
+					</row>
+					<row id="rowAdjuntar" visible="false">
+						<label class="etiqueta"
+							value="Adjuntar carta firmada:" />
+						<button
+							upload="true,maxsize=6144, multiple=true" id="fudCarta"
+							class="btn" tooltiptext="Adjunte la carta respaldo firmada"
+							image="/public/imagenes/botones/cargar.png" />
+					</row>
+					<row id="rowCierreClinico" visible="false">
+						<label value="Epicrisis médica"></label>
+						<textbox id="txtEpicrisis" rows="3"></textbox>
+					</row>
+					<row id="rowCierreClinicoObs" visible="false">
+						<label value="Observación"></label>
+						<textbox id="txtObservacionCierreClinico"
+							rows="3">
+						</textbox>
+					</row>
+					<row id="rowCierreAdministrativo" visible="false">
+						<label value="ID de cuenta:"></label>
+						<textbox id="txtRecepcionCuenta"></textbox>
+					</row>
+					<row id="rowCierreAdministrativoPdf"
+						visible="false">
+						<label class="etiqueta"
+							value="Adjuntar pdf cuenta:" />
+						<button
+							upload="true,maxsize=6144, multiple=true" id="fudCuenta"
+							class="btn" tooltiptext="Adjunte pdf de la cuenta"
+							image="/public/imagenes/botones/cargar.png" />
+					</row>
+				</rows>
+			</grid>
+			<div id="divAdjuntar" align="center" visible="false">
+				<image id="imagen" style="width:400px;height: 360px"
+					visible="false" />
+			</div>
+			<div class="alert alert-info" id="divCierreAdministrativo"
+				style=" margin-right: 10px;padding: 10px;" visible="false">
+				<label id="lblCierreAdministrativo">
+				</label>
+			</div>
+			<div  align="center" >
+			<iframe style="width:600px;height: 322px" visible="false" id= "ifmPdf">
+			</iframe>
+			</div>
+		</groupbox>
+		<checkbox class="label-validar" id="ckbxValidar"
+			label="Valida la Carta de Respaldo y su contenido" visible="false">
+		</checkbox>
+		<separator></separator>
+		<separator></separator>
+		<separator></separator>
+		<separator></separator>
+		<div align="center">
+			<button id="btnAceptar" class="btn btn-default"
+				image="/public/imagenes/botones/aceptar.png">
+			</button>
+			<button id="btnRechazar" label="Anular"
+				class="btn btn-default" visible="false"
+				image="/public/imagenes/botones/rechazar.png">
+			</button>
+			<button label="Cancelar" id="btnCancelar"
+				class="btn btn-default"
+				image="/public/imagenes/botones/rechazar.png">
+			</button>
+		</div>
+	</window>
+</zk>

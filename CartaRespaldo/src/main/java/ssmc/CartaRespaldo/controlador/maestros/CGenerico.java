@@ -175,7 +175,6 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 		log.debug(new StringBuilder().append(
 				"Fin del metodo nombreUsuarioSesion(), retorna:").append(
 				sesion.getName()));
-		ipValida("123123123123");
 		return sesion.getName();
 	}
 
@@ -472,8 +471,9 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 
 	public String cortarCadena(String cadena) {
 		int posicion = cadena.indexOf("(");
+		int posicionF = cadena.indexOf(")");
 		if (posicion != -1) {
-			cadena = cadena.substring(0, posicion);
+			cadena = cadena.substring(0, posicion) + " " + cadena.substring(posicionF+1, cadena.length()) ;
 		}
 		return cadena;
 	}
@@ -525,27 +525,15 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 		log.setFecha(fechaSistema);
 		servicioLog.guardar(log);
 	}
-
-	public void ipValida(String cadena) {
-		String n1 = "";
-		String n2 = "";
-		String n3 = "";
-		String n4 = "";
-		int tamannoCadena = cadena.length();
-		if (tamannoCadena == 12) {
-			n1 = cadena.substring(0, 2);
-			n2 = cadena.substring(3, 5);
-			n3 = cadena.substring(6, 8);
-			n4 = cadena.substring(9, 11);
-			if (Integer.valueOf(n1) <= 255 && Integer.valueOf(n2) <= 255
-					&& Integer.valueOf(n3) <= 255 && Integer.valueOf(n4) <= 255) {
-				System.out.println(n1 + "." + n2 + "." + n3  + "." + n4 );
-			}
-		}
-		else {
-		for (int i = 0; i < cadena.length(); i++) {
-		
-		}
-		}
+	
+	public String formatearNombre (String nombre){
+		char[] caracteres = nombre.toCharArray();
+		caracteres[0] = Character.toUpperCase(caracteres[0]);
+		 for (int i = 0; i < nombre.length()- 2; i++) 
+			    if (caracteres[i] == ' ' || caracteres[i] == '.' || caracteres[i] == ',')
+			      caracteres[i + 1] = Character.toUpperCase(caracteres[i + 1]);
+		return new String(caracteres);
 	}
+
+
 }
