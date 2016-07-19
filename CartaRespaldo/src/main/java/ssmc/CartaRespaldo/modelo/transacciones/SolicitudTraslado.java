@@ -67,9 +67,6 @@ public class SolicitudTraslado implements Serializable{
 	@Column(name= "id_ugcc")
 	private String idUgcc; 
 	
-//	@Column(name ="documento_ugcc")
-//	private byte [] documentoUgcc; 
-	
 	public SolicitudTraslado() {
 	}
 

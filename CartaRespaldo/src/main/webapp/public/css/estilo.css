@@ -139,3 +139,20 @@
     font-size: 13px;
     padding-top: 10px;
 }
+
+.div-estados-inhabilitados {
+	background-color: #f5f2f2;
+	border-color: #c7c7c7;
+	color: #777272;
+	padding: 10px;
+	border: 1px solid rgba(140, 137, 137, 0.14)
+}
+
+.row-paciente .z-row-inner{
+	padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.label-datos-paciente{
+	 font-weight: bold;
+}

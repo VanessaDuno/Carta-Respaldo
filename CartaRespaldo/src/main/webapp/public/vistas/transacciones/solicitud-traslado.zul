@@ -30,17 +30,23 @@
 							<hbox></hbox>
 						</row>
 						<row>
-							<label id = "lblFiltrosEstableciminto" value="Filtros establecimiento" visible="false"></label>
-							<textbox id="txtBusquedaEstablecimiento" placeholder="Nombre del establecimiento" visible="false"></textbox>
-							<textbox id="txtBusquedaRutEstablecimiento" placeholder="Rut del establecimiento" visible="false"></textbox>
+							<label id="lblFiltrosEstableciminto"
+								value="Filtros establecimiento" visible="false">
+							</label>
+							<textbox id="txtBusquedaEstablecimiento"
+								placeholder="Nombre del establecimiento" visible="false">
+							</textbox>
+							<textbox id="txtBusquedaRutEstablecimiento"
+								placeholder="Rut del establecimiento" visible="false">
+							</textbox>
 							<hbox></hbox>
 						</row>
 						<row>
 							<label id="lblEstablecimiento"
 								value="Establecimiento" visible="false">
 							</label>
-							<combobox id="cmbEstablecimiento" readonly="true"
-								width="100%" visible="false" class="combo">
+							<combobox id="cmbEstablecimiento"
+								readonly="true" width="100%" visible="false" class="combo">
 								<template name="model">
 									<comboitem label="${each.nombre}"
 										context="${each.id}">
@@ -99,7 +105,45 @@
 								</textbox>
 							</hbox>
 						</row>
-						<row>
+						<row class="row-paciente" id="row1Paciente"
+							visible="false">
+							<label value="Primer apellido"></label>
+							<label id="lblPrimerApellido" class= "label-datos-paciente"></label>
+							<label value="Segundo apellido"></label>
+							<label id="lblSegundoApellido" class= "label-datos-paciente"></label>
+						</row>
+						<row class="row-paciente" id="row2Paciente"
+							visible="false">
+							<label value="Nombres"></label>
+							<label id="lblNombres" class= "label-datos-paciente"></label>
+							<label value="Fecha de Nacimiento"></label>
+							<label id="lblFechaNacimiento" class= "label-datos-paciente"></label>
+						</row>
+						<row class="row-paciente" id="row3Paciente"
+							visible="false">
+							<label value="Genero"></label>
+							<label id="lblGenero" class= "label-datos-paciente"></label>
+							<label value="Comuna"></label>
+							<label id="lblComuna" class= "label-datos-paciente"></label>
+						</row>
+						<row class="row-paciente" id="row4Paciente"
+							visible="false">
+							<label value="Dirección"></label>
+							<label id="lblDireccion" class= "label-datos-paciente"></label>
+							<label value="Teléfono"></label>
+							<label id="lblTelefono" class= "label-datos-paciente"></label>
+						
+						</row>
+						<row class="row-paciente" id="row5Paciente"
+							visible="false">
+							<label value="Previsión"></label>
+							<label id="lblPrevision" class= "label-datos-paciente"></label>
+							<hbox></hbox><hbox></hbox>
+						</row>
+
+						<!--  Antes  -->
+
+						<row visible="false">
 							<label value="Primer nombre"></label>
 							<textbox id="txtPrimerNombrePaciente"
 								c:onKeyPress="return soloLetras()">
@@ -109,7 +153,7 @@
 								c:onKeyPress="return soloLetras()">
 							</textbox>
 						</row>
-						<row>
+						<row visible="false">
 							<label value="Primer apellido"></label>
 							<textbox id="txtPrimerApellidoPaciente"
 								c:onKeyPress="return soloLetras()">
@@ -119,7 +163,7 @@
 								c:onKeyPress="return soloLetras()">
 							</textbox>
 						</row>
-						<row>
+						<row visible="false">
 							<label value="Fecha de Nacimiento"></label>
 							<datebox id="dtbFechaNacPaciente"
 								readonly="true">
@@ -133,7 +177,7 @@
 								</template>
 							</combobox>
 						</row>
-						<row>
+						<row visible="false">
 							<label value="Región"></label>
 							<combobox id="cmbRegionPaciente"
 								readonly="true">
@@ -153,7 +197,7 @@
 								</template>
 							</combobox>
 						</row>
-						<row>
+						<row visible="false">
 							<label value="Comuna"></label>
 							<combobox id="cmbComuna" readonly="true">
 								<template name="model">
@@ -165,7 +209,7 @@
 							<label value="Dirección"></label>
 							<textbox id="txtDireccionPaciente"></textbox>
 						</row>
-						<row>
+						<row visible="false">
 							<label value="Teléfono"></label>
 							<textbox id="txtTelefonoPaciente"
 								c:onKeyPress="return soloNumero()">
@@ -236,12 +280,12 @@
 							<label value="ID de UGCC"></label>
 							<hbox>
 								<textbox id="txtIdUgcc"></textbox>
-<!-- 								<button id="btnIdUgcc" -->
-<!-- 									class="botonAdjuntar" label="Adjuntar" -->
-<!-- 									upload="true,maxsize=6144, multiple=true" > -->
-<!-- 								</button> -->
-<!-- 								<label  id= "lblNombreArchivo"  -->
-<!-- 								style="color: #a94442;font-weight: 600; font-size: 13px;margin-left: 5px;"></label> -->
+								<!-- 								<button id="btnIdUgcc" -->
+								<!-- 									class="botonAdjuntar" label="Adjuntar" -->
+								<!-- 									upload="true,maxsize=6144, multiple=true" > -->
+								<!-- 								</button> -->
+								<!-- 								<label  id= "lblNombreArchivo"  -->
+								<!-- 								style="color: #a94442;font-weight: 600; font-size: 13px;margin-left: 5px;"></label> -->
 							</hbox>
 
 						</row>

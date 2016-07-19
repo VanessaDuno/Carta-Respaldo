@@ -42,5 +42,9 @@ public class SComuna {
 		return iComunaDAO.findOne(id);
 	}
 	
+	public Comuna buscarCodigo (int codigo){
+		return iComunaDAO.findByCodigo(codigo); 
+	}
+	
 	
 }

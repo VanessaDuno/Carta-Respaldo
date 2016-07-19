@@ -29,6 +29,10 @@ import ssmc.CartaRespaldo.modelo.seguridad.Usuario;
 /**
  * CResponsableEstablecimiento
  * 
+ * Controlador encargado de realizar las funciones necesarias para agregar y
+ * actualizar cargos responsables firmantes de las cartas respaldo por
+ * establecimientos
+ * 
  * @author Vanessa Maria Duno
  * @version 1.0
  * 
@@ -42,11 +46,11 @@ public class CResponsableEstablecimiento extends CGenerico {
 	@Wire
 	private Div botoneraResponsables;
 	@Wire
-	private Window wdwResponsables; 
+	private Window wdwResponsables;
 	@Wire
-	private Div  divError; 
+	private Div divError;
 	@Wire
-	private Label lblError; 
+	private Label lblError;
 	Botonera botonera;
 	/**
 	 * 
@@ -56,8 +60,8 @@ public class CResponsableEstablecimiento extends CGenerico {
 			.getLogger(ssmc.CartaRespaldo.controlador.maestros.CResponsableEstablecimiento.class);
 	private List<Cargo> listaCargos = new ArrayList<Cargo>();
 	private List<CargosEstablecimiento> cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
-	List<CargosEstablecimiento> cargosRegistrados = new ArrayList<CargosEstablecimiento>(); 
-	Usuario usuario= new Usuario();
+	List<CargosEstablecimiento> cargosRegistrados = new ArrayList<CargosEstablecimiento>();
+	Usuario usuario = new Usuario();
 
 	Establecimiento establecimiento = new Establecimiento();
 
@@ -65,7 +69,8 @@ public class CResponsableEstablecimiento extends CGenerico {
 	public void inicializar() throws IOException {
 		llenarListas();
 		establecimiento = usuarioActivo().getEstablecimiento();
-		buscarCargos();marcarCargos();
+		buscarCargos();
+		marcarCargos();
 		botonera = new Botonera() {
 
 			@Override
@@ -97,11 +102,15 @@ public class CResponsableEstablecimiento extends CGenerico {
 	}
 
 	public void llenarListas() {
+		log.info("Inicio del metodo llenarListas()");
 		listaCargos = servicioCargo.buscarTodos();
 		lbxCargos.setModel(new ListModelList<Cargo>(listaCargos));
 		multiple();
-		usuario = usuarioActivo(); 
+		usuario = usuarioActivo();
 		spnFirmas.setValue(usuario.getEstablecimiento().getCantidadFirmantes());
+		log.debug(new StringBuilder(
+				"Fin del metodo llenarListas(), con objetos").append(
+				listaCargos.toString()).append(usuario));
 	}
 
 	public void multiple() {
@@ -115,7 +124,7 @@ public class CResponsableEstablecimiento extends CGenerico {
 		spnFirmas.setValue(0);
 		divError.setVisible(false);
 		llenarListas();
-		
+
 	}
 
 	public boolean validarCampos() {
@@ -126,7 +135,20 @@ public class CResponsableEstablecimiento extends CGenerico {
 		}
 	}
 
+	/**
+	 * obtenerCargos: Metodo que obtiene los cargos firmantes de un
+	 * establecimiento
+	 * 
+	 * @param No
+	 *            Recibe ningun parametro
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	public void obtenerCargos() {
+		log.info("Inicio del metodo obtenerCargos()");
 		Set<Listitem> listItem = lbxCargos.getSelectedItems();
 		for (java.util.Iterator<Listitem> it = listItem.iterator(); it
 				.hasNext();) {
@@ -137,9 +159,25 @@ public class CResponsableEstablecimiento extends CGenerico {
 			cargoEs.setEstablecimiento(establecimiento);
 			cargosEstablecimiento.add(cargoEs);
 		}
+		log.debug(new StringBuilder(
+				"Fin de metodo obtenerCargos(), con cargos:")
+				.append(cargosEstablecimiento));
 	}
 
+	/**
+	 * guardarCargos: Metodo que guarda los cargos configurados a un
+	 * establecimiento
+	 * 
+	 * @param No
+	 *            Recibe ningun parametro
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	public void guardarCargos() {
+		log.info("Inicio del metodo guardarCargos()");
 		eliminarCargos();
 		obtenerCargos();
 		if (validarCampos()) {
@@ -152,44 +190,60 @@ public class CResponsableEstablecimiento extends CGenerico {
 					CargosEstablecimiento ce = cargosEstablecimiento.get(i);
 					servicioCargoEstablecimiento.guardar(ce);
 				}
+				log.debug(new StringBuilder(
+						"Exito del metodo guardar con datos").append(
+						establecimiento).append(cargosEstablecimiento));
 				Messagebox.show(Constantes.mensajeRegistroGuardado,
 						"Información", Messagebox.OK, Messagebox.INFORMATION);
-
-				//limpiarCampos();
-			}
-			else {
+			} else {
 				divError.setVisible(true);
-				lblError.setValue("La cantidad de cargos configurado debe coincidir con el numero de cargos seleccionados");
+				lblError.setValue(Constantes.mensajeErrorCargos);
 			}
-		}
-		else{
+		} else {
 			divError.setVisible(true);
 			lblError.setValue(Constantes.mensajeCamposVacios);
 		}
 		cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
 	}
-	
-	public void buscarCargos (){
-		cargosRegistrados = new ArrayList<CargosEstablecimiento>(); 
-		cargosRegistrados = servicioCargoEstablecimiento.cargosEstablecimientos(usuario.getEstablecimiento().getId()); 
+
+	public void buscarCargos() {
+		log.info("Inicio del metodo buscarCargos()");
+		cargosRegistrados = new ArrayList<CargosEstablecimiento>();
+		cargosRegistrados = servicioCargoEstablecimiento
+				.cargosEstablecimientos(usuario.getEstablecimiento().getId());
+		log.info("Fin del metodo buscarCargos()");
 	}
-	
-	public void marcarCargos (){
+
+	/**
+	 * marcarCargos: Metodo que marca en la lista multiple los cargos
+	 * configurados por el estableciemiento
+	 * 
+	 * @param No
+	 *            Recibe ningun parametro
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
+	public void marcarCargos() {
+		log.info("Inicio del metodo marcarCargos()");
 		lbxCargos.renderAll();
 		for (int i = 0; i < cargosRegistrados.size(); i++) {
-			Cargo cargo = cargosRegistrados.get(i).getCargo(); 
-			
+			Cargo cargo = cargosRegistrados.get(i).getCargo();
+
 			for (int g = 0; g < lbxCargos.getItemCount(); g++) {
 				Listitem listItem = lbxCargos.getItemAtIndex(g);
 				Cargo c = listItem.getValue();
-				if (c.getId() == cargo.getId()){
+				if (c.getId() == cargo.getId()) {
 					listItem.setSelected(true);
-				}
 				}
 			}
 		}
-	
-	public void eliminarCargos (){
+		log.info("Fin del metodo marcarCargos()");
+	}
+
+	public void eliminarCargos() {
 		servicioCargoEstablecimiento.eliminarCargos(cargosRegistrados);
 	}
 }

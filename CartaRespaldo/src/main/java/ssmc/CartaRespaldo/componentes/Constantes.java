@@ -63,6 +63,8 @@ public class Constantes {
 	public static String mensajeLoginExiste = "El login ya existe.";
 	public static String rutaReinicioPassword= "/public/vistas/seguridad/VReinicioPassword.zul"; 
 	public static String rutaCambioPassword = "/public/vistas/seguridad/cambiar-password.zul"; 
+	public static String mensajeErrorCargos = "La cantidad de cargos configurado debe coincidir con el numero de cargos seleccionados"; 
+	public static String mensajeRutNoExisteFonasa = "El Rut ingresado no esta inscrito en FONASA"; 
 	
 	
 	/** Carta Respaldo **/
@@ -94,6 +96,21 @@ public class Constantes {
 	public static int canal = 1;
 	public static int tipoEmisor = 1;
 	public static int tipoUsuario = 1; 
+	public static int entidad = 61606800;
+	public static int claveEntidad = 6160; 
+	
+	/** Rutas **/
+	
+	public static String rutaEstadoCreada = "/public/imagenes/generales/creada.png";
+	public static String rutaEstadoTraslado = "/public/imagenes/generales/traslado.png";
+	public static String rutaEstadoAnulada = "/public/imagenes/generales/anulada.png";
+	public static String rutaEstadoPorValidar =  "/public/imagenes/generales/por_validar.png";
+	public static String rutaEstadoCierreClinico = "/public/imagenes/generales/cierre_clinico.png";
+	public static String rutaEstadoCierreAdministrativo = "/public/imagenes/generales/cierre_administrativo.png"; 
+	public static String rutaAplicacionServidor = "\\eclipseApps\\CartaRespaldo\\public\\temporal\\generado";
+	public static String rutaDirectorioTemporal = "public/temporal/generado"; 
+	public static String extensionPdf = ".pdf"; 
+			
 	
 	
 }

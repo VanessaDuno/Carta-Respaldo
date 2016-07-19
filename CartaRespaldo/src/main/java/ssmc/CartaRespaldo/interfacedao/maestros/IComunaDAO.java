@@ -16,5 +16,7 @@ import ssmc.CartaRespaldo.modelo.maestros.Comuna;
 public interface IComunaDAO extends JpaRepository<Comuna, Integer> {
 	
 	public List<Comuna> findByProvinciaId (int idProvincia); 
+	
+	public Comuna findByCodigo(int codigo); 
 
 }

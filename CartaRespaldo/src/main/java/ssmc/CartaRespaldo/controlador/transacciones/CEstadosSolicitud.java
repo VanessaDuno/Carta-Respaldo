@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
@@ -36,7 +37,12 @@ import ssmc.CartaRespaldo.enums.EnumEstadoSolicitud;
 import ssmc.CartaRespaldo.modelo.transacciones.Bitacora;
 
 /**
+ * CEstadosSolicitud
+ * 
+ * Controlador encargado de realizar los cambios de estado de un traslado
+ * 
  * @author Vanessa Maria Duno
+ * @version 1.0
  * 
  */
 public class CEstadosSolicitud extends CGenerico {
@@ -45,6 +51,8 @@ public class CEstadosSolicitud extends CGenerico {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private final static Logger log = Logger
+			.getLogger(ssmc.CartaRespaldo.controlador.transacciones.CEstadosSolicitud.class);
 
 	private Bitacora bitacora = new Bitacora();
 	@Wire
@@ -131,64 +139,90 @@ public class CEstadosSolicitud extends CGenerico {
 
 	@Override
 	public void inicializar() throws IOException {
+		log.info("Metodo inicializar ()");
 		HashMap<String, Object> map = (HashMap<String, Object>) Sessions
 				.getCurrent().getAttribute("itemsCatalogo");
 		if (map != null) {
 			bitacora = (Bitacora) map.get("bitacora");
 			String motivo = (String) map.get("motivo");
 			seguimientoEstado();
-			lblPaciente.setValue(formatearNombre(bitacora.getTraslado().getPaciente()
-					.getNombres()
-					+ " "
-					+ bitacora.getTraslado().getPaciente().getPrimerApellido()));
+			lblPaciente
+					.setValue(formatearNombre(bitacora.getTraslado()
+							.getPaciente().getNombres()
+							+ " "
+							+ bitacora.getTraslado().getPaciente()
+									.getPrimerApellido()));
 			lblRut.setValue(bitacora.getTraslado().getPaciente().getRut());
 			lblDiagnostico.setValue(bitacora.getTraslado().getDiagnostico());
 			lblMotivo.setValue(cortarCadena(motivo));
-
 		}
+		log.info("Fin del metodo inicializar()");
 
 	}
 
+	/**
+	 * llenarEstados: Metodo asigna valores a las etiquetas de cada estado
+	 * 
+	 * @param No
+	 *            Recibe ningun parametro
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	public void llenarEstados() {
+		log.info("Inicio del metodo llenarEstados()");
 		lblPrimerEstado.setValue(EnumEstadoSolicitud.CREADA.getEstado());
 		lblSegundoEstado.setValue(EnumEstadoSolicitud.PORVALIDAR.getEstado());
 		lblTercerEstado.setValue(EnumEstadoSolicitud.TRASLADO.getEstado());
 		lblCuartoEstado.setValue(EnumEstadoSolicitud.CIERRECLINICO.getEstado());
 		lblQuintoEstado.setValue(EnumEstadoSolicitud.CIERREADMINISTRATIVO
 				.getEstado());
+		lblQuintoEstado.setStyle("font-size:12px;");
+		log.info("Fin del metodo llenarEstados()");
 	}
 
+	/**
+	 * seguimientoEstado: Metodo que verifica el estado de la bitacora
+	 * seleccionada, da estilos necesarios a la vista y muestra los componentes
+	 * necesarios para cada estado.
+	 * 
+	 * @param No
+	 *            Recibe ningun parametro
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	public void seguimientoEstado() {
+		log.info("Inicio del metodo seguimientoEstado()");
 		llenarEstados();
 		if (bitacora.getEstatus()
 				.equals(EnumEstadoSolicitud.CREADA.getEstado())) {
-			imgEstado.setSrc("/public/imagenes/generales/creada.png");
-			divSegundoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
-			divTercerEstado
-					.setStyle("background-color: #f5f2f2; border-color: #c7c7c7;color: #777272;padding: 10px;");
-			divCuartoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
-			divQuintoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
-			btnAceptar.setLabel("Por Validar");
+			imgEstado.setSrc(Constantes.rutaEstadoCreada);
+			divSegundoEstado.setClass("div-estados-inhabilitados");
+			divTercerEstado.setClass("div-estados-inhabilitados");
+			divCuartoEstado.setClass("div-estados-inhabilitados");
+			divQuintoEstado.setClass("div-estados-inhabilitados");
+			btnAceptar.setLabel(EnumEstadoSolicitud.PORVALIDAR.getEstado());
 			btnRechazar.setVisible(true);
 			rowAdjuntar.setVisible(true);
 			divAdjuntar.setVisible(true);
-			rowAnulacion.setVisible(true); 
+			rowAnulacion.setVisible(true);
 			lblFechaPrimerEstado.setValue(formatoFecha.format(bitacora
 					.getFecha()));
 			imagen.setHeight("310px");
+			log.info(new StringBuilder("El registro esta en estatus:")
+					.append(EnumEstadoSolicitud.CREADA.getEstado()));
 
 		} else if (bitacora.getEstatus().equals(
 				EnumEstadoSolicitud.PORVALIDAR.getEstado())) {
-			imgEstado.setSrc("/public/imagenes/generales/por_validar.png");
-			divTercerEstado
-					.setStyle("background-color: #f5f2f2; border-color: #c7c7c7;color: #777272;padding: 10px;");
-			divCuartoEstado
-					.setStyle("background-color: #f5f2f2; border-color: #c7c7c7;color: #777272;padding: 10px;");
-			divQuintoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
+			imgEstado.setSrc(Constantes.rutaEstadoPorValidar);
+			divTercerEstado.setClass("div-estados-inhabilitados");
+			divCuartoEstado.setClass("div-estados-inhabilitados");
+			divQuintoEstado.setClass("div-estados-inhabilitados");
 			btnAceptar.setLabel("Validar");
 			btnRechazar.setVisible(false);
 			divAdjuntar.setVisible(true);
@@ -211,16 +245,15 @@ public class CEstadosSolicitud extends CGenerico {
 									bitacora.getTraslado().getId(),
 									EnumEstadoSolicitud.CREADA.getEstado())
 							.getFecha()));
-
+			log.info(new StringBuilder("El registro esta en estatus:")
+					.append(EnumEstadoSolicitud.PORVALIDAR.getEstado()));
 		} else if (bitacora.getEstatus().equals(
 				EnumEstadoSolicitud.TRASLADO.getEstado())) {
 
-			imgEstado.setSrc("/public/imagenes/generales/traslado.png");
-			divCuartoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
-			divQuintoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
-			btnAceptar.setLabel("Cierre clínico");
+			imgEstado.setSrc(Constantes.rutaEstadoTraslado);
+			divCuartoEstado.setClass("div-estados-inhabilitados");
+			divQuintoEstado.setClass("div-estados-inhabilitados");
+			btnAceptar.setLabel(EnumEstadoSolicitud.CIERRECLINICO.getEstado());
 			btnRechazar.setVisible(false);
 			rowCierreClinico.setVisible(true);
 			rowCierreClinicoObs.setVisible(true);
@@ -237,17 +270,16 @@ public class CEstadosSolicitud extends CGenerico {
 					.buscarTrasladooEstado(bitacora.getTraslado().getId(),
 							EnumEstadoSolicitud.PORVALIDAR.getEstado())
 					.getFecha()));
+			log.info(new StringBuilder("El registro esta en estatus:")
+					.append(EnumEstadoSolicitud.TRASLADO.getEstado()));
 
 		} else if (bitacora.getEstatus().equals(
 				EnumEstadoSolicitud.ANULADA.getEstado())) {
-			imgEstado.setSrc("/public/imagenes/generales/anulada.png");
+			imgEstado.setSrc(Constantes.rutaEstadoAnulada);
 			divSegundoEstado.setClass("alert alert-danger");
-			divTercerEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
-			divCuartoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
-			divQuintoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
+			divTercerEstado.setClass("div-estados-inhabilitados");
+			divCuartoEstado.setClass("div-estados-inhabilitados");
+			divQuintoEstado.setClass("div-estados-inhabilitados");
 			btnAceptar.setVisible(false);
 			lblFechaPrimerEstado
 					.setValue(formatoFecha.format(servicioBitacora
@@ -255,21 +287,25 @@ public class CEstadosSolicitud extends CGenerico {
 									bitacora.getTraslado().getId(),
 									EnumEstadoSolicitud.CREADA.getEstado())
 							.getFecha()));
-			lblFechaSegundoEstado.setValue(formatoFecha.format(bitacora.getFecha()));
-			lblSegundoEstado.setValue("Anulada");
+			lblFechaSegundoEstado.setValue(formatoFecha.format(bitacora
+					.getFecha()));
+			lblSegundoEstado.setValue(EnumEstadoSolicitud.ANULADA.getEstado());
 			wdwEstadoTraslado.setHeight("65%");
 			divCierreAdministrativo.setVisible(true);
-			lblCierreAdministrativo.setValue("Motivo del anulación:" + bitacora.getMotivoAnulacion());
+			lblCierreAdministrativo.setValue("Motivo del anulación:"
+					+ bitacora.getMotivoAnulacion());
+			log.info(new StringBuilder("El registro esta en estatus:")
+					.append(EnumEstadoSolicitud.ANULADA.getEstado()));
 
 		} else if (bitacora.getEstatus().equals(
 				EnumEstadoSolicitud.CIERRECLINICO.getEstado())) {
-			divQuintoEstado
-					.setStyle("background-color: #f5f2f2;border-color: #c7c7c7;color: #777272;padding: 10px;");
-			imgEstado.setSrc("/public/imagenes/generales/cierre_clinico.png");
+			divQuintoEstado.setClass("div-estados-inhabilitados");
+			imgEstado.setSrc(Constantes.rutaEstadoCierreClinico);
 			btnRechazar.setVisible(false);
 			lblFechaCuartoEstado.setValue(formatoFecha.format(bitacora
 					.getFecha()));
-			btnAceptar.setLabel("Cierre administrativo");
+			btnAceptar.setLabel(EnumEstadoSolicitud.CIERREADMINISTRATIVO
+					.getEstado());
 			lblFechaPrimerEstado
 					.setValue(formatoFecha.format(servicioBitacora
 							.buscarTrasladooEstado(
@@ -286,10 +322,11 @@ public class CEstadosSolicitud extends CGenerico {
 					.getFecha()));
 			rowCierreAdministrativo.setVisible(true);
 			rowCierreAdministrativoPdf.setVisible(true);
+			log.info(new StringBuilder("El registro esta en estatus:")
+					.append(EnumEstadoSolicitud.CIERRECLINICO.getEstado()));
 		} else if (bitacora.getEstatus().equals(
 				EnumEstadoSolicitud.CIERREADMINISTRATIVO.getEstado())) {
-			imgEstado
-					.setSrc("/public/imagenes/generales/cierre_administrativo.png");
+			imgEstado.setSrc(Constantes.rutaEstadoCierreAdministrativo);
 			btnAceptar.setVisible(false);
 			btnRechazar.setVisible(false);
 			lblFechaQuintoEstado.setValue(formatoFecha.format(bitacora
@@ -314,13 +351,32 @@ public class CEstadosSolicitud extends CGenerico {
 					.buscarTrasladooEstado(bitacora.getTraslado().getId(),
 							EnumEstadoSolicitud.CIERRECLINICO.getEstado())
 					.getFecha()));
-			divCierreAdministrativo.setVisible(true); 
-			lblCierreAdministrativo.setValue("La cuenta registrada es: " + bitacora.getCuenta());
+			divCierreAdministrativo.setVisible(true);
+			lblCierreAdministrativo.setValue("La cuenta registrada es: "
+					+ bitacora.getCuenta());
 			mostrarPdf(bitacora);
+			log.info(new StringBuilder("El registro esta en estatus:")
+					.append(EnumEstadoSolicitud.CIERREADMINISTRATIVO
+							.getEstado()));
 		}
+		log.info("Fin del metodo seguimientoEstado()");
 	}
 
+	/**
+	 * mostrarPdf: Metodo que busca convierte byte a un documento pdf y es
+	 * guardado en un archivo temporal del servidor para ser mostrado en el
+	 * estado de cierre administrativo
+	 * 
+	 * @param Recibe
+	 *            un objeto Bitacora
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	public void mostrarPdf(Bitacora bitacora) {
+		log.info("Inicio del metodo mostrarPdf()");
 		try {
 			int numero = (int) Math.random();
 			String ruta = System.getProperty("com.sun.aas.instanceRoot")
@@ -334,13 +390,27 @@ public class CEstadosSolicitud extends CGenerico {
 			File file = new File("ruta");
 			file.delete();
 		} catch (Exception e) {
+			log.error(new StringBuilder("Error en el metodo mostrarPdf()")
+					.append(e));
 			e.printStackTrace();
 		}
-
+		log.info("Fin del metodo mostrarPdf()");
 	}
 
+	/**
+	 * capturarCartaAdjuntada: Metodo que obtiene y muestra una imagen adjuntada
+	 * 
+	 * @param Recibe
+	 *            un objeto UploadEvent event
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws Dispara
+	 *             una excepcion de tipo IOException
+	 * 
+	 */
 	@Listen("onUpload = #fudCarta")
 	public void capturarCartaAdjuntada(UploadEvent event) throws IOException {
+		log.info("Inicio del metodo capturarCartaAdjuntada()");
 		media = event.getMedia();
 		if (Validador.validarTipoImagen(media)
 				&& Validador.validarTamannoImagen(media)) {
@@ -350,42 +420,88 @@ public class CEstadosSolicitud extends CGenerico {
 						.getByteData()));
 				imagen.setContent(imag);
 				imagen.setVisible(true);
+				log.info("Imagen Valida");
 			} else {
 				Messagebox.show(Constantes.imagenNoValida, "Alerta",
 						Messagebox.OK, Messagebox.EXCLAMATION);
+				log.error("Imagen no Valida");
 			}
+		} else {
+			Messagebox.show(Constantes.imagenNoValida, "Alerta", Messagebox.OK,
+					Messagebox.EXCLAMATION);
+			log.error("Imagen no Valida");
 		}
+		log.info("Fin del metodo capturarCartaAdjuntada()");
 	}
 
+	/**
+	 * capturarCuentaAdjuntada: Metodo que obtiene y muestra un PDF adjuntado
+	 * 
+	 * @param Recibe
+	 *            un objeto UploadEvent event
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws Dispara
+	 *             una excepcion de tipo IOException
+	 * 
+	 */
 	@Listen("onUpload = #fudCuenta")
 	public void capturarCuentaAdjuntada(UploadEvent event) throws IOException {
+		log.info("Inicio del metodo capturarCuentaAdjuntada()");
 		media = event.getMedia();
 		if (Validador.validarTipoDocumento(media)
 				&& Validador.validarTamannoDocumento(media)) {
 
 			ifmPdf.setContent(media);
 			ifmPdf.setVisible(true);
+			log.info("Documento Valido");
 		} else {
 			Messagebox.show(Constantes.documentoNoValido, "Alerta",
 					Messagebox.OK, Messagebox.EXCLAMATION);
+			log.error("Documento no Valido");
 		}
+		log.info("Fin del metodo capturarCuentaAdjuntada()");
 	}
 
+	/**
+	 * inhabilitarEstado: Metodo que coloca el estado anterior inactivo
+	 * 
+	 * @param No
+	 *            recibe ningun parametro
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	public void inhabilitarEstado() {
+		log.info("Inicio del metodo inhabilitarEstado()");
 		Bitacora b = servicioBitacora.buscarEstadoActivo(bitacora.getTraslado()
 				.getId(), true);
 		b.setActivo(false);
 		servicioBitacora.guardar(b);
+		log.info("Fin del metodo inhabilitarEstado()");
 	}
 
+	/**
+	 * cambiarEstado: Metodo que cambia el estado de una solicitud y guarda los
+	 * valores necesarios depende el estado
+	 * 
+	 * @param No
+	 *            recibe ningun parametro
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	@Listen("onClick = #btnAceptar")
 	public void cambiarEstado() {
-
+		log.info("Inicio del metodo cambiarEstado()");
 		Bitacora bq = new Bitacora();
 		bq.setActivo(true);
 		bq.setFecha(fechaHora);
 		bq.setTraslado(bitacora.getTraslado());
-
 		if (bitacora.getEstatus()
 				.equals(EnumEstadoSolicitud.CREADA.getEstado())) {
 			if (validarEstadoPorValidar()) {
@@ -449,15 +565,29 @@ public class CEstadosSolicitud extends CGenerico {
 						Messagebox.OK, Messagebox.EXCLAMATION);
 			}
 		}
+		log.info("Fin del metodo cambiarEstado()");
 	}
 
 	@Listen("onClick = #btnCancelar")
 	public void cancelar() {
 		wdwEstadoTraslado.onClose();
 	}
-	
+
+	/**
+	 * rechazarCaso: Metodo que cambia el estado de una solicitud a anulado y guarda los
+	 * valores necesarios de ese estado. 
+	 * 
+	 * @param No
+	 *            recibe ningun parametro
+	 * @return No Retorna ningun dato ni objeto
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	@Listen("onClick = #btnRechazar")
 	public void rechazarCaso() {
+		log.info("Inicio del metodo rechazarCaso()");
 		Bitacora bq = new Bitacora();
 		bq.setActivo(true);
 		bq.setFecha(fechaHora);
@@ -473,9 +603,8 @@ public class CEstadosSolicitud extends CGenerico {
 			Messagebox.show(Constantes.mensajeCamposVacios, "Advertencia",
 					Messagebox.OK, Messagebox.EXCLAMATION);
 		}
-
+		log.info("Fin del metodo rechazarCaso()");
 	}
-
 
 	public boolean validarEstadoPorValidar() {
 		if (media == null) {
@@ -509,13 +638,12 @@ public class CEstadosSolicitud extends CGenerico {
 			return true;
 		}
 	}
-	
-	public boolean validarAnulacion (){
-		if (txtMotivoAnulacion.getValue().equals("")){
+
+	public boolean validarAnulacion() {
+		if (txtMotivoAnulacion.getValue().equals("")) {
 			return false;
-		}
-		else{
-			return true; 
+		} else {
+			return true;
 		}
 	}
 

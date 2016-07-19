@@ -56,10 +56,9 @@ public class Paciente implements Serializable {
 
 	@Column(name = "domicilio")
 	private String domicilio;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_sexo")
-	private Sexo sexo;
+	
+	@Column(name = "sexo")
+	private String sexo;
 
 	@Column(name = "prevision")
 	private String prevision;
@@ -143,11 +142,11 @@ public class Paciente implements Serializable {
 		this.domicilio = domicilio;
 	}
 
-	public Sexo getSexo() {
+	public String getSexo() {
 		return sexo;
 	}
 
-	public void setSexo(Sexo sexo) {
+	public void setSexo(String sexo) {
 		this.sexo = sexo;
 	}
 

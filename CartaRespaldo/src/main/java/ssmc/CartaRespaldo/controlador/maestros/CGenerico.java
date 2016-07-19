@@ -1,6 +1,7 @@
 package ssmc.CartaRespaldo.controlador.maestros;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -59,6 +60,7 @@ import ssmc.CartaRespaldo.servicio.maestros.SServicioClinico;
 import ssmc.CartaRespaldo.servicio.maestros.SSexo;
 import ssmc.CartaRespaldo.servicio.maestros.SUnidad;
 import ssmc.CartaRespaldo.servicio.seguridad.SGrupo;
+import ssmc.CartaRespaldo.servicio.seguridad.SLog;
 import ssmc.CartaRespaldo.servicio.seguridad.SMenu;
 import ssmc.CartaRespaldo.servicio.seguridad.SMenuGrupo;
 import ssmc.CartaRespaldo.servicio.seguridad.SUsuario;
@@ -66,12 +68,15 @@ import ssmc.CartaRespaldo.servicio.seguridad.SUsuarioGrupo;
 import ssmc.CartaRespaldo.servicio.transacciones.SPrestacionSolicitud;
 import ssmc.CartaRespaldo.servicio.transacciones.SResponsableSolicitud;
 import ssmc.CartaRespaldo.servicio.transacciones.SSolicitudTraslado;
-import ssmc.CartaRespaldo.servicio.seguridad.SLog;
+import ws.cl.gov.fonasa.certificadorprevisional.CertificadorPrevisionalSoapProxy;
+import ws.cl.gov.fonasa.certificadorprevisional.QueryCertificadorPrevisionalTO;
+import ws.cl.gov.fonasa.certificadorprevisional.QueryTO;
+import ws.cl.gov.fonasa.certificadorprevisional.ReplyCertificadorPrevisionalTO;
 
 /**
  * Controlador CGenerico
  * 
- * Clase abstracta padre de que los controladores de la aplicacion manaja
+ * Clase abstracta padre de que los controladores de la aplicacion maneja
  * metodos genericos y abstractos usados en el sistema
  * 
  * @author Vanessa Duno / SSMC
@@ -448,6 +453,17 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 
 	}
 
+	/**
+	 * calcularEdad: Metodo que calcula la edad dado la fecha de nacimiento
+	 * 
+	 * @param Recibe
+	 *            un Timestamp fecha
+	 * @return Retorna un int con la edad
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	public int calcularEdad(Timestamp fecha) {
 		log.info("Inicio de metodo calcularEdad()");
 		Date fechaActual = new Date();
@@ -466,24 +482,33 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 				anos = anos - 1;
 			}
 		}
+		log.debug(new StringBuilder("Fin de metodo calcularEdad(), con edad:")
+				.append(anos));
 		return anos;
 	}
 
+	/**
+	 * cortarCadena: Metodo corta el contenido entre parentesis de un String
+	 * 
+	 * @param Recibe
+	 *            un String de la cadena a formatear
+	 * @return Retorna un String con la cadena formateada
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
 	public String cortarCadena(String cadena) {
+		log.debug(new StringBuilder(
+				"Inicio de metodo cortarCadena(), con cadena:").append(cadena));
 		int posicion = cadena.indexOf("(");
 		int posicionF = cadena.indexOf(")");
 		if (posicion != -1) {
-			cadena = cadena.substring(0, posicion) + " " + cadena.substring(posicionF+1, cadena.length()) ;
+			cadena = cadena.substring(0, posicion) + " "
+					+ cadena.substring(posicionF + 1, cadena.length());
 		}
-		return cadena;
-	}
-
-	public String cortarCadenaParentesis(String cadena) {
-		int posicion = cadena.indexOf("(");
-		int posicionCierre = cadena.indexOf(")");
-		if (posicion != -1) {
-			cadena = cadena.substring(posicion, posicionCierre);
-		}
+		log.debug(new StringBuilder("Fin de metodo cortarCadena(), con cadena:")
+				.append(cadena));
 		return cadena;
 	}
 
@@ -516,24 +541,79 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 	 * 
 	 */
 	public void prepararLog(String actividad, String descripcion) {
+		log.debug(new StringBuilder(
+				"Inicio de metodo prepararLog(), con datos:").append(actividad)
+				.append(descripcion));
 		java.util.Date fecha = new Date();
 		Timestamp fechaSistema = new Timestamp(fecha.getTime());
-		LogActividad log = new LogActividad();
-		log.setActividad(actividad);
-		log.setDescripcion(descripcion);
-		log.setLoginUsuario(auth.getName());
-		log.setFecha(fechaSistema);
-		servicioLog.guardar(log);
-	}
-	
-	public String formatearNombre (String nombre){
-		char[] caracteres = nombre.toCharArray();
-		caracteres[0] = Character.toUpperCase(caracteres[0]);
-		 for (int i = 0; i < nombre.length()- 2; i++) 
-			    if (caracteres[i] == ' ' || caracteres[i] == '.' || caracteres[i] == ',')
-			      caracteres[i + 1] = Character.toUpperCase(caracteres[i + 1]);
-		return new String(caracteres);
+		LogActividad loga = new LogActividad();
+		loga.setActividad(actividad);
+		loga.setDescripcion(descripcion);
+		loga.setLoginUsuario(auth.getName());
+		loga.setFecha(fechaSistema);
+		servicioLog.guardar(loga);
+		log.debug(new StringBuilder("Fin de metodo prepararLog(), con objeto:")
+				.append(loga));
 	}
 
+	/**
+	 * formatearNombre: Metodo que formatea un string con la primera letra en
+	 * mayuscula
+	 * 
+	 * @param Recibe
+	 *            String nombre
+	 * @return Retorna el String formateado
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
+	public String formatearNombre(String nombre) {
+		log.debug(new StringBuilder(
+				"Inicio de metodo formatearNombre(), con datos:")
+				.append(nombre));
+		char[] caracteres = nombre.toCharArray();
+		caracteres[0] = Character.toUpperCase(caracteres[0]);
+		for (int i = 0; i < nombre.length() - 2; i++)
+			if (caracteres[i] == ' ' || caracteres[i] == '.'
+					|| caracteres[i] == ',')
+				caracteres[i + 1] = Character.toUpperCase(caracteres[i + 1]);
+		log.debug(new StringBuilder(
+				"Inicio de metodo formatearNombre(), con string formateado:")
+				.append(new String(caracteres)));
+		return new String(caracteres);
+	}
+	
+	/**
+	 * consumirWsFonasa: Metodo que consulta un rut con web service de Fonasa 
+	 * @param Recibe
+	 *            int rut, String dgv
+	 * @return Retorna respuesta de objeto ReplyCertificadorPrevisionalTO
+	 * 
+	 * @throws No
+	 *             dispara ninguna excepción.
+	 * 
+	 */
+	public ReplyCertificadorPrevisionalTO consumirWsFonasa (int rut, String dgv){
+		CertificadorPrevisionalSoapProxy cf = new CertificadorPrevisionalSoapProxy();
+		QueryCertificadorPrevisionalTO query = new QueryCertificadorPrevisionalTO();
+		query.setCanal(Constantes.canal);
+		query.setClaveEntidad(Constantes.claveEntidad);
+		query.setDgvBeneficiario(dgv);
+		query.setEntidad(Constantes.entidad);
+		query.setRutBeneficiario(rut);
+		QueryTO qto = new QueryTO();
+		qto.setTipoEmisor(Constantes.tipoEmisor);
+		qto.setTipoUsuario(Constantes.tipoUsuario);
+		query.setQueryTO(qto);
+		ReplyCertificadorPrevisionalTO respuesta  = new ReplyCertificadorPrevisionalTO();
+		try {
+			respuesta =	cf.getCertificadoPrevisional(query);
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}		
+		return respuesta; 
+	}
 
 }
