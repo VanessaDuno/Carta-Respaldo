@@ -11,6 +11,8 @@ import ssmc.CartaRespaldo.modelo.maestros.Diagnostico;
  *
  */
 
-public interface IDiagnosticoDAO extends JpaRepository<Diagnostico, Integer> {
+public interface IDiagnosticoDAO extends JpaRepository<Diagnostico, Long> {
+	
+	public Diagnostico findByNombre (String nombre); 
 
 }

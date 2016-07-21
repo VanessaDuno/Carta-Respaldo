@@ -24,5 +24,7 @@ public interface IBitacoraDAO extends JpaRepository<Bitacora, Integer> {
 	Bitacora findByTrasladoIdAndActivo (int idTraslado, boolean activo);
 	
 	Bitacora findByTrasladoIdAndEstatus (int idTraslado, String estado); 
+	
+	List<Bitacora> findByActivo (boolean activo); 
 
 }

@@ -107,7 +107,7 @@ public class CHistoricoTraslado extends CGenerico {
 	public void llenarLista() {
 		if (usuario.getEstablecimiento().getId() == 4) {
 			isSsmc = true;
-			historicoTraslado = servicioBitacora.buscarTodos();
+			historicoTraslado = servicioBitacora.buscarEstado(true);
 			lbxTraslado
 					.setModel(new ListModelList<Bitacora>(historicoTraslado));
 			lhdEstablecimientoOrigen.setVisible(true);
@@ -281,7 +281,7 @@ public class CHistoricoTraslado extends CGenerico {
 				.getDomicilio());
 		p.put("comunaPaciente", solicitudTraslado.getPaciente().getComuna()
 				.getNombre());
-		p.put("diagnosticoPaciente", solicitudTraslado.getDiagnostico());
+		p.put("diagnosticoPaciente", solicitudTraslado.getDiagnostico().getNombre());
 		p.put("unidadDerivadora", solicitudTraslado.getUnidad().getNombre());
 		p.put("rutEstablecimientoDeriva", solicitudTraslado.getUnidad()
 				.getEstablecimiento().getRut());

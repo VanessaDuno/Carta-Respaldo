@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import ssmc.CartaRespaldo.modelo.maestros.Diagnostico;
 import ssmc.CartaRespaldo.modelo.maestros.Establecimiento;
 import ssmc.CartaRespaldo.modelo.maestros.Paciente;
 import ssmc.CartaRespaldo.modelo.maestros.Unidad;
@@ -41,8 +42,9 @@ public class SolicitudTraslado implements Serializable{
 	@JoinColumn(name="id_paciente")
 	private Paciente paciente;
 	
-	@Column(name="diagnostico")
-	private String  diagnostico; 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="id_diagnostico")
+	private Diagnostico  diagnostico; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="id_establecimiento")
@@ -140,14 +142,6 @@ public class SolicitudTraslado implements Serializable{
 		return builder.toString();
 	}
 
-	public String getDiagnostico() {
-		return diagnostico;
-	}
-
-	public void setDiagnostico(String diagnostico) {
-		this.diagnostico = diagnostico;
-	}
-
 	public String getTipoDerivacion() {
 		return tipoDerivacion;
 	}
@@ -198,5 +192,13 @@ public class SolicitudTraslado implements Serializable{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Diagnostico getDiagnostico() {
+		return diagnostico;
+	}
+
+	public void setDiagnostico(Diagnostico diagnostico) {
+		this.diagnostico = diagnostico;
 	}
 }

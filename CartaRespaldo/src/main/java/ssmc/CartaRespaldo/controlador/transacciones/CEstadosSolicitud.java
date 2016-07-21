@@ -153,7 +153,7 @@ public class CEstadosSolicitud extends CGenerico {
 							+ bitacora.getTraslado().getPaciente()
 									.getPrimerApellido()));
 			lblRut.setValue(bitacora.getTraslado().getPaciente().getRut());
-			lblDiagnostico.setValue(bitacora.getTraslado().getDiagnostico());
+			lblDiagnostico.setValue(bitacora.getTraslado().getDiagnostico().getNombre());
 			lblMotivo.setValue(cortarCadena(motivo));
 		}
 		log.info("Fin del metodo inicializar()");

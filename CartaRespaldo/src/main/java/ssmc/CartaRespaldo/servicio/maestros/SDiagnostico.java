@@ -34,9 +34,14 @@ public class SDiagnostico {
 		return iDiagnosticoDAO.findAll(); 
 	}
 	
-	public Diagnostico buscarId (int id){
-		return iDiagnosticoDAO.findOne(id); 
+	public Diagnostico buscarNombre (String nombre){
+		return iDiagnosticoDAO.findByNombre(nombre); 
 	}
 	
+	public Diagnostico buscarPorId(Long id) {
+		Diagnostico arbol;
+		arbol = iDiagnosticoDAO.findOne(id);
+		return arbol;
+	}
 	
 }

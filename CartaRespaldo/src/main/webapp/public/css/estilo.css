@@ -156,3 +156,11 @@
 .label-datos-paciente{
 	 font-weight: bold;
 }
+
+.z-treecell-content, .z-treefooter-content{
+	font-size:14px;
+}
+
+.ventana-diagnostico .z-window{
+	 width: 50%;
+}

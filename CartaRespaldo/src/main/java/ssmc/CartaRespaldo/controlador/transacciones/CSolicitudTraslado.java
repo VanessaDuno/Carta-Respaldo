@@ -46,6 +46,7 @@ import ssmc.CartaRespaldo.modelo.maestros.CargosEstablecimiento;
 import ssmc.CartaRespaldo.modelo.maestros.CategoriaPrestacion;
 import ssmc.CartaRespaldo.modelo.maestros.Comuna;
 import ssmc.CartaRespaldo.modelo.maestros.DetallePrestacion;
+import ssmc.CartaRespaldo.modelo.maestros.Diagnostico;
 import ssmc.CartaRespaldo.modelo.maestros.Establecimiento;
 import ssmc.CartaRespaldo.modelo.maestros.Motivo;
 import ssmc.CartaRespaldo.modelo.maestros.Paciente;
@@ -95,8 +96,8 @@ public class CSolicitudTraslado extends CGenerico {
 	private List<Responsable> funcionariosResponsables = new ArrayList<Responsable>();
 	private List<CargosEstablecimiento> cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
 	private List<ResponsableSolicitud> responsablesSolicitud = new ArrayList<ResponsableSolicitud>();
-	private Paciente pacienteRegistrado = new Paciente(); 
-	//private Media media;
+	private Paciente pacienteRegistrado = new Paciente();
+	// private Media media;
 
 	@Wire
 	private Combobox cmbProvincia;
@@ -195,7 +196,7 @@ public class CSolicitudTraslado extends CGenerico {
 	@Wire
 	private Label lblMotivoCama;
 	@Wire
-	private Label  lblFiltrosEstableciminto;
+	private Label lblFiltrosEstableciminto;
 	@Wire
 	private Label lblResponsables;
 	@Wire
@@ -219,7 +220,7 @@ public class CSolicitudTraslado extends CGenerico {
 	@Wire
 	private Combobox cmbMotivoCama;
 	@Wire
-	private Textbox txtOtroEstablecimiento; 
+	private Textbox txtOtroEstablecimiento;
 	@Wire
 	private Row row1Paciente;
 	@Wire
@@ -237,7 +238,13 @@ public class CSolicitudTraslado extends CGenerico {
 	@Wire
 	private Textbox txtBusquedaEstablecimiento;
 	@Wire
-	private Textbox  txtBusquedaRutEstablecimiento;
+	private Textbox txtBusquedaRutEstablecimiento;
+	@Wire
+	private Window wdwDiagnostico;
+	private boolean sinFonasa = false;
+	private boolean perteneceRed = false;
+
+	Diagnostico diagnostico = new Diagnostico();
 
 	Botonera botonera;
 	List<PrestacionSolicitud> prestacionesSolicitud = new ArrayList<PrestacionSolicitud>();
@@ -251,6 +258,7 @@ public class CSolicitudTraslado extends CGenerico {
 		lblResponsables.setValue("Recuerde que debe seleccionar" + " "
 				+ usuarioActivo.getEstablecimiento().getCantidadFirmantes()
 				+ " " + "responsables de la Carta Respaldo.");
+
 		botonera = new Botonera() {
 
 			@Override
@@ -267,32 +275,45 @@ public class CSolicitudTraslado extends CGenerico {
 
 			@Override
 			public void guardar() {
-				if (validarCampos()) {
-					if (usuarioActivo.getEstablecimiento()
-							.getCantidadFirmantes() == recuperarDataSession().size()) {
-						prepararObjetosGuardar();
-						Messagebox.show(Constantes.mensajeRegistroGuardado,
-								"Información", Messagebox.OK,
-								Messagebox.INFORMATION);
-						try {
-							generarReporteQuemado(solicitudGuardada.getId());
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-						borrarDataSesion();
-						limpiarCampos();
-					} else {
-						Messagebox
-								.show("La cantidad de cargos configurados debe coincidir con el numero de cargos seleccionados como responsables",
+				if (!sinFonasa) {
+					if (perteneceRed) {
+						if (validarCampos()) {
+							if (usuarioActivo.getEstablecimiento()
+									.getCantidadFirmantes() == recuperarDataSession()
+									.size()) {
+								prepararObjetosGuardar();
+								Messagebox.show(
+										Constantes.mensajeRegistroGuardado,
 										"Información", Messagebox.OK,
 										Messagebox.INFORMATION);
+								try {
+									generarReporteQuemado(solicitudGuardada
+											.getId());
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
+								borrarDataSesion();
+								limpiarCampos();
+							} else {
+								Messagebox
+										.show("La cantidad de cargos configurados debe coincidir con el numero de cargos seleccionados como responsables",
+												"Información", Messagebox.OK,
+												Messagebox.INFORMATION);
+							}
+						} else {
+							Messagebox.show(Constantes.mensajeCamposVacios,
+									"Advertencia", Messagebox.OK,
+									Messagebox.EXCLAMATION);
+						}
+
+					} else {
+						Messagebox.show("El Paciente no pertenece a la Red",
+								"Error", Messagebox.OK, Messagebox.ERROR);
 					}
 				} else {
-					Messagebox.show(Constantes.mensajeCamposVacios,
-							"Advertencia", Messagebox.OK,
-							Messagebox.EXCLAMATION);
+					Messagebox.show(respuesta.getCoddesc(),
+							"Error", Messagebox.OK, Messagebox.ERROR);
 				}
-
 			}
 
 			@Override
@@ -308,10 +329,20 @@ public class CSolicitudTraslado extends CGenerico {
 		log.info("Fin del metodo inicializar ()");
 	}
 
+	public void obtenerDiagnostico() {
+		String diagnosticoMap = (String) Sessions.getCurrent().getAttribute(
+				"diagnostico");
+		txtDiagnostico = (Textbox) Sessions.getCurrent().getAttribute("text");
+		if (diagnosticoMap != null) {
+			txtDiagnostico.setValue(diagnosticoMap);
+		}
+	}
+
 	public void borrarDataSesion() {
 		Sessions.getCurrent().setAttribute("prestacionesSolicitud", null);
 		Sessions.getCurrent().setAttribute("responsablesSolicitud", null);
 		Sessions.getCurrent().setAttribute("itemsCatalogo", null);
+		Sessions.getCurrent().setAttribute("diagnostico", null);
 	}
 
 	public List<ResponsableSolicitud> recuperarDataSession() {
@@ -367,7 +398,6 @@ public class CSolicitudTraslado extends CGenerico {
 		}
 	}
 
-
 	@Listen("onChange = #txtRutPaciente")
 	public void validarRutPaciente() {
 		log.info("Inicio del metodo validarRutPaciente()");
@@ -383,18 +413,17 @@ public class CSolicitudTraslado extends CGenerico {
 				inhabilitarRows();
 			} else {
 				divErrorRutPaciente.setVisible(false);
-				String rut = formatearRut(txtRutPaciente.getValue()); 
-				txtRutPaciente
-						.setValue(rut);
+				String rut = formatearRut(txtRutPaciente.getValue());
+				txtRutPaciente.setValue(rut);
 				log.debug(new StringBuilder().append("Valido rut:").append(
 						txtRutPaciente.getValue()));
 				rutPaciente = false;
 				int posicion = rut.indexOf("-");
-				String rutParteEntera = ""; 
+				String rutParteEntera = "";
 				if (posicion != -1) {
 					rutParteEntera = rut.substring(0, posicion);
 				}
-				String verificador =  rut.substring(posicion+1, rut.length());
+				String verificador = rut.substring(posicion + 1, rut.length());
 				recibirDatosWS(rutParteEntera, verificador);
 			}
 		}
@@ -458,8 +487,8 @@ public class CSolicitudTraslado extends CGenerico {
 		cmbEstablecimiento.setVisible(true);
 		lblEstablecimiento.setVisible(true);
 		txtBusquedaEstablecimiento.setVisible(true);
-		txtBusquedaRutEstablecimiento.setVisible(true); 
-		lblFiltrosEstableciminto.setVisible(true); 
+		txtBusquedaRutEstablecimiento.setVisible(true);
+		lblFiltrosEstableciminto.setVisible(true);
 		lblNombreLaboratorio.setVisible(false);
 		txtLaboratorio.setVisible(false);
 		establecimientos = servicioEstablecimiento.buscarRegion(13, false);
@@ -467,17 +496,17 @@ public class CSolicitudTraslado extends CGenerico {
 		es.setNombre("Otro");
 		es.setId(500);
 		establecimientos.add(es);
-		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(establecimientos));
+		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(
+				establecimientos));
 	}
-	
-	@Listen ("onChange = #cmbEstablecimiento")
-	public void comboEstablecimiento (){
-		if (cmbEstablecimiento.getSelectedItem() != null){
-			if (cmbEstablecimiento.getValue().equals("Otro")){
-				txtOtroEstablecimiento.setVisible(true); 
-			}
-			else {
-				txtOtroEstablecimiento.setVisible(false); 
+
+	@Listen("onChange = #cmbEstablecimiento")
+	public void comboEstablecimiento() {
+		if (cmbEstablecimiento.getSelectedItem() != null) {
+			if (cmbEstablecimiento.getValue().equals("Otro")) {
+				txtOtroEstablecimiento.setVisible(true);
+			} else {
+				txtOtroEstablecimiento.setVisible(false);
 			}
 		}
 	}
@@ -490,42 +519,43 @@ public class CSolicitudTraslado extends CGenerico {
 		lblEstablecimiento.setVisible(false);
 		txtOtroEstablecimiento.setVisible(false);
 		txtBusquedaEstablecimiento.setVisible(false);
-		txtBusquedaRutEstablecimiento.setVisible(false); 
+		txtBusquedaRutEstablecimiento.setVisible(false);
 		lblFiltrosEstableciminto.setVisible(false);
 	}
 
-	public Paciente prepararPaciente() { 
+	public Paciente prepararPaciente() {
 		Paciente pacienteGuardado = new Paciente();
-		String text = lblFechaNacimiento.getValue()+" "+"00:00:00";
-	    Timestamp ts = Timestamp.valueOf(text);
-	    paciente.setFechaNacimiento(ts);
-	    paciente.setDomicilio(lblDireccion.getValue().trim());
-	    paciente.setNombres(lblNombres.getValue().trim());
-	    paciente.setRut(txtRutPaciente.getValue());
-	    paciente.setPrimerApellido(lblPrimerApellido.getValue().trim());
-	    paciente.setSegundoApellido(lblSegundoApellido.getValue().trim());
-	    paciente.setComuna(servicioComuna.buscarCodigo(Integer.valueOf(respuesta.getBeneficiarioTO().getCdgComuna())));
-	    paciente.setSexo(lblGenero.getValue().trim());
-	    paciente.setPrevision(respuesta.getAfiliadoTO().getTramo().trim());
-	    paciente.setTelefono(lblTelefono.getValue().trim());
-	    pacienteGuardado = servicioPaciente.guardar(paciente);
-		/** ya va 
-		 * +
-		Paciente pacienteGuardado = new Paciente();
-		paciente.setRut(txtRutPaciente.getValue());7uy                                                                                                                                                                            
-		paciente.setPrimerApellido(txtPrimerApellidoPaciente.getValue());
-		paciente.setNombres(txtPrimerNombrePaciente.getValue() + " "
-				+ txtSegundoNombrePaciente.getValue());
-		paciente.setComuna((Comuna) cmbComuna.getSelectedItem().getValue());
-		paciente.setDomicilio(txtDireccionPaciente.getValue());
-		paciente.setPrevision(cmbPrevisionPaciente.getValue());
-		paciente.setSexo((Sexo) cmbSexo.getSelectedItem().getValue());
-		paciente.setSegundoApellido(txtSegundoApellidoPaciente.getValue());
-		Date fecha = dtbFechaNacPaciente.getValue();
-		Timestamp fechaNacimiento = new Timestamp(fecha.getTime());
-		paciente.setFechaNacimiento(fechaNacimiento);
-		paciente.setTelefono(txtTelefonoPaciente.getValue());
-		pacienteGuardado = servicioPaciente.guardar(paciente);**/
+		String text = lblFechaNacimiento.getValue() + " " + "00:00:00";
+		Timestamp ts = Timestamp.valueOf(text);
+		paciente.setFechaNacimiento(ts);
+		paciente.setDomicilio(lblDireccion.getValue().trim());
+		paciente.setNombres(lblNombres.getValue().trim());
+		paciente.setRut(txtRutPaciente.getValue());
+		paciente.setPrimerApellido(lblPrimerApellido.getValue().trim());
+		paciente.setSegundoApellido(lblSegundoApellido.getValue().trim());
+		paciente.setComuna(servicioComuna.buscarCodigo(Integer
+				.valueOf(respuesta.getBeneficiarioTO().getCdgComuna())));
+		paciente.setSexo(lblGenero.getValue().trim());
+		paciente.setPrevision(respuesta.getAfiliadoTO().getTramo().trim());
+		paciente.setTelefono(lblTelefono.getValue().trim());
+		pacienteGuardado = servicioPaciente.guardar(paciente);
+		/**
+		 * ya va + Paciente pacienteGuardado = new Paciente();
+		 * paciente.setRut(txtRutPaciente.getValue());7uy
+		 * paciente.setPrimerApellido(txtPrimerApellidoPaciente.getValue());
+		 * paciente.setNombres(txtPrimerNombrePaciente.getValue() + " " +
+		 * txtSegundoNombrePaciente.getValue()); paciente.setComuna((Comuna)
+		 * cmbComuna.getSelectedItem().getValue());
+		 * paciente.setDomicilio(txtDireccionPaciente.getValue());
+		 * paciente.setPrevision(cmbPrevisionPaciente.getValue());
+		 * paciente.setSexo((Sexo) cmbSexo.getSelectedItem().getValue());
+		 * paciente.setSegundoApellido(txtSegundoApellidoPaciente.getValue());
+		 * Date fecha = dtbFechaNacPaciente.getValue(); Timestamp
+		 * fechaNacimiento = new Timestamp(fecha.getTime());
+		 * paciente.setFechaNacimiento(fechaNacimiento);
+		 * paciente.setTelefono(txtTelefonoPaciente.getValue());
+		 * pacienteGuardado = servicioPaciente.guardar(paciente);
+		 **/
 		return pacienteGuardado;
 	}
 
@@ -573,42 +603,47 @@ public class CSolicitudTraslado extends CGenerico {
 		}
 	}
 
+	public Diagnostico prepararDiagnostico() {
+		return diagnostico = servicioDiagnostico.buscarNombre(txtDiagnostico
+				.getValue());
+	}
+
 	public void prepararObjetosGuardar() {
-		if (pacienteRegistrado == null){
-		solicitudTraslado.setPaciente(prepararPaciente());
-		}
-		else {
-			servicioPaciente.guardar(pacienteRegistrado); 
+		if (pacienteRegistrado == null) {
+			solicitudTraslado.setPaciente(prepararPaciente());
+		} else {
+			servicioPaciente.guardar(pacienteRegistrado);
 			solicitudTraslado.setPaciente(pacienteRegistrado);
 		}
 		if (rdoHospital.isChecked()) {
-			if (cmbEstablecimiento.getValue().equals("Otro")){
+			if (cmbEstablecimiento.getValue().equals("Otro")) {
 				Establecimiento establecimiento = new Establecimiento();
 				Establecimiento establecimientoGuardado = new Establecimiento();
 				establecimiento.setNombre(txtOtroEstablecimiento.getValue());
 				establecimiento.setDestino(false);
-				establecimiento.setRegion(usuarioActivo.getEstablecimiento().getRegion());
+				establecimiento.setRegion(usuarioActivo.getEstablecimiento()
+						.getRegion());
 				establecimientoGuardado = servicioEstablecimiento
 						.guardarRetorno(establecimiento);
 				solicitudTraslado.setEstablecimiento(establecimientoGuardado);
-			}
-			else {
-			solicitudTraslado
-					.setEstablecimiento((Establecimiento) cmbEstablecimiento
-							.getSelectedItem().getValue());
+			} else {
+				solicitudTraslado
+						.setEstablecimiento((Establecimiento) cmbEstablecimiento
+								.getSelectedItem().getValue());
 			}
 		} else if (rdoLaboratorio.isChecked()) {
 			Establecimiento establecimiento = new Establecimiento();
 			Establecimiento establecimientoGuardado = new Establecimiento();
 			establecimiento.setNombre(txtLaboratorio.getValue());
 			establecimiento.setDestino(false);
-			establecimiento.setRegion(usuarioActivo.getEstablecimiento().getRegion());
+			establecimiento.setRegion(usuarioActivo.getEstablecimiento()
+					.getRegion());
 			establecimientoGuardado = servicioEstablecimiento
 					.guardarRetorno(establecimiento);
 			solicitudTraslado.setEstablecimiento(establecimientoGuardado);
 		}
 
-		solicitudTraslado.setDiagnostico(txtDiagnostico.getValue());
+		solicitudTraslado.setDiagnostico(prepararDiagnostico());
 		solicitudTraslado.setTipoDerivacion(cmbTipoDerivacion.getValue());
 		solicitudTraslado.setFicha(txtFicha.getValue());
 		solicitudTraslado.setFolio(rellenarCeros(servicioSolicitudTraslado
@@ -773,17 +808,17 @@ public class CSolicitudTraslado extends CGenerico {
 		cmbMotivoCama.setVisible(false);
 		cmbMotivoCama.setValue("");
 		txtOtroEstablecimiento.setValue("");
-		txtOtroEstablecimiento.setVisible(false); 
+		txtOtroEstablecimiento.setVisible(false);
 		txtIdUgcc.setValue("");
 		txtBusquedaEstablecimiento.setVisible(false);
 		txtBusquedaRutEstablecimiento.setVisible(false);
 		txtBusquedaEstablecimiento.setValue("");
 		txtBusquedaRutEstablecimiento.setValue("");
 		inhabilitarRows();
-		lblFiltrosEstableciminto.setVisible(false); 
+		lblFiltrosEstableciminto.setVisible(false);
 	}
 
-	public void limpiarCamposPaciente(){
+	public void limpiarCamposPaciente() {
 		txtDireccionPaciente.setValue("");
 		txtPrimerApellidoPaciente.setValue("");
 		txtPrimerNombrePaciente.setValue("");
@@ -798,7 +833,7 @@ public class CSolicitudTraslado extends CGenerico {
 		cmbSexo.setValue("");
 		inhabilitarRows();
 	}
-	
+
 	public boolean validarCampos() {
 
 		if (txtDiagnostico.getValue().equals("")
@@ -807,9 +842,9 @@ public class CSolicitudTraslado extends CGenerico {
 				|| txtRutPaciente.getValue().equals("")
 				|| lblSegundoApellido.getValue().equals("")
 				|| lblPrimerApellido.getValue().equals("")
-				//|| lblTelefono.getValue().equals("")
+				// || lblTelefono.getValue().equals("")
 				|| lblComuna.getValue().equals("")
-				//|| lblPrevision.getValue().equals("")
+				// || lblPrevision.getValue().equals("")
 				|| lblGenero.getValue().equals("")
 				|| cmbTipoDerivacion.getSelectedItem() == null
 				|| cmbUnidad.getSelectedItem() == null
@@ -819,7 +854,7 @@ public class CSolicitudTraslado extends CGenerico {
 			return false;
 		} else {
 			if (rdoHospital.isChecked()) {
-				if ( cmbEstablecimiento.getSelectedItem() == null) {
+				if (cmbEstablecimiento.getSelectedItem() == null) {
 					return false;
 				}
 			}
@@ -857,7 +892,6 @@ public class CSolicitudTraslado extends CGenerico {
 				+ id
 				+ "','','top=100,left=200,height=600,width=800,scrollbars=1,resizable=1')");
 	}
-
 
 	public byte[] reporteTraslado(String id) throws JRException, IOException {
 		byte[] fichero = null;
@@ -926,23 +960,26 @@ public class CSolicitudTraslado extends CGenerico {
 				.getDomicilio());
 		p.put("comunaPaciente", solicitudTraslado.getPaciente().getComuna()
 				.getNombre());
-		p.put("diagnosticoPaciente", solicitudTraslado.getDiagnostico());
+		p.put("diagnosticoPaciente", solicitudTraslado.getDiagnostico()
+				.getNombre());
 		p.put("unidadDerivadora", solicitudTraslado.getUnidad().getNombre());
 		p.put("rutEstablecimientoDeriva", usuarioActivo.getEstablecimiento()
 				.getRut());
 		p.put("direccionEstablecimientoDeriva", usuarioActivo
 				.getEstablecimiento().getDireccion());
-		
+
 		p.put("funcionario0", "NO APLICA");
 		p.put("funcionario1", "NO APLICA");
 		p.put("funcionario2", "NO APLICA");
 		p.put("cargo0", "");
 		p.put("cargo1", "");
-		p.put("cargo2","");
-		
+		p.put("cargo2", "");
+
 		for (int j = 0; j < responsables.size(); j++) {
-			p.put("funcionario"+j, responsables.get(j).getResponsable().getNombre());
-			p.put("cargo"+j, responsables.get(j).getResponsable().getCargo().getNombre()); 
+			p.put("funcionario" + j, responsables.get(j).getResponsable()
+					.getNombre());
+			p.put("cargo" + j, responsables.get(j).getResponsable().getCargo()
+					.getNombre());
 		}
 
 		p.put("telefonoHospital", usuarioActivo.getEstablecimiento()
@@ -973,7 +1010,6 @@ public class CSolicitudTraslado extends CGenerico {
 		return idS;
 	}
 
-	
 	@Listen("onClick = #btnMedico")
 	public void buscarMedicos() {
 		medicosResponsables = servicioResponsable.buscarEstablecimientoCargo(
@@ -1018,120 +1054,189 @@ public class CSolicitudTraslado extends CGenerico {
 						null, map);
 		wdwModalResponsables.doModal();
 	}
-	
+
 	@Listen("onOK = #txtRutPaciente")
-	public void buscarRut (){
-		validarRutPaciente(); 
-	/**	log.info("Inicio del metodo buscarRut()");
-		String rut;
-		if (txtRutPaciente.getText().compareTo("") == 0) {
-			Messagebox.show(Constantes.mensajeIngresarIdentificacionPaciente, "Advertencia",
-					Messagebox.OK, Messagebox.EXCLAMATION);
-		} else {
-			rut = formatearRut(txtRutPaciente.getValue());
-			txtRutPaciente.setValue(rut);
-			pacienteRegistrado = servicioPaciente.buscarRut(rut);
-			if (pacienteRegistrado != null) {
-				int posicion = pacienteRegistrado.getNombres().indexOf(" ");
-				txtPrimerNombrePaciente.setValue(pacienteRegistrado.getNombres().substring(0, posicion));
-				txtSegundoNombrePaciente.setValue(pacienteRegistrado.getNombres().substring(posicion,pacienteRegistrado.getNombres().length()));
-				txtPrimerApellidoPaciente.setValue(pacienteRegistrado.getPrimerApellido());
-				txtSegundoApellidoPaciente.setValue(pacienteRegistrado.getSegundoApellido());
-				dtbFechaNacPaciente.setValue(pacienteRegistrado.getFechaNacimiento());	
-				cmbSexo.setValue(pacienteRegistrado.getSexo()); 
-				cmbSexo.setContext(String.valueOf(pacienteRegistrado.getSexo()));
-				cmbRegionPaciente.setValue(pacienteRegistrado.getComuna().getProvincia().getRegion().getNombre());
-				cmbProvincia.setValue(pacienteRegistrado.getComuna().getProvincia().getNombre());
-				cmbComuna.setValue(pacienteRegistrado.getComuna().getNombre()); 
-				cmbComuna.setContext(String.valueOf(pacienteRegistrado.getComuna().getId()));
-				txtDireccionPaciente.setValue(pacienteRegistrado.getDomicilio());
-				cmbPrevisionPaciente.setValue(pacienteRegistrado.getPrevision());
-				txtTelefonoPaciente.setValue(pacienteRegistrado.getTelefono());
-			} else {
-				if (!rutPaciente) {
-					log.debug(new StringBuilder().append("No esta registrado paciente:").append(rut));
-					Messagebox.show(
-							Constantes.mensajePacienteNoRegistrado,
-							"Advertencia", Messagebox.OK,
-							Messagebox.EXCLAMATION);
-				}
-			}
-		}
-		log.info("Fin del metodo buscarMedico()");**/
+	public void buscarRut() {
+		validarRutPaciente();
+		/**
+		 * log.info("Inicio del metodo buscarRut()"); String rut; if
+		 * (txtRutPaciente.getText().compareTo("") == 0) {
+		 * Messagebox.show(Constantes.mensajeIngresarIdentificacionPaciente,
+		 * "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION); } else { rut =
+		 * formatearRut(txtRutPaciente.getValue());
+		 * txtRutPaciente.setValue(rut); pacienteRegistrado =
+		 * servicioPaciente.buscarRut(rut); if (pacienteRegistrado != null) {
+		 * int posicion = pacienteRegistrado.getNombres().indexOf(" ");
+		 * txtPrimerNombrePaciente
+		 * .setValue(pacienteRegistrado.getNombres().substring(0, posicion));
+		 * txtSegundoNombrePaciente
+		 * .setValue(pacienteRegistrado.getNombres().substring
+		 * (posicion,pacienteRegistrado.getNombres().length()));
+		 * txtPrimerApellidoPaciente
+		 * .setValue(pacienteRegistrado.getPrimerApellido());
+		 * txtSegundoApellidoPaciente
+		 * .setValue(pacienteRegistrado.getSegundoApellido());
+		 * dtbFechaNacPaciente
+		 * .setValue(pacienteRegistrado.getFechaNacimiento());
+		 * cmbSexo.setValue(pacienteRegistrado.getSexo());
+		 * cmbSexo.setContext(String.valueOf(pacienteRegistrado.getSexo()));
+		 * cmbRegionPaciente
+		 * .setValue(pacienteRegistrado.getComuna().getProvincia
+		 * ().getRegion().getNombre());
+		 * cmbProvincia.setValue(pacienteRegistrado.
+		 * getComuna().getProvincia().getNombre());
+		 * cmbComuna.setValue(pacienteRegistrado.getComuna().getNombre());
+		 * cmbComuna
+		 * .setContext(String.valueOf(pacienteRegistrado.getComuna().getId()));
+		 * txtDireccionPaciente.setValue(pacienteRegistrado.getDomicilio());
+		 * cmbPrevisionPaciente.setValue(pacienteRegistrado.getPrevision());
+		 * txtTelefonoPaciente.setValue(pacienteRegistrado.getTelefono()); }
+		 * else { if (!rutPaciente) { log.debug(new
+		 * StringBuilder().append("No esta registrado paciente:").append(rut));
+		 * Messagebox.show( Constantes.mensajePacienteNoRegistrado,
+		 * "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION); } } }
+		 * log.info("Fin del metodo buscarMedico()");
+		 **/
 	}
-	
+
 	@Listen("onChange= #txtBusquedaEstablecimiento")
-	public void filtrarEstablecimiento (){
+	public void filtrarEstablecimiento() {
 		cmbEstablecimiento.setValue("");
 		List<Establecimiento> lista = new ArrayList<Establecimiento>();
 		for (Establecimiento establecimiento : establecimientos) {
-			if (establecimiento.getNombre().toLowerCase().contains(txtBusquedaEstablecimiento.getValue().toLowerCase())) {
+			if (establecimiento
+					.getNombre()
+					.toLowerCase()
+					.contains(
+							txtBusquedaEstablecimiento.getValue().toLowerCase())) {
 				lista.add(establecimiento);
 			}
 		}
 		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(lista));
 		cmbEstablecimiento.setStyle("height: 350px !important;");
 	}
-	
-	//@Listen("onChange= #txtBusquedaRutEstablecimiento")
-	public void filtrarRutEstablecimiento () {
+
+	// @Listen("onChange= #txtBusquedaRutEstablecimiento")
+	public void filtrarRutEstablecimiento() {
 		cmbEstablecimiento.setValue("");
 		List<Establecimiento> lista = new ArrayList<Establecimiento>();
 		for (Establecimiento establecimiento : establecimientos) {
-			if (establecimiento.getRut().toLowerCase().contains(formatearRut(txtBusquedaRutEstablecimiento.getValue().toLowerCase()))) {
+			if (establecimiento
+					.getRut()
+					.toLowerCase()
+					.contains(
+							formatearRut(txtBusquedaRutEstablecimiento
+									.getValue().toLowerCase()))) {
 				lista.add(establecimiento);
 			}
 		}
 		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(lista));
 		cmbEstablecimiento.setStyle("height: 350px !important;");
-		
+
 	}
-	
-	
-	public void recibirDatosWS (String rut, String verificador){
-		respuesta = consumirWsFonasa(Integer.parseInt(rut), verificador); 
-		if (respuesta.getReplyTO().getEstado()==0 && respuesta.getReplyTO().getErrorM().equals("")){
+
+	public void recibirDatosWS(String rut, String verificador) {
+		respuesta = consumirWsFonasa(Integer.parseInt(rut), verificador);
+		if (respuesta.getReplyTO().getEstado() == 0
+				&& respuesta.getReplyTO().getErrorM().equals("")) {
 			habilitarRows();
-			lblPrimerApellido.setValue(respuesta.getBeneficiarioTO().getApell1());
-			lblSegundoApellido.setValue(respuesta.getBeneficiarioTO().getApell2());
+			lblPrimerApellido.setValue(respuesta.getBeneficiarioTO()
+					.getApell1());
+			lblSegundoApellido.setValue(respuesta.getBeneficiarioTO()
+					.getApell2());
 			lblNombres.setValue(respuesta.getBeneficiarioTO().getNombres());
-			lblFechaNacimiento.setValue(respuesta.getBeneficiarioTO().getFechaNacimiento());
+			lblFechaNacimiento.setValue(respuesta.getBeneficiarioTO()
+					.getFechaNacimiento());
 			lblGenero.setValue(respuesta.getBeneficiarioTO().getGeneroDes());
 			lblComuna.setValue(respuesta.getBeneficiarioTO().getDesComuna());
 			lblDireccion.setValue(respuesta.getBeneficiarioTO().getDireccion());
 			lblPrevision.setValue(respuesta.getAfiliadoTO().getTramo());
 			lblTelefono.setValue(respuesta.getBeneficiarioTO().getTelefono());
-			pacienteRegistrado = servicioPaciente.buscarRut(formatearRut(txtRutPaciente.getValue()));
-			if (pacienteRegistrado != null){
-			pacienteRegistrado.setDomicilio(respuesta.getBeneficiarioTO().getDireccion());
-			pacienteRegistrado.setComuna(servicioComuna.buscarCodigo(Integer.valueOf(respuesta.getBeneficiarioTO().getCdgComuna())));
-			pacienteRegistrado.setPrevision(respuesta.getAfiliadoTO().getTramo().trim());
-			pacienteRegistrado.setTelefono(respuesta.getBeneficiarioTO().getTelefono());
+			pacienteRegistrado = servicioPaciente
+					.buscarRut(formatearRut(txtRutPaciente.getValue()));
+			if (pacienteRegistrado != null) {
+				pacienteRegistrado.setDomicilio(respuesta.getBeneficiarioTO()
+						.getDireccion());
+				pacienteRegistrado.setComuna(servicioComuna
+						.buscarCodigo(Integer.valueOf(respuesta
+								.getBeneficiarioTO().getCdgComuna())));
+				pacienteRegistrado.setPrevision(respuesta.getAfiliadoTO()
+						.getTramo().trim());
+				pacienteRegistrado.setTelefono(respuesta.getBeneficiarioTO()
+						.getTelefono());
 			}
-		}
-		else {
+			String codigoBloqueo= respuesta.getCodcybl(); 
+			if (codigoBloqueo.equals(
+					Constantes.codigoBloqueadoAuditoria)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoCagaSinCotizaciones)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoCapredena)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoCargaAuditoria)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoCargaCapredena)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoCargaDipreca)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoCargaIsapre)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoDipreca)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoFallecido)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoIsapre)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoRutCargaFueraRango)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoRutTitularFueraRango)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoSinCotizaciones)
+					|| codigoBloqueo.equals(
+							Constantes.codigoBloqueadoSinInformacion)) {
+				sinFonasa = true;
+				divErrorRutPaciente.setVisible(true);
+				lblErrorRutPaciente.setValue(respuesta.getCoddesc());
+			} else {
+				sinFonasa = false; 
+				if (respuesta.getBeneficiarioTO().getCdgComuna()
+						.equals(Constantes.codigoCerrillos)
+						|| respuesta.getBeneficiarioTO().getCdgComuna()
+								.equals(Constantes.codigoEstacionCentral)
+						|| respuesta.getBeneficiarioTO().getCdgComuna()
+								.equals(Constantes.codigoMaipu)
+						|| respuesta.getBeneficiarioTO().getCdgComuna()
+								.equals(Constantes.codigoPedroAguierreCerda)
+						|| respuesta.getBeneficiarioTO().getCdgComuna()
+								.equals(Constantes.codigoSantiago)) {
+					perteneceRed = true;
+				} else {
+					divErrorRutPaciente.setVisible(true);
+					lblErrorRutPaciente
+							.setValue("El Paciente no pertenece a la Red");
+				}
+			}
+		} else {
 			inhabilitarRows();
-			Messagebox.show(
-					Constantes.mensajeRutNoExisteFonasa,
-					"Error", Messagebox.OK,
-					Messagebox.ERROR);
+			Messagebox.show(Constantes.mensajeRutNoExisteFonasa, "Error",
+					Messagebox.OK, Messagebox.ERROR);
 		}
 	}
-	
-	public void habilitarRows(){
+
+	public void habilitarRows() {
 		row1Paciente.setVisible(true);
 		row2Paciente.setVisible(true);
 		row3Paciente.setVisible(true);
 		row4Paciente.setVisible(true);
-		row5Paciente.setVisible(true); 
+		row5Paciente.setVisible(true);
 	}
-	
-	public void inhabilitarRows (){
+
+	public void inhabilitarRows() {
 		row1Paciente.setVisible(false);
 		row2Paciente.setVisible(false);
 		row3Paciente.setVisible(false);
 		row4Paciente.setVisible(false);
-		row5Paciente.setVisible(false); 
+		row5Paciente.setVisible(false);
 		lblPrimerApellido.setValue("");
 		lblSegundoApellido.setValue("");
 		lblNombres.setValue("");
@@ -1141,6 +1246,18 @@ public class CSolicitudTraslado extends CGenerico {
 		lblDireccion.setValue("");
 		lblPrevision.setValue("");
 		lblTelefono.setValue("");
-		
+		perteneceRed = false;
+		sinFonasa = false;
+
+	}
+
+	@Listen("onClick = #txtDiagnostico")
+	public void modalDiagnostico() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("textbox", txtDiagnostico);
+		Sessions.getCurrent().setAttribute("itemsCatalogo", map);
+		wdwDiagnostico = (Window) Executions.createComponents(
+				"public/vistas/transacciones/modal-diagnostico.zul", null, map);
+		wdwDiagnostico.doModal();
 	}
 }

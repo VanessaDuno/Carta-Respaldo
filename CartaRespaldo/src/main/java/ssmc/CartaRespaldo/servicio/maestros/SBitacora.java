@@ -53,4 +53,8 @@ public class SBitacora {
 		return iBitacoraDAO.findByTrasladoIdAndEstatus(idTraslado, estado); 
 	}
 	
+	public List<Bitacora> buscarEstado (boolean estado){
+		return iBitacoraDAO.findByActivo(estado); 
+	}
+	
 }

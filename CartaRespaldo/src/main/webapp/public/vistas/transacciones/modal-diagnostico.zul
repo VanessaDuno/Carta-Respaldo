@@ -1,0 +1,15 @@
+<zk>
+	<window title="Diagnósticos" border="normal" id="wdwDiagnostico"
+		closable="true" class="ventana-diagnostico" width="60%" height="87%"
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CModalDiagnostico">
+		<tree id="arbolDiagnostico" width="100%" zclass="z-tree" height="90%" style="overflow-y:scroll">
+			<template name="model">
+				<treeitem context="menupopup">
+					<treerow>
+						<treecell label="${each.label}" />
+					</treerow>
+				</treeitem>
+			</template>
+		</tree>
+	</window>
+</zk>

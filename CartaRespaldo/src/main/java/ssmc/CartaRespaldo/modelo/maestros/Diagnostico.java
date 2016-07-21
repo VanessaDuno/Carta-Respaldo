@@ -11,9 +11,10 @@ import javax.persistence.Table;
 
 /**
  * Diagnostico
+ * 
  * @author Vanessa Duno
  * @version 1.0
- *
+ * 
  */
 
 @Entity
@@ -25,7 +26,7 @@ public class Diagnostico implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_diagnostico")
-	private int id;
+	private long id;
 
 	@Column(name = "nombre")
 	private String nombre;
@@ -33,14 +34,20 @@ public class Diagnostico implements Serializable {
 	@Column(name = "codigo_cie")
 	private String codigoCie;
 
+	@Column(name = "padre")
+	private long padre;
+
+	@Column(name = "hoja")
+	private boolean hoja;
+
 	public Diagnostico() {
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -69,7 +76,27 @@ public class Diagnostico implements Serializable {
 		builder.append(nombre);
 		builder.append(", codigoCie=");
 		builder.append(codigoCie);
+		builder.append(", padre=");
+		builder.append(padre);
+		builder.append(", hoja=");
+		builder.append(hoja);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public long getPadre() {
+		return padre;
+	}
+
+	public void setPadre(long padre) {
+		this.padre = padre;
+	}
+
+	public boolean isHoja() {
+		return hoja;
+	}
+
+	public void setHoja(boolean hoja) {
+		this.hoja = hoja;
 	}
 }

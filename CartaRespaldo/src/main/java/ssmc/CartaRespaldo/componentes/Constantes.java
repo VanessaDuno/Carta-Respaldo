@@ -110,6 +110,34 @@ public class Constantes {
 	public static String rutaAplicacionServidor = "\\eclipseApps\\CartaRespaldo\\public\\temporal\\generado";
 	public static String rutaDirectorioTemporal = "public/temporal/generado"; 
 	public static String extensionPdf = ".pdf"; 
+	
+	
+	/** Codigos de comunas de la red **/
+	
+	public static String codigoPedroAguierreCerda = "13121";
+	public static String codigoSantiago = "13101";
+	public static String codigoEstacionCentral = "13106";
+	public static String codigoMaipu = "13119";
+	public static String codigoCerrillos = "13102"; 
+	
+	/** Codigos de bloqueo **/
+	
+	public static String codigoBloqueadoIsapre = "01901"; 
+	public static String codigoBloqueadoFallecido = "01902";
+	public static String codigoBloqueadoSinCotizaciones = "01903";
+	public static String codigoBloqueadoSinInformacion = "01906";
+	public static String codigoBloqueadoCapredena = "01911";
+	public static String codigoBloqueadoAuditoria = "01914";
+	public static String codigoBloqueadoCargaIsapre = "01951";
+	public static String codigoBloqueadoCagaSinCotizaciones = "01953";
+	public static String codigoBloqueadoCargaCapredena = "01957";
+	public static String codigoBloqueadoRutTitularFueraRango = "01970";
+	public static String codigoBloqueadoRutCargaFueraRango = "01971";
+	public static String codigoBloqueadoDipreca = "01972";
+	public static String codigoBloqueadoCargaDipreca = "01973";
+	public static String codigoBloqueadoCargaAuditoria = "01976";
+
+	
 			
 	
 	

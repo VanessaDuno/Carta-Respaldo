@@ -94,17 +94,17 @@
 			<listbox id="lbxTraslado" class="historico" mold="paging"
 				pageSize="10">
 				<listhead>
-					<listheader label="Fecha solicitud" width="10%">
+					<listheader label="Fecha solicitud" width="9%">
 					</listheader>
 					<listheader label="Establecimiento Origen"
-						visible="false" id="lhdEstablecimientoOrigen" width="30%">
+						visible="false" id="lhdEstablecimientoOrigen" width="25%">
 					</listheader>
 					<listheader label="Establecimiento Destino"
-						width="30%">
+						width="25%">
 					</listheader>
-					<listheader label="Motivo" width="38%"></listheader>
-					<listheader label="Diagnóstico" width="10%"></listheader>
-					<listheader label="Estado" width="10%"></listheader>
+					<listheader label="Motivo" width="35%"></listheader>
+					<listheader label="Diagnóstico" width="25%"></listheader>
+					<listheader label="Estado" width="9%"></listheader>
 					<listheader label="Días" width="5%"></listheader>
 				</listhead>
 
@@ -122,7 +122,7 @@
 							<label></label>
 						</listcell>
 						<listcell
-							label="${each.traslado.diagnostico}">
+							label="${each.traslado.diagnostico.nombre}">
 						</listcell>
 						<listcell label="${each.estatus}"></listcell>
 						<listcell>
