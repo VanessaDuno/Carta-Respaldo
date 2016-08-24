@@ -1,0 +1,40 @@
+<zk>
+	<window title="Prestaciones" border="normal" width="50%"
+		 height = "75%" closable="true" id="wdwModalPrestaciones" 
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CModalPrestaciones">
+		<textbox id="txtBusquedaPrestaciones" placeholder="Buscar..."
+			width="100%">
+		</textbox>
+		<listbox id="lbxPrestaciones" multiple="true" height="80%"  style="overflow-y:auto" 
+			checkmark="true">
+			<listhead>
+				<listheader label="Prestación" width="65%"></listheader>
+				<listheader label="Motivo" width="35%"></listheader>
+			</listhead>
+			<template name="model">
+				<listitem>
+					<listcell label="${each.nombre}"></listcell>
+					<listcell>
+						<combobox readonly="true" width="85%">
+							<template name="model">
+								<comboitem label="${each.nombre}"
+									context="${each.id}">
+								</comboitem>
+							</template>
+						</combobox>
+					</listcell>
+				</listitem>
+			</template>
+		</listbox>
+		<separator></separator>
+		<separator></separator>
+		<div align="center">
+			<button label="Aceptar" id="btnAceptar"
+				image="/public/imagenes/botones/aceptar.png">
+			</button>
+			<button label="Cancelar" id="btnCancelar"
+				image="/public/imagenes/botones/rechazar.png">
+			</button>
+		</div>
+	</window>
+</zk>

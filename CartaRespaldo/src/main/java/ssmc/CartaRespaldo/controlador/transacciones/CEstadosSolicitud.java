@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -21,10 +23,12 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -34,6 +38,7 @@ import ssmc.CartaRespaldo.componentes.Constantes;
 import ssmc.CartaRespaldo.componentes.Validador;
 import ssmc.CartaRespaldo.controlador.maestros.CGenerico;
 import ssmc.CartaRespaldo.enums.EnumEstadoSolicitud;
+import ssmc.CartaRespaldo.enums.EnumMotivoCierreClinico;
 import ssmc.CartaRespaldo.modelo.transacciones.Bitacora;
 
 /**
@@ -135,7 +140,17 @@ public class CEstadosSolicitud extends CGenerico {
 	@Wire
 	private Row rowAnulacion;
 	@Wire
+	private Row rowEpicrisisPdf;
+	@Wire
 	private Textbox txtMotivoAnulacion;
+	@Wire
+	private Textbox txtidSigfe;
+	@Wire
+	private Row rowIdSigfe;
+	@Wire
+	private Row rowMotivoCierreClinico;
+	@Wire
+	private Combobox cmbMotivoCierreClinico;
 
 	@Override
 	public void inicializar() throws IOException {
@@ -153,8 +168,18 @@ public class CEstadosSolicitud extends CGenerico {
 							+ bitacora.getTraslado().getPaciente()
 									.getPrimerApellido()));
 			lblRut.setValue(bitacora.getTraslado().getPaciente().getRut());
-			lblDiagnostico.setValue(bitacora.getTraslado().getDiagnostico().getNombre());
+			lblDiagnostico.setValue(bitacora.getTraslado().getDiagnostico()
+					.getNombre());
 			lblMotivo.setValue(cortarCadena(motivo));
+
+		}
+		if (bitacora.getTraslado().getObservacion() != null) {
+			Messagebox.show("Paciente posee restricciones -"
+					+ bitacora.getTraslado().getObservacion() + ", "
+					+ bitacora.getTraslado().getObservacionRestriccion(),
+					"Alerta", Messagebox.OK, Messagebox.EXCLAMATION);
+			
+			
 		}
 		log.info("Fin del metodo inicializar()");
 
@@ -212,7 +237,7 @@ public class CEstadosSolicitud extends CGenerico {
 			divAdjuntar.setVisible(true);
 			rowAnulacion.setVisible(true);
 			lblFechaPrimerEstado.setValue(formatoFecha.format(bitacora
-					.getFecha()));
+					.getFecha()) + " " + df.format(bitacora.getFecha()));
 			imagen.setHeight("310px");
 			log.info(new StringBuilder("El registro esta en estatus:")
 					.append(EnumEstadoSolicitud.CREADA.getEstado()));
@@ -237,14 +262,13 @@ public class CEstadosSolicitud extends CGenerico {
 				e.printStackTrace();
 			}
 			ckbxValidar.setVisible(true);
+			Timestamp primeraFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.CREADA.getEstado()).getFecha();
 			lblFechaSegundoEstado.setValue(formatoFecha.format(bitacora
-					.getFecha()));
-			lblFechaPrimerEstado
-					.setValue(formatoFecha.format(servicioBitacora
-							.buscarTrasladooEstado(
-									bitacora.getTraslado().getId(),
-									EnumEstadoSolicitud.CREADA.getEstado())
-							.getFecha()));
+					.getFecha()) + " " + df.format(bitacora.getFecha()));
+			lblFechaPrimerEstado.setValue(formatoFecha.format(primeraFecha)
+					+ " " + df.format(primeraFecha));
 			log.info(new StringBuilder("El registro esta en estatus:")
 					.append(EnumEstadoSolicitud.PORVALIDAR.getEstado()));
 		} else if (bitacora.getEstatus().equals(
@@ -257,21 +281,27 @@ public class CEstadosSolicitud extends CGenerico {
 			btnRechazar.setVisible(false);
 			rowCierreClinico.setVisible(true);
 			rowCierreClinicoObs.setVisible(true);
-			wdwEstadoTraslado.setHeight("65%");
+			rowMotivoCierreClinico.setVisible(true); 
+			wdwEstadoTraslado.setHeight("100%");
+			rowEpicrisisPdf.setVisible(true);
+			ifmPdf.setWidth("500px");
+			ifmPdf.setHeight("250px");
+			Timestamp primeraFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.CREADA.getEstado()).getFecha();
+			Timestamp segundaFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.PORVALIDAR.getEstado()).getFecha();
 			lblFechaTercerEstado.setValue(formatoFecha.format(bitacora
-					.getFecha()));
-			lblFechaPrimerEstado
-					.setValue(formatoFecha.format(servicioBitacora
-							.buscarTrasladooEstado(
-									bitacora.getTraslado().getId(),
-									EnumEstadoSolicitud.CREADA.getEstado())
-							.getFecha()));
-			lblFechaSegundoEstado.setValue(formatoFecha.format(servicioBitacora
-					.buscarTrasladooEstado(bitacora.getTraslado().getId(),
-							EnumEstadoSolicitud.PORVALIDAR.getEstado())
-					.getFecha()));
+					.getFecha()) + df.format(bitacora.getFecha()));
+			lblFechaPrimerEstado.setValue(formatoFecha.format(primeraFecha)
+					+ " " + df.format(primeraFecha));
+			lblFechaSegundoEstado.setValue(formatoFecha.format(segundaFecha)
+					+ " " + df.format(segundaFecha));
+			llenarComboMotivoCierreClinico(); 
 			log.info(new StringBuilder("El registro esta en estatus:")
 					.append(EnumEstadoSolicitud.TRASLADO.getEstado()));
+			ifmPdf.setHeight("200px");
 
 		} else if (bitacora.getEstatus().equals(
 				EnumEstadoSolicitud.ANULADA.getEstado())) {
@@ -281,14 +311,13 @@ public class CEstadosSolicitud extends CGenerico {
 			divCuartoEstado.setClass("div-estados-inhabilitados");
 			divQuintoEstado.setClass("div-estados-inhabilitados");
 			btnAceptar.setVisible(false);
-			lblFechaPrimerEstado
-					.setValue(formatoFecha.format(servicioBitacora
-							.buscarTrasladooEstado(
-									bitacora.getTraslado().getId(),
-									EnumEstadoSolicitud.CREADA.getEstado())
-							.getFecha()));
+			Timestamp primeraFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.CREADA.getEstado()).getFecha();
+			lblFechaPrimerEstado.setValue(formatoFecha.format(primeraFecha)
+					+ " " + df.format(primeraFecha));
 			lblFechaSegundoEstado.setValue(formatoFecha.format(bitacora
-					.getFecha()));
+					.getFecha()) + " " + df.format(bitacora.getFecha()));
 			lblSegundoEstado.setValue(EnumEstadoSolicitud.ANULADA.getEstado());
 			wdwEstadoTraslado.setHeight("65%");
 			divCierreAdministrativo.setVisible(true);
@@ -302,24 +331,25 @@ public class CEstadosSolicitud extends CGenerico {
 			divQuintoEstado.setClass("div-estados-inhabilitados");
 			imgEstado.setSrc(Constantes.rutaEstadoCierreClinico);
 			btnRechazar.setVisible(false);
+			Timestamp primeraFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.CREADA.getEstado()).getFecha();
+			Timestamp segundaFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.PORVALIDAR.getEstado()).getFecha();
+			Timestamp terceraFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.TRASLADO.getEstado()).getFecha();
 			lblFechaCuartoEstado.setValue(formatoFecha.format(bitacora
-					.getFecha()));
+					.getFecha()) + " " + df.format(bitacora.getFecha()));
 			btnAceptar.setLabel(EnumEstadoSolicitud.CIERREADMINISTRATIVO
 					.getEstado());
-			lblFechaPrimerEstado
-					.setValue(formatoFecha.format(servicioBitacora
-							.buscarTrasladooEstado(
-									bitacora.getTraslado().getId(),
-									EnumEstadoSolicitud.CREADA.getEstado())
-							.getFecha()));
-			lblFechaSegundoEstado.setValue(formatoFecha.format(servicioBitacora
-					.buscarTrasladooEstado(bitacora.getTraslado().getId(),
-							EnumEstadoSolicitud.PORVALIDAR.getEstado())
-					.getFecha()));
-			lblFechaTercerEstado.setValue(formatoFecha.format(servicioBitacora
-					.buscarTrasladooEstado(bitacora.getTraslado().getId(),
-							EnumEstadoSolicitud.TRASLADO.getEstado())
-					.getFecha()));
+			lblFechaPrimerEstado.setValue(formatoFecha.format(primeraFecha)
+					+ " " + df.format(primeraFecha));
+			lblFechaSegundoEstado.setValue(formatoFecha.format(segundaFecha)
+					+ df.format(segundaFecha));
+			lblFechaTercerEstado.setValue(formatoFecha.format(terceraFecha)
+					+ df.format(terceraFecha));
 			rowCierreAdministrativo.setVisible(true);
 			rowCierreAdministrativoPdf.setVisible(true);
 			log.info(new StringBuilder("El registro esta en estatus:")
@@ -327,34 +357,46 @@ public class CEstadosSolicitud extends CGenerico {
 		} else if (bitacora.getEstatus().equals(
 				EnumEstadoSolicitud.CIERREADMINISTRATIVO.getEstado())) {
 			imgEstado.setSrc(Constantes.rutaEstadoCierreAdministrativo);
-			btnAceptar.setVisible(false);
 			btnRechazar.setVisible(false);
 			lblFechaQuintoEstado.setValue(formatoFecha.format(bitacora
-					.getFecha()));
+					.getFecha()) + " " + df.format(bitacora.getFecha()));
 			wdwEstadoTraslado.setHeight("100%");
 			lblQuintoEstado.setStyle("font-size:12px;");
-			lblFechaPrimerEstado
-					.setValue(formatoFecha.format(servicioBitacora
-							.buscarTrasladooEstado(
-									bitacora.getTraslado().getId(),
-									EnumEstadoSolicitud.CREADA.getEstado())
-							.getFecha()));
-			lblFechaSegundoEstado.setValue(formatoFecha.format(servicioBitacora
-					.buscarTrasladooEstado(bitacora.getTraslado().getId(),
-							EnumEstadoSolicitud.PORVALIDAR.getEstado())
-					.getFecha()));
-			lblFechaTercerEstado.setValue(formatoFecha.format(servicioBitacora
-					.buscarTrasladooEstado(bitacora.getTraslado().getId(),
-							EnumEstadoSolicitud.TRASLADO.getEstado())
-					.getFecha()));
-			lblFechaCuartoEstado.setValue(formatoFecha.format(servicioBitacora
-					.buscarTrasladooEstado(bitacora.getTraslado().getId(),
-							EnumEstadoSolicitud.CIERRECLINICO.getEstado())
-					.getFecha()));
+			Timestamp primeraFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.CREADA.getEstado()).getFecha();
+			Timestamp segundaFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.PORVALIDAR.getEstado()).getFecha();
+			Timestamp terceraFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.TRASLADO.getEstado()).getFecha();
+			Timestamp cuartaFecha = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.CIERRECLINICO.getEstado()).getFecha();
+			lblFechaPrimerEstado.setValue(formatoFecha.format(primeraFecha)
+					+ " " + df.format(primeraFecha));
+			lblFechaSegundoEstado.setValue(formatoFecha.format(segundaFecha)
+					+ " " + df.format(segundaFecha));
+			lblFechaTercerEstado.setValue(formatoFecha.format(terceraFecha)
+					+ " " + df.format(terceraFecha));
+			lblFechaCuartoEstado.setValue(formatoFecha.format(cuartaFecha)
+					+ " " + df.format(cuartaFecha));
 			divCierreAdministrativo.setVisible(true);
-			lblCierreAdministrativo.setValue("La cuenta registrada es: "
-					+ bitacora.getCuenta());
+			btnAceptar.setLabel("Aceptar");
+
+			if (bitacora.getIdSigfe() != null) {
+				lblCierreAdministrativo.setValue("La cuenta registrada es: "
+						+ bitacora.getCuenta() + " " + "y Id del SIGFE:" + " "
+						+ bitacora.getIdSigfe());
+			} else {
+				lblCierreAdministrativo.setValue("La cuenta registrada es: "
+						+ bitacora.getCuenta());
+				btnAceptar.setVisible(true);
+				rowIdSigfe.setVisible(true);
+			}
 			mostrarPdf(bitacora);
+
 			log.info(new StringBuilder("El registro esta en estatus:")
 					.append(EnumEstadoSolicitud.CIERREADMINISTRATIVO
 							.getEstado()));
@@ -380,12 +422,17 @@ public class CEstadosSolicitud extends CGenerico {
 		try {
 			int numero = (int) Math.random();
 			String ruta = System.getProperty("com.sun.aas.instanceRoot")
-					+ "\\eclipseApps\\CartaRespaldo\\public\\temporal\\generado"
+					+ "/applications/CartaRespaldo/public/vistas/generado"
 					+ numero + ".pdf";
+			log.info("Ruta:" + ruta);
+			log.info("Ruta server:"
+					+ System.getProperty("com.sun.aas.instanceRoot"));
 			FileOutputStream fileOuputStream = new FileOutputStream(ruta);
 			fileOuputStream.write(bitacora.getArchivoCuenta());
 			fileOuputStream.close();
-			ifmPdf.setSrc("public/temporal/generado" + numero + ".pdf");
+			log.info("Ruta Iframe:" + "public/vistas/generado" + numero
+					+ ".pdf");
+			ifmPdf.setSrc("public/vistas/generado" + numero + ".pdf");
 			ifmPdf.setVisible(true);
 			File file = new File("ruta");
 			file.delete();
@@ -461,6 +508,25 @@ public class CEstadosSolicitud extends CGenerico {
 			log.error("Documento no Valido");
 		}
 		log.info("Fin del metodo capturarCuentaAdjuntada()");
+	}
+
+	@Listen("onUpload = #fudEpicrisis")
+	public void capturarEpicrisisAdjuntada(UploadEvent event)
+			throws IOException {
+		log.info("Inicio del metodo capturarEpicrisisAdjuntada()");
+		media = event.getMedia();
+		if (Validador.validarTipoDocumento(media)
+				&& Validador.validarTamannoDocumento(media)) {
+
+			ifmPdf.setContent(media);
+			ifmPdf.setVisible(true);
+			log.info("Documento Valido");
+		} else {
+			Messagebox.show(Constantes.documentoNoValido, "Alerta",
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			log.error("Documento no Valido");
+		}
+		log.info("Fin del metodo capturarEpicrisisAdjuntada()");
 	}
 
 	/**
@@ -541,6 +607,10 @@ public class CEstadosSolicitud extends CGenerico {
 				bq.setObservacionCierreClinico(txtObservacionCierreClinico
 						.getValue());
 				bq.setEpicrisis(txtEpicrisis.getValue());
+				bq.setMotivoCierreClinico(cmbMotivoCierreClinico.getValue());
+				if (media != null) {
+					bq.setEpicrisisInforme(media.getByteData());
+				}
 				servicioBitacora.guardar(bq);
 				cancelar();
 				Executions.sendRedirect(null);
@@ -564,8 +634,28 @@ public class CEstadosSolicitud extends CGenerico {
 				Messagebox.show(Constantes.mensajeCamposVacios, "Advertencia",
 						Messagebox.OK, Messagebox.EXCLAMATION);
 			}
+		} else if (bitacora.getEstatus().equals(
+				EnumEstadoSolicitud.CIERREADMINISTRATIVO.getEstado())) {
+			if (validarIdSigfe()) {
+				bitacora.setIdSigfe(txtidSigfe.getValue());
+				servicioBitacora.guardar(bitacora);
+				cancelar();
+				Executions.sendRedirect(null);
+			} else {
+				Messagebox.show(Constantes.mensajeCamposVacios, "Advertencia",
+						Messagebox.OK, Messagebox.EXCLAMATION);
+			}
 		}
 		log.info("Fin del metodo cambiarEstado()");
+	}
+
+	private boolean validarIdSigfe() {
+		if (txtidSigfe.getValue().equals("")) {
+			return false;
+		} else {
+			return true;
+		}
+
 	}
 
 	@Listen("onClick = #btnCancelar")
@@ -574,8 +664,8 @@ public class CEstadosSolicitud extends CGenerico {
 	}
 
 	/**
-	 * rechazarCaso: Metodo que cambia el estado de una solicitud a anulado y guarda los
-	 * valores necesarios de ese estado. 
+	 * rechazarCaso: Metodo que cambia el estado de una solicitud a anulado y
+	 * guarda los valores necesarios de ese estado.
 	 * 
 	 * @param No
 	 *            recibe ningun parametro
@@ -596,6 +686,7 @@ public class CEstadosSolicitud extends CGenerico {
 			inhabilitarEstado();
 			bq.setEstatus(EnumEstadoSolicitud.ANULADA.getEstado());
 			bq.setMotivoAnulacion(txtMotivoAnulacion.getValue());
+			bq.setUsuario(usuarioActivo());
 			servicioBitacora.guardar(bq);
 			cancelar();
 			Executions.sendRedirect(null);
@@ -623,11 +714,12 @@ public class CEstadosSolicitud extends CGenerico {
 	}
 
 	public boolean validarCierreClinico() {
-		if (txtObservacionCierreClinico.getValue().equals("")
-				|| txtEpicrisis.getValue().equals("")) {
+		if (txtObservacionCierreClinico.getValue().equals("") || cmbMotivoCierreClinico.getValue().equals("")) {
 			return false;
-		} else {
+		} else if (txtEpicrisis.getValue().equals("") || media == null) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -645,6 +737,15 @@ public class CEstadosSolicitud extends CGenerico {
 		} else {
 			return true;
 		}
+	}
+	
+	public void llenarComboMotivoCierreClinico (){
+		ArrayList<String> listaMotivo = new ArrayList<String>();
+		listaMotivo.add(EnumMotivoCierreClinico.ALTACLINICA.getMotivo());
+		listaMotivo.add(EnumMotivoCierreClinico.DERIVACIONOTROCENTRO.getMotivo());
+		listaMotivo.add(EnumMotivoCierreClinico.FALLECIMIENTO.getMotivo());
+		listaMotivo.add(EnumMotivoCierreClinico.RESCATE.getMotivo());
+		cmbMotivoCierreClinico.setModel(new ListModelList<String>(listaMotivo));
 	}
 
 }

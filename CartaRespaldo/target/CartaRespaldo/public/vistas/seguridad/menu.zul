@@ -1,0 +1,95 @@
+<?page title="Menu" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:x="xhtml">
+	<div class="panel panel-default panel-vistas-mantenedores">
+		<div class="panel-heading">Menú</div>
+		<div class="panel-body">
+			<div apply="ssmc.CartaRespaldo.controlador.seguridad.CMenu">
+				<div class="panel panel-default">
+					<div class="panel-body" style="padding: 8px;">
+						<div width="50%" id="botoneraMenu" align="left" />
+					</div>
+				</div>
+				<groupbox width="100%">
+					<caption class="captionGroupbox"
+						label="Datos del menú" />
+					<grid width="100%"  zclass="none">
+						<columns visible="false">
+							<column label="" width="15%" />
+							<column label="" width="35%" />
+							<column label="" width="15%" />
+							<column label="" width="35%" />
+						</columns>
+						<rows>
+							<row>
+								<label  value="Nombre:" />
+								<textbox id="txtNombreMenu" hflex="1"
+									maxlength="100"
+									tooltiptext="Ingrese el Nombre de la opción de menú" />
+								<label value="Url:" />
+								<textbox id="txtUrlMenu" hflex="1"
+									 maxlength="100"
+									tooltiptext="Ingrese la url de la opción de menú" />
+							</row>
+							<row>
+								<label 
+									value="Opción padre: " />
+								<cell>
+									<combobox id="cmbOpcionPadre"
+										width="100%">
+										<template name="model">
+											<comboitem
+												label="${each.nombre}" context="${each.idMenu}">
+											</comboitem>
+										</template>
+									</combobox>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+				<separator />
+				<groupbox width="100%">
+					<caption class="captionGroupbox"
+						label="Grupos para el menú" />
+					<hbox>
+						<listbox id="ltbGruposDisponibles"
+							height="160px" emptyMessage="No hay Grupos registrados">
+							<template name="model">
+								<listitem>
+									<listcell label="${each.nombre}"></listcell>
+								</listitem>
+							</template>
+						</listbox>
+						<separator></separator>
+						<vbox>
+							<button id="btnAgregarGrupo"
+								image="/public/imagenes/botones/right.png"
+								tooltiptext="Agregar Grupos" width="47px"
+								style="margin-left: 20px;margin-right: 10px;    margin-top: 10px;" />
+							<separator />
+							<button id="btnQuitarGrupo"
+								image="/public/imagenes/botones/left.png"
+								tooltiptext="Quitar Grupos" width="47px"
+								style="margin-left: 20px;margin-right: 10px;" />
+						</vbox>
+						<listbox id="ltbGruposAgregados" height="160px"
+							emptyMessage="No ha Seleccionado ningun Grupo">
+							<template name="model">
+								<listitem>
+									<listcell
+										label="${each.grupo.nombre}">
+									</listcell>
+								</listitem>
+							</template>
+						</listbox>
+					</hbox>
+				</groupbox>
+				<groupbox width="100%">
+					<caption class="captionGroupbox"
+						label="Menús Registrados" />
+					<div id="catalogoMenu" />
+				</groupbox>
+			</div>
+		</div>
+	</div>
+</zk>

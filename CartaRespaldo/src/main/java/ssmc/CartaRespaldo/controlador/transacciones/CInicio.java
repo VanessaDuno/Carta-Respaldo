@@ -208,13 +208,13 @@ public class CInicio extends CGenerico {
 
 	public void encabezadoEstablecimiento() {
 		if (usuario.getEstablecimiento().getId() == 1) {
-			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoSanborja.png");
+			imgEncabezado.setSrc("public/imagenes/generales/BannerExtraSistema-HCSBA.png");
 		}
 		else if (usuario.getEstablecimiento().getId() == 2) {
-			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoHec.png");
+			imgEncabezado.setSrc("public/imagenes/generales/BannerExtraSistema-HEC.png");
 		}
 		else if (usuario.getEstablecimiento().getId() == 3) {
-			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoHuap.png");
+			imgEncabezado.setSrc("public/imagenes/generales/BannerExtraSistema-HUAP.png");
 		}
 		else if (usuario.getEstablecimiento().getId() == 4) {
 			imgEncabezado.setSrc("public/imagenes/generales/EncabezadoSsmc.png");

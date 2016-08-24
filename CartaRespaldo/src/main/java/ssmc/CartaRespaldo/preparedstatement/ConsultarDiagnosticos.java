@@ -3,8 +3,8 @@
  */
 package ssmc.CartaRespaldo.preparedstatement;
 
+import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.naming.NamingException;
+
+import ssmc.CartaRespaldo.controlador.maestros.CGenerico;
 import ssmc.CartaRespaldo.modelo.maestros.Diagnostico;
 
 /**
@@ -21,21 +24,22 @@ import ssmc.CartaRespaldo.modelo.maestros.Diagnostico;
  * @author Vanessa Maria Duno
  * @version 1.0
  */
-public class ConsultarDiagnosticos {
+public class ConsultarDiagnosticos extends CGenerico {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public List<Diagnostico> consultarDiagnosticos() {
 		List<Diagnostico> diagnosticos = new ArrayList<Diagnostico>();
 		Connection con = null;
 		PreparedStatement pst = null;
 
-		String url = "jdbc:postgresql://localhost:5432/carta_respaldo";
-		String user = "postgres";
-		String password = "postgres";
 		ResultSet rs = null;
 
 		try {
-			con = DriverManager.getConnection(url, user, password);
-
+			con = Conexion(); 
 			String querySql = "select id_diagnostico, codigo_cie, nombre, padre,hoja from diagnostico";
 
 			pst = con.prepareStatement(querySql);
@@ -50,7 +54,7 @@ public class ConsultarDiagnosticos {
 				d.setHoja(rs.getBoolean(5));
 				diagnosticos.add(d); 
 			}
-		} catch (SQLException ex) {
+		} catch (SQLException | NamingException ex) {
 			Logger lgr = Logger.getLogger(PreparedStatement.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
@@ -68,5 +72,14 @@ public class ConsultarDiagnosticos {
 			}
 		}
 		return diagnosticos;
+	}
+
+	/* (non-Javadoc)
+	 * @see ssmc.CartaRespaldo.controlador.maestros.CGenerico#inicializar()
+	 */
+	@Override
+	public void inicializar() throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 }

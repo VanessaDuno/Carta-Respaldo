@@ -65,6 +65,8 @@ public class Constantes {
 	public static String rutaCambioPassword = "/public/vistas/seguridad/cambiar-password.zul"; 
 	public static String mensajeErrorCargos = "La cantidad de cargos configurado debe coincidir con el numero de cargos seleccionados"; 
 	public static String mensajeRutNoExisteFonasa = "El Rut ingresado no esta inscrito en FONASA"; 
+	public static String observacionSinFonasa = "El paciente no pertenece a FONASA";
+	public static String observacionNoEsRed ="El paciente no pertenece a la RED"; 
 	
 	
 	/** Carta Respaldo **/

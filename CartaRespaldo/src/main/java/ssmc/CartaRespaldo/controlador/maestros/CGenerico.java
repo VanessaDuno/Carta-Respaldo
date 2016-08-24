@@ -2,6 +2,8 @@ package ssmc.CartaRespaldo.controlador.maestros;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,6 +15,7 @@ import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.annotation.Resource;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -23,6 +26,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -142,6 +147,8 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 	protected SResponsableSolicitud servicioResponsableSolicitud;
 	@WireVariable("SLog")
 	protected SLog servicioLog;
+	@Resource(name="jdbcUbicate")
+	public javax.sql.DataSource ds;
 
 	public Tabbox tabBox;
 	public Include contenido;
@@ -583,9 +590,10 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 				.append(new String(caracteres)));
 		return new String(caracteres);
 	}
-	
+
 	/**
-	 * consumirWsFonasa: Metodo que consulta un rut con web service de Fonasa 
+	 * consumirWsFonasa: Metodo que consulta un rut con web service de Fonasa
+	 * 
 	 * @param Recibe
 	 *            int rut, String dgv
 	 * @return Retorna respuesta de objeto ReplyCertificadorPrevisionalTO
@@ -594,7 +602,7 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 	 *             dispara ninguna excepción.
 	 * 
 	 */
-	public ReplyCertificadorPrevisionalTO consumirWsFonasa (int rut, String dgv){
+	public ReplyCertificadorPrevisionalTO consumirWsFonasa(int rut, String dgv) {
 		CertificadorPrevisionalSoapProxy cf = new CertificadorPrevisionalSoapProxy();
 		QueryCertificadorPrevisionalTO query = new QueryCertificadorPrevisionalTO();
 		query.setCanal(Constantes.canal);
@@ -606,14 +614,22 @@ public abstract class CGenerico extends SelectorComposer<Component> {
 		qto.setTipoEmisor(Constantes.tipoEmisor);
 		qto.setTipoUsuario(Constantes.tipoUsuario);
 		query.setQueryTO(qto);
-		ReplyCertificadorPrevisionalTO respuesta  = new ReplyCertificadorPrevisionalTO();
+		ReplyCertificadorPrevisionalTO respuesta = new ReplyCertificadorPrevisionalTO();
 		try {
-			respuesta =	cf.getCertificadoPrevisional(query);
-			
+			respuesta = cf.getCertificadoPrevisional(query);
+
 		} catch (RemoteException e) {
 			e.printStackTrace();
-		}		
-		return respuesta; 
+		}
+		return respuesta;
+	}
+
+	public Connection Conexion() throws NamingException, SQLException {
+		Connection con = null;
+		InitialContext ctx = new InitialContext();
+		ds = (javax.sql.DataSource) ctx.lookup("jdbcCartaRespaldo");
+		con = ds.getConnection();
+		return con;
 	}
 
 }

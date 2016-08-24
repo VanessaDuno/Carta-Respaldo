@@ -1,0 +1,42 @@
+<?page title="Modal Restricciones" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window title="Restricciones" border="normal"
+		id="wdwModalRestricciones" width="50%"
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CRestricciones" closable="true">
+		<separator></separator>
+		<groupbox>
+			<caption label="Datos del Paciente"
+				style=" font-size: 16px; font-style: italic; font-weight: 600;">
+			</caption>
+			<grid zclass="none">
+				<columns>
+					<column width="15%"></column>
+					<column width="35%"></column>
+					<column width="15%"></column>
+					<column width="35%"></column>
+				</columns>
+				<rows>
+					<row>
+						<label value="Nombre:"
+							style="font-weight: 600;">
+						</label>
+						<label id="lblPaciente"></label>
+						<label value="Rut:" style="font-weight: 600;"></label>
+						<label id="lblRut"></label>
+
+					</row>
+				</rows>
+			</grid>
+		</groupbox>
+		<separator></separator>
+		<separator></separator>
+		<div class="alert alert-danger" id="divObservacion"
+			style=" margin-right: 10px;padding: 10px;">
+			<label id="lblObservacion"></label>
+		</div>
+		<div class="alert alert-info" id="divObservacionR"
+			style=" margin-right: 10px;padding: 10px;">
+			<label id="lblObservacionR"></label>
+		</div>
+	</window>
+</zk>

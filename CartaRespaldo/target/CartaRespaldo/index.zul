@@ -1,0 +1,88 @@
+<zk xmlns:x="xhtml">
+	<?link rel="stylesheet" type="text/css" href="public/bootstrap-3.3.6-dist/css/bootstrap.css"?>
+	<?link rel="stylesheet" type="text/css" href="public/css/estilo.css"?>
+	<?link rel="stylesheet" type="text/css" href="public/css/custom.css"?>
+	<?link type="image/x-icon" href="/public/imagenes/generales/1.png" rel="shortcut icon"?>
+	
+
+	<zscript>
+	String variable = execution.getParameter("respuesta");
+	String a = "";
+	if (variable == null)
+		a = "";
+	else
+		a = execution.getParameter("respuesta");
+</zscript>
+
+<style>
+		.window-index .z-window-content{     background: transparent; }
+</style>
+
+	<window title="" border="0" height="100%" contentStyle="overflow:auto" class="window-index"
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CIndex" style="background: transparent !important;">
+	<borderlayout style="background: transparent;">
+		<center style="background: transparent;border: none;">
+			<div class="container">
+				<div class="row" id="">
+					<div class="col-md-4"></div>
+					<div class="col-md-4">
+						<x:section class="login-form">
+							<x:form class="registro" role="login"
+								method="post" id="inicioSesion"
+								action="j_spring_security_check">
+								<image style="width: 60%;"
+									src="/public/imagenes/generales/logoI.png"
+									class="img-responsive" />
+
+								<x:center>
+									<x:h3>
+										<x:b>Ingreso al Sistema</x:b>
+									</x:h3>
+								</x:center>
+								<textbox id="log_usuario" zclass="none"
+									name="j_username" placeholder="Usuario"
+									class="form-control input-lg">
+								</textbox>
+								<textbox class="form-control input-lg" zclass="none"
+									placeholder="Password" id="log_clave" type="password"
+									name="j_password" />
+
+								<x:center>
+									<button label="Enviar" type="submit"
+										class="btn btn-lg btn-primary btn-block" style="width:60%">
+										Ingresar
+									</button>
+								</x:center>
+
+								<label
+									style="color: #A94442; font-weight: 600; margin-left: 90px; border-radius: 4px"
+									value="${a}">
+								</label>
+								<vlayout width="100%">
+									<separator />
+									<separator />
+									<a href="">
+										<label id="lblOlvidoClave"
+											sclass="pointer" value="¿Olvidó su Contraseña?"
+											style="color:red;" />
+									</a>
+								</vlayout>
+							</x:form>
+							<div class="form-links">
+								<a href="http://www.minsal.cl/"
+									target="_blank" style="color: black">
+									http://www.minsal.cl/
+								</a>
+							</div>
+						</x:section>
+
+					</div>
+					<div class="col-md-4"></div>
+				</div>
+			</div>
+		</center>
+
+	</borderlayout>
+	</window>
+
+</zk>

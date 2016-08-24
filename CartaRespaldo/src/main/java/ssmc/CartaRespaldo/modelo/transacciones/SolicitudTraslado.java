@@ -69,6 +69,12 @@ public class SolicitudTraslado implements Serializable{
 	@Column(name= "id_ugcc")
 	private String idUgcc; 
 	
+	@Column(name ="observacion")
+	private String observacion; 
+	
+	@Column(name ="observacion_restriccion")
+	private String observacionRestriccion; 
+	
 	public SolicitudTraslado() {
 	}
 
@@ -138,6 +144,10 @@ public class SolicitudTraslado implements Serializable{
 		builder.append(descripcion);
 		builder.append(", idUgcc=");
 		builder.append(idUgcc);
+		builder.append(", observacion=");
+		builder.append(observacion);
+		builder.append(", observacionRestriccion=");
+		builder.append(observacionRestriccion);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -200,5 +210,21 @@ public class SolicitudTraslado implements Serializable{
 
 	public void setDiagnostico(Diagnostico diagnostico) {
 		this.diagnostico = diagnostico;
+	}
+
+	public String getObservacionRestriccion() {
+		return observacionRestriccion;
+	}
+
+	public void setObservacionRestriccion(String observacionRestriccion) {
+		this.observacionRestriccion = observacionRestriccion;
+	}
+
+	public String getObservacion() {
+		return observacion;
+	}
+
+	public void setObservacion(String observacion) {
+		this.observacion = observacion;
 	}
 }

@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
@@ -97,7 +98,7 @@ public class CSolicitudTraslado extends CGenerico {
 	private List<CargosEstablecimiento> cargosEstablecimiento = new ArrayList<CargosEstablecimiento>();
 	private List<ResponsableSolicitud> responsablesSolicitud = new ArrayList<ResponsableSolicitud>();
 	private Paciente pacienteRegistrado = new Paciente();
-	// private Media media;
+	private String observacion = "";
 
 	@Wire
 	private Combobox cmbProvincia;
@@ -275,44 +276,39 @@ public class CSolicitudTraslado extends CGenerico {
 
 			@Override
 			public void guardar() {
-				if (!sinFonasa) {
-					if (perteneceRed) {
-						if (validarCampos()) {
-							if (usuarioActivo.getEstablecimiento()
-									.getCantidadFirmantes() == recuperarDataSession()
-									.size()) {
-								prepararObjetosGuardar();
-								Messagebox.show(
-										Constantes.mensajeRegistroGuardado,
+				if (validarCampos()) {
+					if (usuarioActivo.getEstablecimiento()
+							.getCantidadFirmantes() == recuperarDataSession()
+							.size()) {
+						if (sinFonasa || !perteneceRed) {
+							Messagebox
+									.show("Paciente posee restricciones -"+ lblErrorRutPaciente.getValue()+", ¿Desea generar la carta?",
+											"Alerta",
+											Messagebox.OK | Messagebox.CANCEL,
+											Messagebox.QUESTION,
+											new org.zkoss.zk.ui.event.EventListener<Event>() {
+												public void onEvent(Event evt)
+														throws InterruptedException,
+														JSONException {
+													if (evt.getName().equals(
+															"onOK")) {
+														instruccionesGuardar();
+													}
+												}
+											});
+						} else {
+							instruccionesGuardar();
+						}
+					} else {
+						Messagebox
+								.show("La cantidad de cargos configurados debe coincidir con el numero de cargos seleccionados como responsables",
 										"Información", Messagebox.OK,
 										Messagebox.INFORMATION);
-								try {
-									generarReporteQuemado(solicitudGuardada
-											.getId());
-								} catch (JSONException e) {
-									e.printStackTrace();
-								}
-								borrarDataSesion();
-								limpiarCampos();
-							} else {
-								Messagebox
-										.show("La cantidad de cargos configurados debe coincidir con el numero de cargos seleccionados como responsables",
-												"Información", Messagebox.OK,
-												Messagebox.INFORMATION);
-							}
-						} else {
-							Messagebox.show(Constantes.mensajeCamposVacios,
-									"Advertencia", Messagebox.OK,
-									Messagebox.EXCLAMATION);
-						}
-
-					} else {
-						Messagebox.show("El Paciente no pertenece a la Red",
-								"Error", Messagebox.OK, Messagebox.ERROR);
 					}
 				} else {
-					Messagebox.show(respuesta.getCoddesc(),
-							"Error", Messagebox.OK, Messagebox.ERROR);
+					Messagebox.show(Constantes.mensajeCamposVacios,
+							"Advertencia", Messagebox.OK,
+							Messagebox.EXCLAMATION);
 				}
 			}
 
@@ -327,6 +323,19 @@ public class CSolicitudTraslado extends CGenerico {
 		botonera.getChildren().get(3).setVisible(true);
 		botoneraSolicitud.appendChild(botonera);
 		log.info("Fin del metodo inicializar ()");
+	}
+
+	public void instruccionesGuardar() {
+		prepararObjetosGuardar();
+		Messagebox.show(Constantes.mensajeRegistroGuardado, "Información",
+				Messagebox.OK, Messagebox.INFORMATION);
+		try {
+			generarReporteQuemado(solicitudGuardada.getId());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		borrarDataSesion();
+		limpiarCampos();
 	}
 
 	public void obtenerDiagnostico() {
@@ -494,16 +503,17 @@ public class CSolicitudTraslado extends CGenerico {
 		establecimientos = servicioEstablecimiento.buscarRegion(13, false);
 		Establecimiento es = new Establecimiento();
 		es.setNombre("Otro");
+		es.setRut("0");
 		es.setId(500);
 		establecimientos.add(es);
 		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(
 				establecimientos));
 	}
 
-	@Listen("onChange = #cmbEstablecimiento")
+	@Listen("onBlur = #cmbEstablecimiento")
 	public void comboEstablecimiento() {
 		if (cmbEstablecimiento.getSelectedItem() != null) {
-			if (cmbEstablecimiento.getValue().equals("Otro")) {
+			if (cmbEstablecimiento.getValue().equals("Otro - 0")) {
 				txtOtroEstablecimiento.setVisible(true);
 			} else {
 				txtOtroEstablecimiento.setVisible(false);
@@ -656,6 +666,13 @@ public class CSolicitudTraslado extends CGenerico {
 			solicitudTraslado.setGes(true);
 		} else {
 			solicitudTraslado.setGes(false);
+		}
+		if (sinFonasa) {
+			solicitudTraslado.setObservacion(Constantes.observacionSinFonasa);
+			solicitudTraslado.setObservacionRestriccion(observacion);
+		} else if (!perteneceRed) {
+			solicitudTraslado.setObservacion(Constantes.observacionNoEsRed);
+			solicitudTraslado.setObservacionRestriccion(observacion);
 		}
 		solicitudGuardada = servicioSolicitudTraslado
 				.guardar(solicitudTraslado);
@@ -816,6 +833,11 @@ public class CSolicitudTraslado extends CGenerico {
 		txtBusquedaRutEstablecimiento.setValue("");
 		inhabilitarRows();
 		lblFiltrosEstableciminto.setVisible(false);
+		divErrorRutPaciente.setVisible(false);
+		lblErrorRutPaciente.setValue("");
+		sinFonasa = false;
+		perteneceRed = false;
+		observacion = "";
 	}
 
 	public void limpiarCamposPaciente() {
@@ -842,15 +864,14 @@ public class CSolicitudTraslado extends CGenerico {
 				|| txtRutPaciente.getValue().equals("")
 				|| lblSegundoApellido.getValue().equals("")
 				|| lblPrimerApellido.getValue().equals("")
-				// || lblTelefono.getValue().equals("")
 				|| lblComuna.getValue().equals("")
-				// || lblPrevision.getValue().equals("")
 				|| lblGenero.getValue().equals("")
 				|| cmbTipoDerivacion.getSelectedItem() == null
 				|| cmbUnidad.getSelectedItem() == null
 				|| lblFechaNacimiento.getValue().equals("")
 				|| txtFicha.getValue().equals("")
 				|| txtIdUgcc.getValue().equals("")) {
+			cmbUnidad.setStyle("    border-color: red !important;");
 			return false;
 		} else {
 			if (rdoHospital.isChecked()) {
@@ -1058,45 +1079,6 @@ public class CSolicitudTraslado extends CGenerico {
 	@Listen("onOK = #txtRutPaciente")
 	public void buscarRut() {
 		validarRutPaciente();
-		/**
-		 * log.info("Inicio del metodo buscarRut()"); String rut; if
-		 * (txtRutPaciente.getText().compareTo("") == 0) {
-		 * Messagebox.show(Constantes.mensajeIngresarIdentificacionPaciente,
-		 * "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION); } else { rut =
-		 * formatearRut(txtRutPaciente.getValue());
-		 * txtRutPaciente.setValue(rut); pacienteRegistrado =
-		 * servicioPaciente.buscarRut(rut); if (pacienteRegistrado != null) {
-		 * int posicion = pacienteRegistrado.getNombres().indexOf(" ");
-		 * txtPrimerNombrePaciente
-		 * .setValue(pacienteRegistrado.getNombres().substring(0, posicion));
-		 * txtSegundoNombrePaciente
-		 * .setValue(pacienteRegistrado.getNombres().substring
-		 * (posicion,pacienteRegistrado.getNombres().length()));
-		 * txtPrimerApellidoPaciente
-		 * .setValue(pacienteRegistrado.getPrimerApellido());
-		 * txtSegundoApellidoPaciente
-		 * .setValue(pacienteRegistrado.getSegundoApellido());
-		 * dtbFechaNacPaciente
-		 * .setValue(pacienteRegistrado.getFechaNacimiento());
-		 * cmbSexo.setValue(pacienteRegistrado.getSexo());
-		 * cmbSexo.setContext(String.valueOf(pacienteRegistrado.getSexo()));
-		 * cmbRegionPaciente
-		 * .setValue(pacienteRegistrado.getComuna().getProvincia
-		 * ().getRegion().getNombre());
-		 * cmbProvincia.setValue(pacienteRegistrado.
-		 * getComuna().getProvincia().getNombre());
-		 * cmbComuna.setValue(pacienteRegistrado.getComuna().getNombre());
-		 * cmbComuna
-		 * .setContext(String.valueOf(pacienteRegistrado.getComuna().getId()));
-		 * txtDireccionPaciente.setValue(pacienteRegistrado.getDomicilio());
-		 * cmbPrevisionPaciente.setValue(pacienteRegistrado.getPrevision());
-		 * txtTelefonoPaciente.setValue(pacienteRegistrado.getTelefono()); }
-		 * else { if (!rutPaciente) { log.debug(new
-		 * StringBuilder().append("No esta registrado paciente:").append(rut));
-		 * Messagebox.show( Constantes.mensajePacienteNoRegistrado,
-		 * "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION); } } }
-		 * log.info("Fin del metodo buscarMedico()");
-		 **/
 	}
 
 	@Listen("onChange= #txtBusquedaEstablecimiento")
@@ -1116,26 +1098,33 @@ public class CSolicitudTraslado extends CGenerico {
 		cmbEstablecimiento.setStyle("height: 350px !important;");
 	}
 
-	// @Listen("onChange= #txtBusquedaRutEstablecimiento")
+	@Listen("onChange= #txtBusquedaRutEstablecimiento")
 	public void filtrarRutEstablecimiento() {
 		cmbEstablecimiento.setValue("");
 		List<Establecimiento> lista = new ArrayList<Establecimiento>();
-		for (Establecimiento establecimiento : establecimientos) {
-			if (establecimiento
-					.getRut()
-					.toLowerCase()
-					.contains(
-							formatearRut(txtBusquedaRutEstablecimiento
-									.getValue().toLowerCase()))) {
-				lista.add(establecimiento);
+		if (!txtBusquedaRutEstablecimiento.getValue().equals("")) {
+			String rut = formatearRut(txtBusquedaRutEstablecimiento.getValue());
+			for (Establecimiento establecimiento : establecimientos) {
+				if (establecimiento.getRut().equals(rut)) {
+					lista.add(establecimiento);
+					log.info(new StringBuilder(
+							"Se Agrego a la lista Establecimiento:")
+							.append(establecimiento));
+				}
 			}
+			cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(
+					lista));
+			cmbEstablecimiento.setStyle("height: 350px !important;");
+		} else {
+			cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(
+					establecimientos));
 		}
-		cmbEstablecimiento.setModel(new ListModelList<Establecimiento>(lista));
-		cmbEstablecimiento.setStyle("height: 350px !important;");
 
 	}
 
 	public void recibirDatosWS(String rut, String verificador) {
+		sinFonasa = false;
+		perteneceRed = false;
 		respuesta = consumirWsFonasa(Integer.parseInt(rut), verificador);
 		if (respuesta.getReplyTO().getEstado() == 0
 				&& respuesta.getReplyTO().getErrorM().equals("")) {
@@ -1165,40 +1154,39 @@ public class CSolicitudTraslado extends CGenerico {
 				pacienteRegistrado.setTelefono(respuesta.getBeneficiarioTO()
 						.getTelefono());
 			}
-			String codigoBloqueo= respuesta.getCodcybl(); 
-			if (codigoBloqueo.equals(
-					Constantes.codigoBloqueadoAuditoria)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoCagaSinCotizaciones)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoCapredena)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoCargaAuditoria)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoCargaCapredena)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoCargaDipreca)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoCargaIsapre)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoDipreca)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoFallecido)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoIsapre)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoRutCargaFueraRango)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoRutTitularFueraRango)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoSinCotizaciones)
-					|| codigoBloqueo.equals(
-							Constantes.codigoBloqueadoSinInformacion)) {
+			String codigoBloqueo = respuesta.getCodcybl();
+			if (codigoBloqueo.equals(Constantes.codigoBloqueadoAuditoria)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoCagaSinCotizaciones)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoCapredena)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoCargaAuditoria)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoCargaCapredena)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoCargaDipreca)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoCargaIsapre)
+					|| codigoBloqueo.equals(Constantes.codigoBloqueadoDipreca)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoFallecido)
+					|| codigoBloqueo.equals(Constantes.codigoBloqueadoIsapre)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoRutCargaFueraRango)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoRutTitularFueraRango)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoSinCotizaciones)
+					|| codigoBloqueo
+							.equals(Constantes.codigoBloqueadoSinInformacion)) {
 				sinFonasa = true;
 				divErrorRutPaciente.setVisible(true);
 				lblErrorRutPaciente.setValue(respuesta.getCoddesc());
+				lblErrorRutPaciente.setVisible(true);
+				observacion = respuesta.getCoddesc();
 			} else {
-				sinFonasa = false; 
+				sinFonasa = false;
 				if (respuesta.getBeneficiarioTO().getCdgComuna()
 						.equals(Constantes.codigoCerrillos)
 						|| respuesta.getBeneficiarioTO().getCdgComuna()
@@ -1214,6 +1202,9 @@ public class CSolicitudTraslado extends CGenerico {
 					divErrorRutPaciente.setVisible(true);
 					lblErrorRutPaciente
 							.setValue("El Paciente no pertenece a la Red");
+					lblErrorRutPaciente.setVisible(true);
+					observacion = "La comuna del paciente es: "
+							+ respuesta.getBeneficiarioTO().getDesComuna();
 				}
 			}
 		} else {

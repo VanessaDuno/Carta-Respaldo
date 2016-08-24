@@ -1,0 +1,32 @@
+<zk>
+	<window title="Prestaciones" border="normal" width="50%"
+		 height = "60%" closable="true" id="wdwModalResponsables" 
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CModalResponsables">
+		<textbox id="txtBusquedaResponsables" placeholder="Buscar..."
+			width="100%">
+		</textbox>
+		<listbox id="lbxResponsables" multiple="true" height="80%"  style="overflow-y:auto" 
+			checkmark="true">
+			<listhead>
+				<listheader label="Nombre" width="60%"></listheader>
+				<listheader label="Cargo" width="40%"></listheader>
+			</listhead>
+			<template name="model">
+				<listitem>
+					<listcell label="${each.nombre}"></listcell>
+					<listcell label="${each.cargo.nombre}"></listcell>
+				</listitem>
+			</template>
+		</listbox>
+		<separator></separator>
+		<separator></separator>
+		<div align="center">
+			<button label="Aceptar" id="btnAceptar"
+				image="/public/imagenes/botones/aceptar.png">
+			</button>
+			<button label="Cancelar" id="btnCancelar"
+				image="/public/imagenes/botones/rechazar.png">
+			</button>
+		</div>
+	</window>
+</zk>

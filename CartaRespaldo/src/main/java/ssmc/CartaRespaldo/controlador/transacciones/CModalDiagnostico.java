@@ -21,6 +21,7 @@ import ssmc.CartaRespaldo.arbol.Nodos;
 import ssmc.CartaRespaldo.controlador.maestros.CGenerico;
 import ssmc.CartaRespaldo.modelo.maestros.Diagnostico;
 import ssmc.CartaRespaldo.preparedstatement.ConsultarDiagnosticos;
+import ssmc.CartaRespaldo.preparedstatement.ConsultarDiagnosticosPorNombre;
 
 /**
  * @author Vanessa Maria Duno
@@ -39,6 +40,9 @@ public class CModalDiagnostico extends CGenerico {
 	private Window wdwDiagnostico;
 	TreeModel _model;
 	Textbox txt;
+	@Wire
+	private Textbox txtBuscarDiagnostico;
+	boolean filtro = false;
 
 	@Override
 	public void inicializar() throws IOException {
@@ -65,10 +69,17 @@ public class CModalDiagnostico extends CGenerico {
 		Nodos twoLevelNode = new Nodos(null, 0, "", "");
 		Nodos threeLevelNode = new Nodos(null, 0, "", "");
 		Nodos fourLevelNode = new Nodos(null, 0, "", "");
-
 		List<Diagnostico> arboles = new ArrayList<Diagnostico>();
-		ConsultarDiagnosticos cs = new ConsultarDiagnosticos();
-		arboles = cs.consultarDiagnosticos();
+		if (!filtro) {
+			ConsultarDiagnosticos cs = new ConsultarDiagnosticos();
+			arboles = cs.consultarDiagnosticos();
+		} else {
+			ConsultarDiagnosticosPorNombre dn = new ConsultarDiagnosticosPorNombre();
+			arboles = dn.consultarDiagnosticos(txtBuscarDiagnostico.getValue().toUpperCase());
+			for (int i = 0; i < arboles.size(); i++) {
+				arboles.get(i).setPadre(0);
+			}
+		}
 
 		long temp1, temp2, temp3 = 0;
 
@@ -139,6 +150,17 @@ public class CModalDiagnostico extends CGenerico {
 				st.obtenerDiagnostico();
 			}
 		}
+	}
+
+	@Listen("onOK = #txtBuscarDiagnostico")
+	public void crearArbolPorNombre() {
+		_model = null;
+		if (!txtBuscarDiagnostico.getValue().equals("")) {
+			filtro = true;
+		} else {
+			filtro = false;
+		}
+		arbolDiagnostico.setModel(getModel());
 	}
 
 }

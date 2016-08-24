@@ -1,0 +1,157 @@
+<?page title="Usuario" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:x="xhtml" xmlns:c="client">
+	<div class="panel panel-default panel-vistas-mantenedores">
+		<div class="panel-heading">Usuario</div>
+		<div class="panel-body">
+			<div apply="ssmc.CartaRespaldo.controlador.seguridad.CUsuario">
+				<div class="panel panel-default">
+					<div class="panel-body" style="padding: 8px;">
+						<div width="50%" id="botoneraUsuario"
+							align="left" />
+					</div>
+				</div>
+				<groupbox width="100%">
+					<caption class="captionGroupbox"
+						label="Datos de Usuario" />
+					<grid width="100%" zclass="none">
+						<columns visible="false">
+							<column label="" width="15%" />
+							<column label="" width="35%" />
+							<column label="" width="15%" />
+							<column label="" width="35%" />
+						</columns>
+						<rows>
+							<row>
+								<label  value="Nombre:" />
+								<textbox id="txtNombreUsuario" hflex="1"
+									c:onKeyPress="return soloLetras()" 
+									maxlength="100" tooltiptext="Ingrese el Nombre del Usuario" />
+								<label  value="Email:" />
+								<textbox id="txtEmailUsuario" hflex="1"
+									 maxlength="100"
+									tooltiptext="Ingrese el email del Usuario" />
+							</row>
+							<row>
+								<hbox>
+									<label
+
+										value="Región" />
+
+								</hbox>
+								<cell colspan="1">
+									<combobox id="cmbRegion"
+										readonly="true" tabindex="1" width="100%"
+										tooltiptext="Seleccione una region"
+										placeholder="Seleccione una region">
+										<template name="model">
+											<comboitem
+												label="${each.nombre}" context="${each.codigo}" />
+										</template>
+									</combobox>
+								</cell>
+								<hbox>
+									<label value="Público:"
+										style="color: #00547A;">
+									</label>
+								</hbox>
+								<cell colspan="4">
+
+									<combobox
+										id="cmbEstablecimientoUsuario" width="77%">
+										<template name="model">
+											<comboitem
+												label="${each.nombre}" context="${each.id}">
+											</comboitem>
+										</template>
+									</combobox>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+				<separator />
+				<grid width="100%" zclass="none">
+					<columns visible="false">
+						<column label="" width="15%" />
+						<column label="" width="35%" />
+						<column label="" width="15%" />
+						<column label="" width="35%" />
+					</columns>
+					<rows>
+						<row>
+							<label 
+								value="Login de Usuario:" />
+							<textbox id="txtLoginUsuario" hflex="1"
+								 maxlength="50"
+								tooltiptext="Ingrese el Login del Usuario" />
+							<hbox />
+							<hbox />
+						</row>
+						<row>
+							<label  value="Password:" />
+							<textbox id="txtPasswordUsuario" hflex="1"
+								 maxlength="256"
+								tooltiptext="Ingrese la Contraseña del Usuario" type="password" />
+							<label 
+								value="Reescriba el Password:" />
+							<textbox id="txtPassword2Usuario" hflex="1"
+								 maxlength="256"
+								tooltiptext="Reescriba el Login del Usuario" type="password" />
+						</row>
+					</rows>
+				</grid>
+				<div class="alert alert-danger"
+					style="margin-bottom: 0px;padding: 5px;margin-top: 10px;"
+					visible="false" id="divIncorrectos" align="center">
+					<x:span class="glyphicon glyphicon-exclamation-sign"
+						aria-hidden="true">
+					</x:span>
+					<x:span class="sr-only">Error:</x:span>
+					<label id= "lblErrorClave"></label>
+				</div>
+				<separator />
+				<groupbox width="100%">
+					<caption class="captionGroupbox"
+						label="Grupos de Usuario" />
+					<hbox>
+						<listbox id="ltbGruposDisponibles" style=" border-top: 1px solid #e3e3e3;"
+							height="160px" emptyMessage="No hay Grupos registrados">
+							<template name="model">
+								<listitem>
+									<listcell label="${each.nombre}"></listcell>
+								</listitem>
+							</template>
+						</listbox>
+						<separator></separator>
+						<vbox>
+							<button id="btnAgregarGrupo"
+								image="/public/imagenes/botones/right.png"
+								tooltiptext="Agregar Grupos" width="47px"
+								style="margin-left: 20px;margin-right: 10px;    margin-top: 10px;" />
+							<separator />
+							<button id="btnQuitarGrupo"
+								image="/public/imagenes/botones/left.png"
+								tooltiptext="Quitar Grupos" width="47px"
+								style="margin-left: 20px;margin-right: 10px;" />
+						</vbox>
+						<listbox id="ltbGruposAgregados" height="160px" style=" border-top: 1px solid #e3e3e3;"
+							emptyMessage="No ha Seleccionado ningun Grupo">
+							<template name="model">
+								<listitem>
+									<listcell
+										label="${each.grupo.nombre}">
+									</listcell>
+								</listitem>
+							</template>
+						</listbox>
+					</hbox>
+				</groupbox>
+				<groupbox width="100%">
+					<caption class="captionGroupbox"
+						label="Usuarios Registrados" />
+					<div id="catalogoUsuarios" />
+				</groupbox>
+			</div>
+		</div>
+	</div>
+</zk>

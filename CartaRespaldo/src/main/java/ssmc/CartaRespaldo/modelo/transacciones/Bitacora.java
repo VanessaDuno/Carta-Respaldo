@@ -80,6 +80,13 @@ public class Bitacora implements Serializable {
 	@Column(name= "motivo_anulacion")
 	private String motivoAnulacion; 
 	
+	private byte[] epicrisisInforme;
+	
+	@Column(name = "id_sigfe")
+	private String idSigfe; 
+	
+	@Column (name = "motivo_cierre_clinico")
+	private String motivoCierreClinico; 
 
 	public Bitacora() {
 	}
@@ -147,6 +154,12 @@ public class Bitacora implements Serializable {
 		builder.append(activo);
 		builder.append(", motivoAnulacion=");
 		builder.append(motivoAnulacion);
+		builder.append(", epicrisisInforme=");
+		builder.append(Arrays.toString(epicrisisInforme));
+		builder.append(", idSigfe=");
+		builder.append(idSigfe);
+		builder.append(", motivoCierreClinico=");
+		builder.append(motivoCierreClinico);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -229,6 +242,30 @@ public class Bitacora implements Serializable {
 
 	public void setMotivoAnulacion(String motivoAnulacion) {
 		this.motivoAnulacion = motivoAnulacion;
+	}
+
+	public byte[] getEpicrisisInforme() {
+		return epicrisisInforme;
+	}
+
+	public void setEpicrisisInforme(byte[] epicrisisInforme) {
+		this.epicrisisInforme = epicrisisInforme;
+	}
+
+	public String getIdSigfe() {
+		return idSigfe;
+	}
+
+	public void setIdSigfe(String idSigfe) {
+		this.idSigfe = idSigfe;
+	}
+
+	public String getMotivoCierreClinico() {
+		return motivoCierreClinico;
+	}
+
+	public void setMotivoCierreClinico(String motivoCierreClinico) {
+		this.motivoCierreClinico = motivoCierreClinico;
 	}
 
 }
