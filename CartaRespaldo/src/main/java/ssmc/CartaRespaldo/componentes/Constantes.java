@@ -109,6 +109,8 @@ public class Constantes {
 	public static String rutaEstadoPorValidar =  "/public/imagenes/generales/por_validar.png";
 	public static String rutaEstadoCierreClinico = "/public/imagenes/generales/cierre_clinico.png";
 	public static String rutaEstadoCierreAdministrativo = "/public/imagenes/generales/cierre_administrativo.png"; 
+	public static String rutaEstadoRecepcionCuenta = "/public/imagenes/generales/recepcion_cuenta.png";
+	public static String rutaEstadoVisacion = "/public/imagenes/generales/visacion.png";
 	public static String rutaAplicacionServidor = "\\eclipseApps\\CartaRespaldo\\public\\temporal\\generado";
 	public static String rutaDirectorioTemporal = "public/temporal/generado"; 
 	public static String extensionPdf = ".pdf"; 

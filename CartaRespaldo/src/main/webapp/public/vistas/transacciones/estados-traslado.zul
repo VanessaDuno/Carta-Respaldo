@@ -2,7 +2,7 @@
 
 <zk>
 	<window title="Seguimiento del caso" border="normal"
-		id="wdwEstadoTraslado" closable="true" width="800px" height="100%"
+		id="wdwEstadoTraslado" closable="true" width="65%" height="100%"
 		apply="ssmc.CartaRespaldo.controlador.transacciones.CEstadosSolicitud">
 		<separator></separator>
 		<separator></separator>
@@ -41,7 +41,7 @@
 			</grid>
 		</groupbox>
 		<separator></separator>
-		<hbox widths="20%,20%,20%,20%,20%" width="100%">
+		<hbox widths="14%,14%,14%, 14%,14%,15%,15%" width="100%">
 			<div class="alert alert-info" id="divPrimerEstado"
 				style=" margin-right: 10px;padding: 10px;">
 				<label id="lblPrimerEstado"></label>
@@ -64,8 +64,20 @@
 					style="    font-size: 13px;">
 				</label>
 			</div>
+			<div class="alert alert-info" id="divSextoEstado"
+				style=" margin-right: 10px;padding: 10px;">
+				<label id="lblSextoEstado"
+					style="    font-size: 13px;">
+				</label>
+			</div>
+			<div class="alert alert-info" id="divSeptimoEstado"
+				style=" margin-right: 10px;padding: 10px;">
+				<label id="lblSeptimoEstado"
+					style="    font-size: 13px;">
+				</label>
+			</div>
 		</hbox>
-		<hbox widths="20%,20%,20%,20%, 20%" width="100%">
+		<hbox widths="14%,14%,14%, 14%,14%,15%,15%" width="100%">
 			<label class="label-fechaEstado"
 				id="lblFechaPrimerEstado">
 			</label>
@@ -81,19 +93,41 @@
 			<label class="label-fechaEstado"
 				id="lblFechaQuintoEstado">
 			</label>
+			<label class="label-fechaEstado" id="lblFechaSextoEstado">
+			</label>
+			<label class="label-fechaEstado"
+				id="lblFechaSeptimoEstado">
+			</label>
 		</hbox>
-		<image id="imgEstado" style="width: 763px;"></image>
+		<image id="imgEstado" style="width: 99%;"></image>
 		<separator></separator>
 		<separator></separator>
-		<groupbox>
+		<groupbox width="80%" style="margin-left:10%">
 			<caption label="Cambio de Estado"></caption>
+			<div class="alert alert-info" id="divInformacion"
+				style=" margin-right: 10px;padding: 5px; margin-bottom: 3px;"
+				visible="false">
+				<label id="lblInformacion"></label>
+			</div>
+			<div class="alert alert-info" id="divTipoCuenta"
+				style=" margin-right: 10px;padding: 0px; padding-right: 10px !important;margin-bottom: 0px;"
+				visible="false">
+				<label id="lblTipoCuenta" style=" font-weight: bold;"></label>
+			</div>
 			<grid>
+				<columns>
+					<column width="40%"></column>
+					<column width="60%"></column>
+				</columns>
 				<rows>
+					<!-- Para Anulación -->
 					<row id="rowAnulacion" visible="false">
 						<label class="etiqueta"
 							value="Ingrese del motivo en caso de anulación:" />
 						<textbox id="txtMotivoAnulacion" rows="2"></textbox>
 					</row>
+
+					<!-- Para Por Validar -->
 					<row id="rowAdjuntar" visible="false">
 						<label class="etiqueta"
 							value="Adjuntar carta firmada:" />
@@ -102,6 +136,9 @@
 							class="btn" tooltiptext="Adjunte la carta respaldo firmada"
 							image="/public/imagenes/botones/cargar.png" />
 					</row>
+
+					<!-- Para Cierre Clínico -->
+
 					<row id="rowCierreClinico" visible="false">
 						<label value="Epicrisis y/o Informe"></label>
 						<textbox id="txtEpicrisis" rows="3"></textbox>
@@ -114,25 +151,13 @@
 					</row>
 					<row id="rowMotivoCierreClinico" visible="false">
 						<label value="Motivo del cierre clínico"></label>
-						<combobox id="cmbMotivoCierreClinico" placeholder="Motivo cierre clínico"
-							readonly="true" width="100%">
+						<combobox id="cmbMotivoCierreClinico"
+							placeholder="Motivo cierre clínico" readonly="true"
+							width="100%">
 							<template name="model">
 								<comboitem label="${each}"></comboitem>
 							</template>
 						</combobox>
-					</row>
-					<row id="rowCierreAdministrativo" visible="false">
-						<label value="ID de cuenta:"></label>
-						<textbox id="txtRecepcionCuenta"></textbox>
-					</row>
-					<row id="rowCierreAdministrativoPdf"
-						visible="false">
-						<label class="etiqueta"
-							value="Adjuntar pdf cuenta:" />
-						<button
-							upload="true,maxsize=6144, multiple=true" id="fudCuenta"
-							class="btn" tooltiptext="Adjunte pdf de la cuenta"
-							image="/public/imagenes/botones/cargar.png" />
 					</row>
 					<row id="rowEpicrisisPdf" visible="false">
 						<label class="etiqueta"
@@ -142,9 +167,114 @@
 							class="btn" tooltiptext="Adjunte pdf de la cuenta"
 							image="/public/imagenes/botones/cargar.png" />
 					</row>
+
+					<!-- Para Cierre Administrativo -->
+
 					<row id="rowIdSigfe" visible="false">
 						<label value="ID del Sigfe:"></label>
 						<textbox id="txtidSigfe"></textbox>
+					</row>
+					<row id="rowOrdenCompra" visible="false">
+						<label value="Número orden compra:"></label>
+						<textbox id="txtOrdenCompra"></textbox>
+					</row>
+					<row id="rowCierreAdministrativoPdf"
+						visible="false">
+						<label class="etiqueta"
+							value="Adjuntar pdf resolución:" />
+						<button
+							upload="true,maxsize=6144, multiple=true" id="fudCuenta"
+							class="btn" tooltiptext="Adjunte pdf de la cuenta"
+							image="/public/imagenes/botones/cargar.png" />
+					</row>
+
+					<!--  Para Recepcion Cuenta -->
+
+					<row id="rowCierreAdministrativo" visible="false">
+						<label value="ID de cuenta:"></label>
+						<textbox id="txtRecepcionCuenta"></textbox>
+					</row>
+					<row id="rowNumeroFactura" visible="false">
+						<label value="Número de factura:"></label>
+						<textbox id="txtNumeroFactura"></textbox>
+					</row>
+					<row id="rowFechaRecepcion" visible="false">
+						<label
+							value="Fecha de recepción de la cuenta:">
+						</label>
+						<datebox id="dtbFechaRecepcion"></datebox>
+					</row>
+					<row id="rowMontoTotal" visible="false">
+						<label value="Monto total cobrado:"></label>
+						<doublespinner id="dsnpMontoTotalCobrado"
+							constraint="min 0" value="0">
+						</doublespinner>
+					</row>
+					<row id="rowFechaIngreso" visible="false">
+						<label
+							value="Fecha de ingreso al establecimiento:">
+						</label>
+						<datebox id="dtbFechaIngreso"></datebox>
+					</row>
+					<row id="rowFechaEgreso" visible="false">
+						<label
+							value="Fecha de egreso del establecimiento:">
+						</label>
+						<datebox id="dtbFechaEgreso"></datebox>
+					</row>
+					<row id="rowTipoCuenta" visible="false">
+						<label value="Tipo de cuenta:"></label>
+						<combobox id="cmbTipoCuenta" readonly="true">
+							<comboitem label="Alta"></comboitem>
+							<comboitem label="Corte"></comboitem>
+						</combobox>
+					</row>
+					<!-- Para Visacion -->
+
+					<row id="rowfechaIngresoCuenta" visible="false">
+						<label value="Fecha ingreso cuenta:"></label>
+						<datebox id="dtbFechaIngresoCuenta"></datebox>
+					</row>
+					<row id="rowObservacion" visible="false">
+						<label value="Observación:"></label>
+						<textbox id="txtObservacionVisacion"></textbox>
+					</row>
+					<row id="rowMontoDescuento" visible="false">
+						<label value="Monto descuento:"></label>
+						<doublespinner id="dspnMontoDescuento" value="0"
+							constraint="min 0">
+						</doublespinner>
+					</row>
+					<row id="rowDiasCamaUci" visible="false">
+						<label value="Total días cama UCI:"></label>
+						<spinner id="spnDiasCamaUci" value="0"
+							constraint="min 0">
+						</spinner>
+					</row>
+					<row id="rowDiasCamaUti" visible="false">
+						<label value="Total días cama UTI:"></label>
+						<spinner id="spnDiasCamaUti" value="0"
+							constraint="min 0">
+						</spinner>
+					</row>
+					<row id="rowDiasCamaBasica" visible="false">
+						<label value="Total días cama básica"></label>
+						<spinner id="spnDiasCamaBasica" value="0"
+							constraint="min 0">
+						</spinner>
+					</row>
+					<row id="rowMontoPago" visible="false">
+						<label value="Monto pago:"></label>
+						<doublespinner id="dspnMontoPago" value="0"
+							constraint="min 0">
+						</doublespinner>
+					</row>
+					<row id="rowPrestacionesAdicionales"
+						visible="false">
+						<label value="Prestaciones adicionales:"></label>
+						<doublespinner id="dspnPrestacionesAdicionales"
+							value="0" constraint="min 0">
+						</doublespinner>
 					</row>
 				</rows>
 			</grid>
@@ -156,8 +286,153 @@
 				style=" margin-right: 10px;padding: 10px;" visible="false">
 				<label id="lblCierreAdministrativo"></label>
 			</div>
+			<hbox width="100%" widths="33%, 33%, 34%" id="hbxLinks"
+				visible="false">
+				<button label="Cargar Acta Valorización"
+					class="boton-carga-documentos" id="btnActaValorizacion"
+					upload="true,maxsize=6144">
+				</button>
+				<button label="Cargar Acta Auditoria"
+					class="boton-carga-documentos" id="btnActaAuditoria"
+					upload="true,maxsize=6144">
+				</button>
+				<button label="Memorandum"
+					class="boton-carga-documentos" id="btnMemorandum"
+					upload="true,maxsize=6144">
+				</button>
+			</hbox>
+			<hbox width="100%" widths="33%, 33%, 34%" id="hbxLabels"
+				visible="false">
+				<div align="center">
+					<label id="lblActaValorizacion"
+						value="No se ha seleccionado archivo" class="links-documentos">
+					</label>
+				</div>
+				<div align="center">
+					<label id="lblActaAuditoria"
+						value="No se ha seleccionado archivo" class="links-documentos">
+					</label>
+				</div>
+				<div align="center">
+					<label id="lblMemorandum"
+						value="No se ha seleccionado archivo" class="links-documentos">
+					</label>
+				</div>
+			</hbox>
+			<hbox widths="50%,50%" width="100%">
+				<div class="alert alert-info" id="divInfoValidacion"
+					visible="false" style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
+					<label value="Información General"
+						class="titulos-estados">
+					</label>
+					<separator></separator>
+					<label id="lblInfoValidacion"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoValidacion1"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoValidacion2"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoValidacion3"
+						style="    font-size: 13px;">
+					</label>
+				</div>
+				<div class="alert alert-info" id="divInfoRecepcion"
+					visible="false" style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
+					<label value="Recepción de la cuenta"
+						class="titulos-estados">
+					</label>
+					<separator></separator>
+					<label id="lblInfoRecepcion"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoRecepcion1"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoRecepcion2"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoRecepcion3"
+						style="    font-size: 13px;">
+					</label>
+				</div>
+			</hbox>
+			<hbox widths="50%,50%" width="100%">
+				<div class="alert alert-info" id="divInfoVisacion"
+					visible="false" style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
+					<label value="Visación" class="titulos-estados"></label>
+					<separator></separator>
+					<label id="lblInfoVisacion"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoVisacion1"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoVisacion2"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoVisacion3"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoVisacion4"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoVisacion5"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoVisacion6"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoVisacion7"
+						style="    font-size: 13px;">
+					</label>
+					<separator></separator>
+					<label id="lblInfoVisacion8"
+						style="    font-size: 13px;">
+					</label>
+				</div>
+				<div class="alert alert-info" id="divDocumentos"
+					visible="false" style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
+					<label value="Documentos" class="titulos-estados"></label>
+					<separator></separator>
+					<button label="Ver Informe epicrisis"
+						class="boton-carga-documentos" id="btnVerInformeEpicrisis" style="background: #d9edf7;    color: black;">
+					</button>
+					<separator></separator>
+					<button label="Ver Acta de Valorización"
+						class="boton-carga-documentos" id="btnVerActaValorizacion" style="background: #d9edf7;    color: black;">
+					</button>
+					<separator></separator>
+				    <button label="Ver Acta de Auditoria Clínico-Financiero"
+						class="boton-carga-documentos" id="btnVerActaAuditoria" style="background: #d9edf7;    color: black;">
+					</button>
+					<separator></separator>
+					 <button label="Ver Memorandum" style="background: #d9edf7;    color: black;"
+						class="boton-carga-documentos" id="btnVerMemorandum">
+					</button>
+					<separator></separator>
+					 <button label="Ver Resolución" style="background: #d9edf7;    color: black;"
+						class="boton-carga-documentos" id="btnVerResolucion">
+					</button>
+				</div>
+			</hbox>
 			<div align="center">
-				<iframe style="width:600px;height: 300px"
+				<iframe style="width:600px;height: 200px"
 					visible="false" id="ifmPdf">
 				</iframe>
 			</div>
@@ -165,8 +440,6 @@
 		<checkbox class="label-validar" id="ckbxValidar"
 			label="Valida la Carta de Respaldo y su contenido" visible="false">
 		</checkbox>
-		<separator></separator>
-		<separator></separator>
 		<separator></separator>
 		<separator></separator>
 		<div align="center">

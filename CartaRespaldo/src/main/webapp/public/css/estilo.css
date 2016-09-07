@@ -206,7 +206,16 @@ opacity
 	border-color: #c7c7c7;
 	color: #777272;
 	padding: 10px;
-	border: 1px solid rgba(140, 137, 137, 0.14)
+	border: 1px solid rgba(140, 137, 137, 0.14);
+	border-radius: 4%;
+}
+
+.div-estado-activo{
+	background-color: #dff0d8;
+    color: #3c763d;
+    border-color: #d6e9c6;
+    border: #d6e9c6 solid 1px;
+    border-radius: 4%;
 }
 
 .row-paciente .z-row-inner {
@@ -236,4 +245,21 @@ opacity
 
 .z-window {
 	z-index: 1700 !important;
+}
+
+.titulos-estados {
+	font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.boton-carga-documentos{
+	font-size: 13px;
+	background: #2e75b6;
+	width: 98%;
+}
+
+.links-documentos {
+	font-size: 12px;
+    font-weight: bold;
 }

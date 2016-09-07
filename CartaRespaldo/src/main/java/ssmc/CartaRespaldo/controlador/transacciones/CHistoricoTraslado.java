@@ -188,12 +188,8 @@ public class CHistoricoTraslado extends CGenerico {
 
 	/**
 	 * semaforoLista: Metodo asigna los colores correspondientes a cada registro
-	 * segun la cantidad de días calculados: 
-	 * Verde -> dias <= 7 
-	 * Amarillo -> 7 <
-	 * dias >= 21 
-	 * Rojo -> dias > 21 
-	 * Blanco -> Tipo de derivación paquete GRD
+	 * segun la cantidad de días calculados: Verde -> dias <= 7 Amarillo -> 7 <
+	 * dias >= 21 Rojo -> dias > 21 Blanco -> Tipo de derivación paquete GRD
 	 * 
 	 * 
 	 * @param No
@@ -211,8 +207,7 @@ public class CHistoricoTraslado extends CGenerico {
 		if (listItem.size() != 0) {
 			for (int i = 0; i < listItem.size(); i++) {
 				lbxTraslado.renderItem(listItem.get(i));
-				Bitacora bitacora = listItem.get(i).
-						getValue();
+				Bitacora bitacora = listItem.get(i).getValue();
 				String otraPrestacion = bitacora.getTraslado().getDescripcion();
 				((Label) ((listItem.get(i).getChildren().get(3)))
 						.getFirstChild()).setValue(cs
@@ -250,7 +245,20 @@ public class CHistoricoTraslado extends CGenerico {
 					lc.setClass("text");
 				}
 				if (bitacora.getTraslado().getTipoDerivacion().toUpperCase()
-						.contains("GRD")) {
+						.contains("GRD")
+						|| bitacora.getEstatus().equals(
+								EnumEstadoSolicitud.CIERRECLINICO.getEstado())
+						|| bitacora.getEstatus()
+								.equals(EnumEstadoSolicitud.RECEPCIONCUENTA
+										.getEstado())
+						|| bitacora.getEstatus().equals(
+								EnumEstadoSolicitud.VISACION.getEstado())
+						|| bitacora.getEstatus().equals(
+								EnumEstadoSolicitud.CIERREADMINISTRATIVO
+										.getEstado())
+						|| bitacora.getEstatus().equals(
+								EnumEstadoSolicitud.ANULADA
+								.getEstado())) {
 					lc.setStyle("background: white");
 					lc.setClass("text");
 				}
@@ -309,14 +317,16 @@ public class CHistoricoTraslado extends CGenerico {
 				+ "','','top=100,left=200,height=600,width=800,scrollbars=1,resizable=1')");
 	}
 
-
 	/**
-	 * reporteTraslado: Metodo que se encarga de generar PDF con la carta de respaldo
+	 * reporteTraslado: Metodo que se encarga de generar PDF con la carta de
+	 * respaldo
 	 * 
-	 * @param Recibe el id de la carta
-	 * @return Retorna un arreglo de byte[] 
+	 * @param Recibe
+	 *            el id de la carta
+	 * @return Retorna un arreglo de byte[]
 	 * 
-	 * @throws Dispara  JRException, IOException
+	 * @throws Dispara
+	 *             JRException, IOException
 	 * 
 	 */
 	public byte[] reporteTraslado(String id) throws JRException, IOException {
@@ -616,7 +626,7 @@ public class CHistoricoTraslado extends CGenerico {
 				wdwModalRestricciones = (Window) Executions.createComponents(
 						"public/vistas/transacciones/modal-restricciones.zul",
 						null, map);
-				
+
 				wdwModalRestricciones.doModal();
 			}
 		}
@@ -707,12 +717,13 @@ public class CHistoricoTraslado extends CGenerico {
 						.setCellValue(
 								cs.consultarPrestaciones(bitacora.getTraslado()
 										.getId()));
-				String cadena = bitacora.getTraslado().getDiagnostico().getNombre();
-				String codigo = ""; 
-				int posicion = cadena.indexOf("-"); 
+				String cadena = bitacora.getTraslado().getDiagnostico()
+						.getNombre();
+				String codigo = "";
+				int posicion = cadena.indexOf("-");
 				if (posicion != -1) {
-					codigo = cadena.substring(0, posicion); 
-					cadena  = cadena.substring(posicion + 1, cadena.length()); 
+					codigo = cadena.substring(0, posicion);
+					cadena = cadena.substring(posicion + 1, cadena.length());
 				}
 				row.createCell(5).setCellValue(codigo);
 				row.createCell(6).setCellValue(cadena);

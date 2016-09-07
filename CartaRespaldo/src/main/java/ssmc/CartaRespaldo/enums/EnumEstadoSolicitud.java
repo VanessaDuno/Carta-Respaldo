@@ -13,7 +13,7 @@ public enum EnumEstadoSolicitud {
 
 	CREADA("Creada", 1), PORVALIDAR("Por validar", 2),  TRASLADO("Traslado", 3), ANULADA(
 			"Anulada", 4), CIERRECLINICO("Cierre Clinico", 5), CIERREADMINISTRATIVO(
-			"Cierre Administrativo", 6);
+			"Cierre Administrativo", 6), RECEPCIONCUENTA("Recepción cuenta", 7), VISACION ("Visación", 8);
 
 	private final String estado;
 	private final int id;

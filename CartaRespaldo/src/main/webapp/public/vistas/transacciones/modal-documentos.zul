@@ -1,0 +1,8 @@
+<?page title="Documentos" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window title="Documentos" border="normal" width="60%" height="80%" closable="true"
+		apply="ssmc.CartaRespaldo.controlador.transacciones.CDocumentos"
+		id="wdwModalDocumentos">
+		<iframe id=  "ifmDocumento" width="100%" height="100%"></iframe>
+	</window>
+</zk>
