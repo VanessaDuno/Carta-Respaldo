@@ -122,6 +122,9 @@ public class Bitacora implements Serializable {
 	@Column(name = "fecha_ingreso_paciente")
 	private Timestamp fechaIngresoPaciente;
 	
+	@Column(name = "fecha_ingreso_ssmc")
+	private Timestamp fechaIngresoSsmc;
+	
 	@Column(name = "fecha_egreso_paciente")
 	private Timestamp fechaEgresoPaciente;
 	
@@ -136,6 +139,21 @@ public class Bitacora implements Serializable {
 	
 	@Column(name = "ruta_memorandum")
 	private String rutaMemorandum; 
+	
+	@Column(name = "fecha_memo")
+	private Timestamp fechaMemo;
+	
+	@Column(name = "fecha_nomina_sisdoc")
+	private Timestamp fechaNominaSisdoc;
+	
+	@Column(name = "fecha_recepcion_memo")
+	private Timestamp fechaRecepcionMemo;
+	
+	@Column(name ="numero_sisdoc")
+	private String numeroSisdoc;
+	
+	@Column (name= "documentacion_visacion")
+	private boolean documentacionVisacion; 
 	
 	
 	public Bitacora() {
@@ -236,6 +254,8 @@ public class Bitacora implements Serializable {
 		builder.append(ordenCompra);
 		builder.append(", fechaIngresoPaciente=");
 		builder.append(fechaIngresoPaciente);
+		builder.append(", fechaIngresoSsmc=");
+		builder.append(fechaIngresoSsmc);
 		builder.append(", fechaEgresoPaciente=");
 		builder.append(fechaEgresoPaciente);
 		builder.append(", tipoCuenta=");
@@ -246,6 +266,16 @@ public class Bitacora implements Serializable {
 		builder.append(rutaActaAuditoria);
 		builder.append(", rutaMemorandum=");
 		builder.append(rutaMemorandum);
+		builder.append(", fechaMemo=");
+		builder.append(fechaMemo);
+		builder.append(", fechaNominaSisdoc=");
+		builder.append(fechaNominaSisdoc);
+		builder.append(", fechaRecepcionMemo=");
+		builder.append(fechaRecepcionMemo);
+		builder.append(", numeroSisdoc=");
+		builder.append(numeroSisdoc);
+		builder.append(", documentacionVisacion=");
+		builder.append(documentacionVisacion);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -496,6 +526,54 @@ public class Bitacora implements Serializable {
 
 	public void setRutaMemorandum(String rutaMemorandum) {
 		this.rutaMemorandum = rutaMemorandum;
+	}
+
+	public Timestamp getFechaIngresoSsmc() {
+		return fechaIngresoSsmc;
+	}
+
+	public void setFechaIngresoSsmc(Timestamp fechaIngresoSsmc) {
+		this.fechaIngresoSsmc = fechaIngresoSsmc;
+	}
+
+	public Timestamp getFechaMemo() {
+		return fechaMemo;
+	}
+
+	public void setFechaMemo(Timestamp fechaMemo) {
+		this.fechaMemo = fechaMemo;
+	}
+
+	public Timestamp getFechaNominaSisdoc() {
+		return fechaNominaSisdoc;
+	}
+
+	public void setFechaNominaSisdoc(Timestamp fechaNominaSisdoc) {
+		this.fechaNominaSisdoc = fechaNominaSisdoc;
+	}
+
+	public Timestamp getFechaRecepcionMemo() {
+		return fechaRecepcionMemo;
+	}
+
+	public void setFechaRecepcionMemo(Timestamp fechaRecepcionMemo) {
+		this.fechaRecepcionMemo = fechaRecepcionMemo;
+	}
+
+	public String getNumeroSisdoc() {
+		return numeroSisdoc;
+	}
+
+	public void setNumeroSisdoc(String numeroSisdoc) {
+		this.numeroSisdoc = numeroSisdoc;
+	}
+
+	public boolean isDocumentacionVisacion() {
+		return documentacionVisacion;
+	}
+
+	public void setDocumentacionVisacion(boolean documentacionVisacion) {
+		this.documentacionVisacion = documentacionVisacion;
 	}
 
 }

@@ -179,6 +179,8 @@ public class CHistoricoTraslado extends CGenerico {
 		listaEstatus.add(EnumEstadoSolicitud.TRASLADO.getEstado());
 		listaEstatus.add(EnumEstadoSolicitud.ANULADA.getEstado());
 		listaEstatus.add(EnumEstadoSolicitud.CIERRECLINICO.getEstado());
+		listaEstatus.add(EnumEstadoSolicitud.RECEPCIONCUENTA.getEstado());
+		listaEstatus.add(EnumEstadoSolicitud.VISACION.getEstado());
 		listaEstatus.add(EnumEstadoSolicitud.CIERREADMINISTRATIVO.getEstado());
 		cmbEstatus.setModel(new ListModelList<String>(listaEstatus));
 		semaforoLista();
@@ -257,8 +259,7 @@ public class CHistoricoTraslado extends CGenerico {
 								EnumEstadoSolicitud.CIERREADMINISTRATIVO
 										.getEstado())
 						|| bitacora.getEstatus().equals(
-								EnumEstadoSolicitud.ANULADA
-								.getEstado())) {
+								EnumEstadoSolicitud.ANULADA.getEstado())) {
 					lc.setStyle("background: white");
 					lc.setClass("text");
 				}
@@ -668,8 +669,8 @@ public class CHistoricoTraslado extends CGenerico {
 		}
 	}
 
-	@Listen("onClick = #btnExportar")
-	public void generarArchivoModificados() throws IOException {
+//	@Listen("onClick = #btnExportar")
+	public void generarArchivo() throws IOException {
 		lbxTraslado.renderAll();
 		List<Listitem> listItem = lbxTraslado.getItems();
 		if (listItem.size() != 0) {
@@ -702,6 +703,7 @@ public class CHistoricoTraslado extends CGenerico {
 
 			for (int i = 0; i < listItem.size(); i++) {
 				Bitacora bitacora = listItem.get(i).getValue();
+
 				XSSFRow row = sheet.createRow(i + 1);
 				row.createCell(0).setCellValue(i + 1);
 				row.createCell(1).setCellValue(bitacora.getFecha());
@@ -744,6 +746,322 @@ public class CHistoricoTraslado extends CGenerico {
 			sheet.autoSizeColumn(6);
 			sheet.autoSizeColumn(7);
 			sheet.autoSizeColumn(8);
+
+			File ff = new File("Historico" + fecha + ".xlsx");
+			FileOutputStream foss = new FileOutputStream(ff);
+			wb.write(foss);
+
+			Filedownload.save(ff, null);
+		} else {
+			Messagebox.show("No existen datos actualizados", "carta respaldo",
+					Messagebox.OK, Messagebox.INFORMATION);
+		}
+
+	}
+
+	@Listen("onClick = #btnExportar")
+	public void generarArchivoExcel() throws IOException {
+		lbxTraslado.renderAll();
+		List<Listitem> listItem = lbxTraslado.getItems();
+		if (listItem.size() != 0) {
+			Calendar c1 = Calendar.getInstance();
+			int mes = c1.get(Calendar.MONTH) + 1;
+			int dia = c1.get(Calendar.DATE);
+			String fecha = (((dia < 10) ? "0" : "") + dia) + "-"
+					+ (((mes < 10) ? "0" : "") + mes) + "-"
+					+ c1.get(Calendar.YEAR);
+
+			XSSFWorkbook wb = new XSSFWorkbook();
+			XSSFSheet sheet = wb.createSheet(fecha);
+
+			XSSFCreationHelper createHelper = wb.getCreationHelper();
+			XSSFCellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setDataFormat(createHelper.createDataFormat().getFormat(
+					"dd/MM/yyyy hh:mm:ss"));
+
+			XSSFRow headerRow = sheet.createRow(0);
+			headerRow.createCell(0).setCellValue("Nº");
+			headerRow.createCell(1).setCellValue("ESTABLECIMIENTO");
+			headerRow.createCell(2).setCellValue("FECHA INGRESO EST.");
+			headerRow.createCell(3).setCellValue("FECHA INGRESO SSMC");
+			headerRow.createCell(4).setCellValue("FECHA RECEPCION UGCF");
+			headerRow.createCell(5).setCellValue("PRESTADOR");
+			headerRow.createCell(6).setCellValue("NOMBRE PACIENTE");
+			headerRow.createCell(7).setCellValue("RUT");
+			headerRow.createCell(8).setCellValue("DV");
+			headerRow.createCell(9).setCellValue("GENERO");
+			headerRow.createCell(10).setCellValue("TRAMO FONASA");
+			headerRow.createCell(11).setCellValue("COMUNA");
+			headerRow.createCell(12).setCellValue("H DERIVADOR");
+			headerRow.createCell(13).setCellValue("FECHA NACIMIENTO");
+			headerRow.createCell(14).setCellValue("EDAD");
+			headerRow.createCell(15).setCellValue("TRAMOS DE EDAD");
+			headerRow.createCell(16).setCellValue("Nº CARTA RESPALDO");
+			headerRow.createCell(17).setCellValue("ID DERIVACION");
+			headerRow.createCell(18).setCellValue("(1) TIPO CAMA");
+			headerRow.createCell(19).setCellValue("(2) PRESTACION");
+			headerRow.createCell(20).setCellValue("(3) DETALLE");
+			headerRow.createCell(21).setCellValue("FECHA INGRESO");
+			headerRow.createCell(22).setCellValue("FECHA ALTA");
+			headerRow.createCell(23).setCellValue("(4) DIAGNOSTICO");
+			headerRow.createCell(24).setCellValue("GRUPO DIAGNOSTICO");
+			headerRow.createCell(25).setCellValue("(4) MOTIVO TRASLADO");
+			headerRow.createCell(26).setCellValue("(5) TIPO DE DERIVACION");
+			headerRow.createCell(27).setCellValue("Nº CUENTA");
+			headerRow.createCell(28).setCellValue("Nº FACTURA");
+			headerRow.createCell(29).setCellValue("Nº DIAS CAMA");
+			headerRow.createCell(30).setCellValue("VALOR DIA CAMA AGUDA");
+			headerRow.createCell(31).setCellValue("Nº DIAS CAMA");
+			headerRow.createCell(32).setCellValue("VALOR DIA CAMA UTI");
+			headerRow.createCell(33).setCellValue("Nº DIAS CAMA");
+			headerRow.createCell(34).setCellValue("VALOR DIA CAMA UCI");
+			headerRow.createCell(35).setCellValue("TOTAL DIAS CAMA");
+			headerRow.createCell(36).setCellValue("MONTO TOTAL DIAS CAMA");
+			headerRow.createCell(37).setCellValue(
+					"MONTO PRESTACIONES  ADICIONALES");
+			headerRow.createCell(38).setCellValue("TOTAL COBRADO");
+			headerRow.createCell(39).setCellValue("MONTO DESCUENTO");
+			headerRow.createCell(40).setCellValue("MONTO A PAGO");
+			headerRow.createCell(41).setCellValue("OBSERVACIONES");
+			headerRow.createCell(42).setCellValue("MEMO VISA");
+			headerRow.createCell(43).setCellValue("FECHA");
+			headerRow.createCell(44)
+					.setCellValue("TIEMPO DEMORA UGCF-VISACION");
+			headerRow.createCell(45).setCellValue(
+					"TIEMPO DEMORA ESTABLECIMIENTO-SERVICIO");
+			headerRow.createCell(46)
+					.setCellValue("TIEMPO DEMORA SERVICIO-UGCF");
+			headerRow.createCell(47).setCellValue("NOMINA SISDOC");
+			headerRow.createCell(48).setCellValue("FECHA");
+			headerRow.createCell(49).setCellValue(
+					"FECHA RECEPCION OF. DE PARTES");
+
+			
+			for (int i = 0; i < listItem.size(); i++) {
+				Bitacora bitacora = listItem.get(i).getValue();
+
+				
+				Bitacora recepcionCuenta = servicioBitacora
+						.buscarTrasladooEstado(bitacora.getTraslado().getId(),
+								EnumEstadoSolicitud.RECEPCIONCUENTA.getEstado());
+				Bitacora visacion = servicioBitacora.buscarTrasladooEstado(
+						bitacora.getTraslado().getId(),
+						EnumEstadoSolicitud.VISACION.getEstado());
+				
+				XSSFRow row = sheet.createRow(i + 1);
+				row.createCell(0).setCellValue(i + 1);
+				row.createCell(1).setCellValue(bitacora.getUsuario().getEstablecimiento().getNombre());
+				
+				if (recepcionCuenta != null){
+					row.createCell(2)
+					.setCellValue(
+							formatoFecha.format(recepcionCuenta
+									.getFechaRecepcion()));
+					row.createCell(21).setCellValue(formatoFecha.format(recepcionCuenta.getFechaIngresoPaciente()));
+					row.createCell(22).setCellValue(formatoFecha.format(recepcionCuenta.getFechaEgresoPaciente()));
+					row.createCell(27).setCellValue(recepcionCuenta.getCuenta());
+					row.createCell(28).setCellValue(recepcionCuenta.getNumeroFactura());
+					row.createCell(38).setCellValue(recepcionCuenta.getMontoCobrado());
+				}
+				else{
+					row.createCell(2).setCellValue("");
+					row.createCell(21).setCellValue("");
+					row.createCell(22).setCellValue("");
+					row.createCell(27).setCellValue("");
+					row.createCell(28).setCellValue("");
+					row.createCell(38).setCellValue("");
+				}
+				
+				if (visacion != null){
+					row.createCell(4).setCellValue(
+							formatoFecha.format(visacion.getFechaIngresoCuenta()));
+					row.createCell(3).setCellValue(
+							formatoFecha.format(visacion.getFechaIngresoSsmc()));
+					row.createCell(37).setCellValue(visacion.getPrestacionesAdicionales());
+					row.createCell(39).setCellValue(visacion.getMontoDescuento());
+					row.createCell(40).setCellValue(visacion.getMontoPago());
+					row.createCell(41).setCellValue(visacion.getObservacionVisacion());
+					row.createCell(29).setCellValue(visacion.getTotalDiasCamaBasica());
+					row.createCell(31).setCellValue(visacion.getTotalDiasCamaUti());
+					row.createCell(33).setCellValue(visacion.getTotalDiasCamaUci());
+					row.createCell(35).setCellValue(visacion.getTotalDiasCamaBasica()+visacion.getTotalDiasCamaUti()+visacion.getTotalDiasCamaUci());
+					row.createCell(45).setCellValue((visacion.getFechaIngresoSsmc().getTime() - recepcionCuenta.getFechaRecepcion().getTime()) / (1000 * 60 * 60 * 24));
+					row.createCell(46).setCellValue((visacion.getFechaIngresoSsmc().getTime()  - visacion.getFechaIngresoCuenta().getTime()) / (1000 * 60 * 60 * 24));
+					if (visacion.isDocumentacionVisacion()){
+						row.createCell(43).setCellValue(formatoFecha.format(visacion.getFechaMemo()));
+						row.createCell(44).setCellValue((visacion.getFechaMemo().getTime()  - visacion.getFechaIngresoCuenta().getTime()) / (1000 * 60 * 60 * 24));	
+						row.createCell(47).setCellValue(visacion.getNumeroSisdoc());
+						row.createCell(48).setCellValue(formatoFecha.format(visacion.getFechaNominaSisdoc()));	
+						row.createCell(49).setCellValue(formatoFecha.format(visacion.getFechaRecepcionMemo()));
+					}
+					else{
+						row.createCell(43).setCellValue("");
+						row.createCell(44).setCellValue("");	
+						row.createCell(47).setCellValue("");
+						row.createCell(48).setCellValue("");	
+						row.createCell(49).setCellValue("");
+					}
+				}
+				else{
+					row.createCell(3).setCellValue("");
+					row.createCell(4).setCellValue("");
+					row.createCell(37).setCellValue("");
+					row.createCell(39).setCellValue("");
+					row.createCell(40).setCellValue("");
+					row.createCell(41).setCellValue("");
+					row.createCell(45).setCellValue("");
+					row.createCell(46).setCellValue("");
+				}		
+				row.createCell(5)
+						.setCellValue(
+								bitacora.getTraslado().getEstablecimiento()
+										.getNombre());
+				row.createCell(6).setCellValue(
+						bitacora.getTraslado().getPaciente().getNombres()
+								+ " "
+								+ bitacora.getTraslado().getPaciente()
+										.getPrimerApellido()
+								+ " "
+								+ bitacora.getTraslado().getPaciente()
+										.getSegundoApellido());
+				
+				String rut = bitacora.getTraslado().getPaciente().getRut();
+				String dv = "";
+				int posi = rut.indexOf("-");
+				if (posi != -1) {
+					dv = rut.substring(0, posi);
+					rut = rut.substring(posi + 1, rut.length());
+				}
+				row.createCell(7).setCellValue(dv);
+				row.createCell(8).setCellValue(rut);
+				row.createCell(9).setCellValue(bitacora.getTraslado().getPaciente().getSexo());
+				row.createCell(10).setCellValue(bitacora.getTraslado().getPaciente().getPrevision());
+				row.createCell(11).setCellValue(bitacora.getTraslado().getPaciente().getComuna().getNombre());
+				row.createCell(12).setCellValue(bitacora.getTraslado().getUnidad().getEstablecimiento().getNombre());
+				row.createCell(13).setCellValue(formatoFecha.format(bitacora.getTraslado().getPaciente().getFechaNacimiento()));
+				int edad= calcularEdad(bitacora.getTraslado().getPaciente().getFechaNacimiento());
+				row.createCell(14).setCellValue(edad);
+
+				if (edad < 15){
+					row.createCell(15).setCellValue(Constantes.tramo0a14);
+				}
+				else if (edad >= 15 && edad < 60){
+					row.createCell(15).setCellValue(Constantes.tramo15a60);
+				}
+				else if (edad >= 60){
+					row.createCell(15).setCellValue(Constantes.tramo60oMas);
+				}
+				row.createCell(16).setCellValue(bitacora.getTraslado().getId());
+				row.createCell(17).setCellValue(bitacora.getTraslado().getIdUgcc());
+				
+			
+
+				List<PrestacionSolicitud> prestacionesSolicitud = new ArrayList<PrestacionSolicitud>();
+				prestacionesSolicitud = servicioPrestacionSolicitud.prestacionesPorSolicitud(bitacora.getTraslado().getId());
+				String motivo = ""; 
+				String cama = "";
+				String detalle="";
+				String prestacion= ""; 
+				
+				for (int j = 0; j < prestacionesSolicitud.size(); j++) {
+					motivo = motivo +" " + prestacionesSolicitud.get(j).getMotivo().getNombre();
+					 
+					if (prestacionesSolicitud.get(j).getTipoCama() != null){
+						cama = cama + " " +prestacionesSolicitud.get(j).getPrestacion().getNombre(); 
+					}
+					else{
+						detalle = detalle + " " + prestacionesSolicitud.get(j).getPrestacion().getNombre();
+						prestacion = prestacion + " " +prestacionesSolicitud.get(j).getPrestacion().getPrestacion().getDescripcion(); 
+					}
+				}
+				
+			
+				row.createCell(18).setCellValue(cama);
+				row.createCell(19).setCellValue(prestacion);
+				row.createCell(20).setCellValue(detalle);
+				
+				String diagnostico = bitacora.getTraslado().getDiagnostico()
+						.getNombre();
+				String codigo = "";
+				int posicion = diagnostico.indexOf("-");
+				if (posicion != -1) {
+					codigo = diagnostico.substring(0, posicion);
+					diagnostico = diagnostico.substring(posicion + 1, diagnostico.length());
+				}
+				row.createCell(23).setCellValue(diagnostico);
+				row.createCell(24).setCellValue(codigo);
+
+				row.createCell(25).setCellValue(motivo);
+				row.createCell(26).setCellValue(bitacora.getTraslado().getTipoDerivacion());
+
+			
+				//VALOR DIA CAMA GUDA
+				row.createCell(30).setCellValue("");
+
+				//VALOR DIA CAMA UTI
+				row.createCell(32).setCellValue("");
+
+				//VALOR DIA CAMA UCI
+				row.createCell(34).setCellValue("");
+
+				//MONTO TOTAL DIAS CAMA
+				row.createCell(36).setCellValue("");
+				
+				//Memo visa
+				row.createCell(42).setCellValue("");
+					
+			}
+
+			sheet.autoSizeColumn(0);
+			sheet.autoSizeColumn(1);
+			sheet.autoSizeColumn(2);
+			sheet.autoSizeColumn(3);
+			sheet.autoSizeColumn(4);
+			sheet.autoSizeColumn(5);
+			sheet.autoSizeColumn(6);
+			sheet.autoSizeColumn(7);
+			sheet.autoSizeColumn(8);
+			sheet.autoSizeColumn(9);
+			sheet.autoSizeColumn(10);
+			sheet.autoSizeColumn(11);
+			sheet.autoSizeColumn(12);
+			sheet.autoSizeColumn(13);
+			sheet.autoSizeColumn(14);
+			sheet.autoSizeColumn(15);
+			sheet.autoSizeColumn(16);
+			sheet.autoSizeColumn(17);
+			sheet.autoSizeColumn(18);
+			sheet.autoSizeColumn(19);
+			sheet.autoSizeColumn(20);
+			sheet.autoSizeColumn(21);
+			sheet.autoSizeColumn(22);
+			sheet.autoSizeColumn(23);
+			sheet.autoSizeColumn(24);
+			sheet.autoSizeColumn(25);
+			sheet.autoSizeColumn(26);
+			sheet.autoSizeColumn(27);
+			sheet.autoSizeColumn(28);
+			sheet.autoSizeColumn(29);
+			sheet.autoSizeColumn(30);
+			sheet.autoSizeColumn(31);
+			sheet.autoSizeColumn(32);
+			sheet.autoSizeColumn(33);
+			sheet.autoSizeColumn(34);
+			sheet.autoSizeColumn(35);
+			sheet.autoSizeColumn(36);
+			sheet.autoSizeColumn(37);
+			sheet.autoSizeColumn(38);
+			sheet.autoSizeColumn(39);
+			sheet.autoSizeColumn(40);
+			sheet.autoSizeColumn(41);
+			sheet.autoSizeColumn(42);
+			sheet.autoSizeColumn(43);
+			sheet.autoSizeColumn(44);
+			sheet.autoSizeColumn(45);
+			sheet.autoSizeColumn(46);
+			sheet.autoSizeColumn(47);
+			sheet.autoSizeColumn(48);
+			sheet.autoSizeColumn(49);
 
 			File ff = new File("Historico" + fecha + ".xlsx");
 			FileOutputStream foss = new FileOutputStream(ff);

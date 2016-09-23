@@ -295,6 +295,28 @@ public class CEstadosSolicitud extends CGenerico {
 	private Label lblActaAuditoria;
 	@Wire
 	private Label lblMemorandum;
+	@Wire
+	private Datebox dtbFechaIngresoSsmc;
+	@Wire
+	private Row rowfechaMemo;
+	@Wire
+	private Row rowNroSisdoc;
+	@Wire
+	private Row rowfechaNominaSisdoc;
+	@Wire
+	private Row rowfechaRecepcionMemo;
+	@Wire
+	private Datebox dtbFechaMemo;
+	@Wire
+	private Textbox txtNroSisdoc;
+	@Wire
+	private Datebox dtbFechaNominaSisdoc;
+	@Wire
+	private Datebox dtbFechaRecepcionMemo;
+	@Wire
+	private Div divInformacionVisacion;
+	@Wire
+	private Label lblInformacionVisacion;
 	String rutaAuditoria;
 	String rutaValorizacion;
 	String rutaMemorandum;
@@ -564,8 +586,8 @@ public class CEstadosSolicitud extends CGenerico {
 				+ tercerEstado.getUsuario().getNombre());
 		lblInfoValidacion1.setValue("Establecimiento destino: "
 				+ bitacora.getTraslado().getEstablecimiento().getNombre());
-		lblInfoValidacion2.setValue("Fecha de ingrego: ");
-		lblInfoValidacion3.setValue("Fecha de egreso: ");
+		lblInfoValidacion2.setValue("Fecha de ingreso: " + formatoFecha.format(quintoEstado.getFechaIngresoPaciente()));
+		lblInfoValidacion3.setValue("Fecha de egreso: " + formatoFecha.format(quintoEstado.getFechaEgresoPaciente()));
 
 		/** INFORMACIÓN DE LA RECEPCIÓN **/
 		lblInfoRecepcion.setValue("Id cuenta: " + quintoEstado.getCuenta());
@@ -595,9 +617,11 @@ public class CEstadosSolicitud extends CGenerico {
 				+ sextoEstado.getPrestacionesAdicionales());
 		BigDecimal pago = new BigDecimal(sextoEstado.getMontoPago());
 		lblInfoVisacion7.setValue("Monto pago: " + pago);
-		if (cuartoEstado.getEpicrisisInforme() == null){
-			btnVerInformeEpicrisis.setVisible(false); 
+		if (cuartoEstado.getEpicrisisInforme() == null) {
+			btnVerInformeEpicrisis.setVisible(false);
 		}
+		btnAceptar.setVisible(false);
+		btnCancelar.setVisible(false);
 	}
 
 	public void estadoRecepcionCuenta() {
@@ -605,6 +629,7 @@ public class CEstadosSolicitud extends CGenerico {
 		divSextoEstado.setClass("div-estado-activo");
 		divSeptimoEstado.setClass("div-estados-inhabilitados");
 		btnAceptar.setLabel(EnumEstadoSolicitud.VISACION.getEstado());
+
 		rowfechaIngresoCuenta.setVisible(true);
 		rowObservacion.setVisible(true);
 		rowMontoDescuento.setVisible(true);
@@ -615,6 +640,9 @@ public class CEstadosSolicitud extends CGenerico {
 		}
 		rowMontoPago.setVisible(true);
 		rowPrestacionesAdicionales.setVisible(true);
+		hbxLinks.setVisible(true);
+		hbxLabels.setVisible(true);
+
 		Timestamp primeraFecha = servicioBitacora.buscarTrasladooEstado(
 				bitacora.getTraslado().getId(),
 				EnumEstadoSolicitud.CREADA.getEstado()).getFecha();
@@ -649,7 +677,7 @@ public class CEstadosSolicitud extends CGenerico {
 						+ bitacora.getCuenta()
 						+ " , Número de factura: "
 						+ bitacora.getNumeroFactura()
-						+ " , Fecha: "
+						+ " , Fecha de recepción: "
 						+ formatoFecha.format(bitacora.getFechaRecepcion())
 						+ ", Monto cobrado: "
 						+ bd1
@@ -661,19 +689,10 @@ public class CEstadosSolicitud extends CGenerico {
 		divTipoCuenta.setVisible(true);
 		lblTipoCuenta.setValue("El tipo de cuenta es: "
 				+ bitacora.getTipoCuenta());
-		hbxLinks.setVisible(true);
-		hbxLabels.setVisible(true);
 
 	}
 
 	public void estadoVisacion() {
-		imgEstado.setSrc(Constantes.rutaEstadoVisacion);
-		divSeptimoEstado.setClass("div-estado-activo");
-		btnAceptar.setLabel(EnumEstadoSolicitud.CIERREADMINISTRATIVO
-				.getEstado());
-		rowCierreAdministrativoPdf.setVisible(true);
-		rowIdSigfe.setVisible(true);
-		rowOrdenCompra.setVisible(true);
 		Timestamp primeraFecha = servicioBitacora.buscarTrasladooEstado(
 				bitacora.getTraslado().getId(),
 				EnumEstadoSolicitud.CREADA.getEstado()).getFecha();
@@ -700,9 +719,79 @@ public class CEstadosSolicitud extends CGenerico {
 				+ df.format(terceraFecha));
 		lblFechaQuintoEstado.setValue(formatoFecha.format(quintaFecha) + " "
 				+ df.format(bitacora.getFecha()));
-		lblFechaSextoEstado.setValue(formatoFecha.format(bitacora.getFecha())
-				+ " " + df.format(bitacora.getFecha()));
+
 		wdwEstadoTraslado.setHeight("92%");
+		if (bitacora.isDocumentacionVisacion()) {
+			btnAceptar.setLabel(EnumEstadoSolicitud.CIERREADMINISTRATIVO
+					.getEstado());
+			rowCierreAdministrativoPdf.setVisible(true);
+			rowIdSigfe.setVisible(true);
+			rowOrdenCompra.setVisible(true);
+			imgEstado.setSrc(Constantes.rutaEstadoVisacion);
+			divSeptimoEstado.setClass("div-estado-activo");
+			lblFechaSextoEstado.setValue(formatoFecha.format(bitacora
+					.getFecha()) + " " + df.format(bitacora.getFecha()));
+		} else {
+			rowfechaMemo.setVisible(true);
+			rowfechaRecepcionMemo.setVisible(true);
+			rowfechaNominaSisdoc.setVisible(true);
+			rowNroSisdoc.setVisible(true);
+			divInformacionVisacion.setVisible(true);
+			btnAceptar.setLabel(EnumEstadoSolicitud.VISACION.getEstado());
+			imgEstado.setSrc(Constantes.rutaEstadoRecepcionCuenta);
+			divSextoEstado.setClass("div-estado-activo");
+			divSeptimoEstado.setClass("div-estados-inhabilitados");
+			divInformacion.setVisible(true);
+			Bitacora recepcion = servicioBitacora.buscarTrasladooEstado(
+					bitacora.getTraslado().getId(),
+					EnumEstadoSolicitud.RECEPCIONCUENTA.getEstado());
+			double monto = recepcion.getMontoCobrado();
+			BigDecimal bd1 = new BigDecimal(monto);
+			lblInformacion
+					.setValue("Información de la cuenta recepcionada - Id cuenta: "
+							+ recepcion.getCuenta()
+							+ " , Número de factura: "
+							+ recepcion.getNumeroFactura()
+							+ " , Fecha de recepción: "
+							+ formatoFecha.format(recepcion.getFechaRecepcion())
+							+ ", Monto cobrado: "
+							+ bd1
+							+ ", Fecha de ingreso al establecimiento: "
+							+ formatoFecha.format(recepcion
+									.getFechaIngresoPaciente())
+							+ ", Fecha de egreso al establecimiento: "
+							+ formatoFecha.format(recepcion
+									.getFechaEgresoPaciente()));
+			divTipoCuenta.setVisible(true);
+			lblTipoCuenta.setValue("El tipo de cuenta es: "
+					+ bitacora.getTipoCuenta());
+			BigDecimal montoDescuento = new BigDecimal(
+					bitacora.getMontoDescuento());
+			BigDecimal montoPago = new BigDecimal(bitacora.getMontoPago());
+			BigDecimal adicionales = new BigDecimal(
+					bitacora.getPrestacionesAdicionales());
+			lblInformacionVisacion
+					.setValue("Información de la visación - Fecha ingreso de la cuenta: "
+							+ formatoFecha.format(bitacora
+									.getFechaIngresoCuenta())
+							+ ", Fecha ingreso SSMC: "
+							+ formatoFecha.format(bitacora
+									.getFechaIngresoSsmc())
+							+ " , Observación: "
+							+ bitacora.getObservacionVisacion()
+							+ ", Monto descuento: "
+							+ montoDescuento
+							+ " , Total días cama básica: "
+							+ bitacora.getTotalDiasCamaBasica()
+							+ " ,Total días cama UTI: "
+							+ bitacora.getTotalDiasCamaUti()
+							+ ", Total días cama UCI: "
+							+ bitacora.getTotalDiasCamaUci()
+							+ ", Monto pago: "
+							+ montoPago
+							+ " ,Prestaciones adicionales: "
+							+ adicionales);
+		}
 
 	}
 
@@ -1028,6 +1117,8 @@ public class CEstadosSolicitud extends CGenerico {
 			bq.setUsuario(usuarioActivo());
 			Date fecha = dtbFechaIngresoCuenta.getValue();
 			Timestamp fechaIngresoCuenta = new Timestamp(fecha.getTime());
+			Date fechaSscm = dtbFechaIngresoSsmc.getValue();
+			Timestamp fechaIngresoSsmc = new Timestamp(fechaSscm.getTime());
 			bq.setFechaIngresoCuenta(fechaIngresoCuenta);
 			bq.setObservacionVisacion(txtObservacionVisacion.getValue());
 			bq.setMontoDescuento(dspnMontoDescuento.getValue());
@@ -1037,6 +1128,7 @@ public class CEstadosSolicitud extends CGenerico {
 			bq.setMontoPago(dspnMontoPago.getValue());
 			bq.setPrestacionesAdicionales(dspnPrestacionesAdicionales
 					.getValue());
+			bq.setFechaIngresoSsmc(fechaIngresoSsmc);
 			guardarArchivosServidor(bq);
 			bq.setRutaActaAuditoria(rutaAuditoria);
 			bq.setRutaActaValorizacion(rutaValorizacion);
@@ -1053,9 +1145,18 @@ public class CEstadosSolicitud extends CGenerico {
 
 	public String crearDirectorio(Bitacora bq) {
 		String archivo = "solicitud_traslado_" + bq.getTraslado().getId();
+
+		// *********************** PARA LOCAL ***********************//
 		File directorio = new File(
 				"C:\\glassfish4\\glassfish\\domains\\domain1\\eclipseApps\\CartaRespaldo\\public\\documentos\\"
 						+ archivo + "\\");
+		// *********************** PARA SERVER ***********************//
+		/**
+		 * String rutaServer = System.getProperty("com.sun.aas.instanceRoot") +
+		 * "/applications/"; log.info("La ruta del server_: " + rutaServer);
+		 * File directorio = new File(rutaServer +
+		 * "/CartaRespaldo/public/documentos/" + archivo + "/");
+		 **/
 		if (!directorio.exists()) {
 			directorio.mkdirs();
 		}
@@ -1063,19 +1164,46 @@ public class CEstadosSolicitud extends CGenerico {
 	}
 
 	public void cambiarACierreAdministrativo(Bitacora bq) {
-		if (validarCierreAdministrativo()) {
-			inhabilitarEstado();
-			bq.setEstatus(EnumEstadoSolicitud.CIERREADMINISTRATIVO.getEstado());
-			bq.setUsuario(usuarioActivo());
-			bq.setIdSigfe(txtidSigfe.getValue());
-			bq.setOrdenCompra(txtOrdenCompra.getValue());
-			bq.setResolucion(guardarResolucion(bq));
-			servicioBitacora.guardar(bq);
-			cancelar();
-			Executions.sendRedirect(null);
+		Bitacora b = servicioBitacora.buscarEstadoActivo(bitacora
+				.getTraslado().getId(), true);
+		if (b.isDocumentacionVisacion()) {
+			if (validarCierreAdministrativo()) {
+				inhabilitarEstado();
+				bq.setEstatus(EnumEstadoSolicitud.CIERREADMINISTRATIVO
+						.getEstado());
+				bq.setUsuario(usuarioActivo());
+				bq.setIdSigfe(txtidSigfe.getValue());
+				bq.setOrdenCompra(txtOrdenCompra.getValue());
+				bq.setResolucion(guardarResolucion(bq));
+				servicioBitacora.guardar(bq);
+				cancelar();
+				Executions.sendRedirect(null);
+			} else {
+				Messagebox.show(Constantes.mensajeCamposVacios, "Advertencia",
+						Messagebox.OK, Messagebox.EXCLAMATION);
+			}
 		} else {
-			Messagebox.show(Constantes.mensajeCamposVacios, "Advertencia",
-					Messagebox.OK, Messagebox.EXCLAMATION);
+			if (validarDocumentacion()) {
+
+				Date fechaMemo = dtbFechaMemo.getValue();
+				Timestamp memo = new Timestamp(fechaMemo.getTime());
+				Date fechaNomina = dtbFechaNominaSisdoc.getValue();
+				Timestamp nomina = new Timestamp(fechaNomina.getTime());
+				Date fechaRecepcionMemo = dtbFechaRecepcionMemo.getValue();
+				Timestamp recepcionMemo = new Timestamp(
+						fechaRecepcionMemo.getTime());
+				b.setFechaMemo(memo);
+				b.setFechaNominaSisdoc(nomina);
+				b.setFechaRecepcionMemo(recepcionMemo);
+				b.setNumeroSisdoc(txtNroSisdoc.getValue());
+				b.setDocumentacionVisacion(true);
+				servicioBitacora.guardar(b);
+				cancelar();
+				Executions.sendRedirect(null);
+			} else {
+				Messagebox.show(Constantes.mensajeCamposVacios, "Advertencia",
+						Messagebox.OK, Messagebox.EXCLAMATION);
+			}
 		}
 	}
 
@@ -1222,8 +1350,20 @@ public class CEstadosSolicitud extends CGenerico {
 
 	public boolean validarVisacion() {
 		if (dtbFechaIngresoCuenta.getValue() == null
+				|| dtbFechaIngresoSsmc.getValue() == null
 				|| dspnMontoPago.getValue() == 0 || mediaActaAuditoria == null
 				|| mediaActaValorizacion == null || mediaMemorandum == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public boolean validarDocumentacion() {
+		if (dtbFechaMemo.getValue() == null
+				|| dtbFechaNominaSisdoc.getValue() == null
+				|| dtbFechaRecepcionMemo.getValue() == null
+				|| txtNroSisdoc.getValue().equals("")) {
 			return false;
 		} else {
 			return true;
@@ -1245,6 +1385,7 @@ public class CEstadosSolicitud extends CGenerico {
 		try {
 
 			String ruta = crearDirectorio(bitacora);
+
 			rutaAuditoria = System.getProperty("com.sun.aas.instanceRoot")
 					+ "\\eclipseApps\\CartaRespaldo\\public\\documentos\\"
 					+ ruta + "\\" + bitacora.getTraslado().getId()
@@ -1259,6 +1400,24 @@ public class CEstadosSolicitud extends CGenerico {
 					+ "\\eclipseApps\\CartaRespaldo\\public\\documentos\\"
 					+ ruta + "\\" + bitacora.getTraslado().getId()
 					+ "Memorandum" + formatoFecha.format(fechaHora) + ".pdf";
+
+			// ******************** PARA SERVER ************************//
+
+			/**
+			 * String rutaServer =
+			 * System.getProperty("com.sun.aas.instanceRoot") +
+			 * "/applications/CartaRespaldo/public/documentos/"; rutaAuditoria =
+			 * rutaServer + ruta + "/" + bitacora.getTraslado().getId() +
+			 * "Acta_Auditoria" + formatoFecha.format(fechaHora) + ".pdf";
+			 * rutaValorizacion = rutaServer + ruta + "/" +
+			 * bitacora.getTraslado().getId() + "Acta_Valorizacion" +
+			 * formatoFecha.format(fechaHora) + ".pdf"; rutaMemorandum =
+			 * rutaServer + ruta + "/" + bitacora.getTraslado().getId() +
+			 * "Memorandum" + formatoFecha.format(fechaHora) + ".pdf";
+			 * log.info(new StringBuilder("Auditoria").append(rutaAuditoria)
+			 * .append(" Valorizacion").append(rutaValorizacion)
+			 * .append(" Memorandum").append(rutaMemorandum));
+			 **/
 			FileOutputStream fileOuputStreamAuditoria = new FileOutputStream(
 					rutaAuditoria);
 			FileOutputStream fileOuputStreamValorizacion = new FileOutputStream(
@@ -1282,11 +1441,23 @@ public class CEstadosSolicitud extends CGenerico {
 	public String guardarResolucion(Bitacora bitacora) {
 		String rutaResolucion = "";
 		try {
+			// ******* PARA SERVER ****************//
+			/**
+			 * String rutaServer =
+			 * System.getProperty("com.sun.aas.instanceRoot") +
+			 * "/applications/CartaRespaldo/public/documentos/"; rutaResolucion
+			 * = rutaServer + "solicitud_traslado_" +
+			 * bitacora.getTraslado().getId() + "/" +
+			 * bitacora.getTraslado().getId() + "Resolucion" +
+			 * formatoFecha.format(fechaHora) + ".pdf";
+			 **/
+			// ******* PARA LOCAL ****************//
 			rutaResolucion = System.getProperty("com.sun.aas.instanceRoot")
 					+ "\\eclipseApps\\CartaRespaldo\\public\\documentos\\solicitud_traslado_"
 					+ bitacora.getTraslado().getId() + "\\"
 					+ bitacora.getTraslado().getId() + "Resolucion"
 					+ formatoFecha.format(fechaHora) + ".pdf";
+
 			FileOutputStream fileOuputStreamResolucion = new FileOutputStream(
 					rutaResolucion);
 			fileOuputStreamResolucion.write(media.getByteData());
@@ -1301,6 +1472,15 @@ public class CEstadosSolicitud extends CGenerico {
 		String ruta = crearDirectorio(bitacora);
 		String rutaEpicrisis = "";
 		try {
+			// ******* PARA SERVER ****************//
+			/**
+			 * String rutaServer =
+			 * System.getProperty("com.sun.aas.instanceRoot") +
+			 * "/applications/CartaRespaldo/public/documentos/"; rutaEpicrisis =
+			 * rutaServer + ruta +"/" + bitacora.getTraslado().getId() +
+			 * "Informe_Epicrisis" + formatoFecha.format(fechaHora) + ".pdf";
+			 **/
+			// ******* PARA LOCAL ****************//
 			rutaEpicrisis = System.getProperty("com.sun.aas.instanceRoot")
 					+ "\\eclipseApps\\CartaRespaldo\\public\\documentos\\"
 					+ ruta + "\\" + bitacora.getTraslado().getId()
@@ -1359,9 +1539,9 @@ public class CEstadosSolicitud extends CGenerico {
 
 	@Listen("onClick = #btnVerInformeEpicrisis")
 	public void verEpicrisis() {
-		Bitacora quintoEstado = servicioBitacora.buscarTrasladooEstado(
-				bitacora.getTraslado().getId(),
-				EnumEstadoSolicitud.CIERRECLINICO.getEstado());
+		Bitacora quintoEstado = servicioBitacora.buscarTrasladooEstado(bitacora
+				.getTraslado().getId(), EnumEstadoSolicitud.CIERRECLINICO
+				.getEstado());
 		verModalRestriccion(quintoEstado.getEpicrisisInforme());
 	}
 }

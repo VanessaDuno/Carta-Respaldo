@@ -2,7 +2,7 @@
 
 <zk>
 	<window title="Seguimiento del caso" border="normal"
-		id="wdwEstadoTraslado" closable="true" width="65%" height="100%"
+		id="wdwEstadoTraslado" closable="true" width="70%" height="100%"
 		apply="ssmc.CartaRespaldo.controlador.transacciones.CEstadosSolicitud">
 		<separator></separator>
 		<separator></separator>
@@ -114,6 +114,11 @@
 				visible="false">
 				<label id="lblTipoCuenta" style=" font-weight: bold;"></label>
 			</div>
+			<div class="alert alert-info" id="divInformacionVisacion"
+				style=" margin-right: 10px;padding: 5px; margin-bottom: 3px;"
+				visible="false">
+				<label id="lblInformacionVisacion"></label>
+			</div>
 			<grid>
 				<columns>
 					<column width="40%"></column>
@@ -212,13 +217,13 @@
 					</row>
 					<row id="rowFechaIngreso" visible="false">
 						<label
-							value="Fecha de ingreso al establecimiento:">
+							value="Fecha de ingreso del paciente al establecimiento:">
 						</label>
 						<datebox id="dtbFechaIngreso"></datebox>
 					</row>
 					<row id="rowFechaEgreso" visible="false">
 						<label
-							value="Fecha de egreso del establecimiento:">
+							value="Fecha de egreso del paciente al establecimiento:">
 						</label>
 						<datebox id="dtbFechaEgreso"></datebox>
 					</row>
@@ -232,8 +237,14 @@
 					<!-- Para Visacion -->
 
 					<row id="rowfechaIngresoCuenta" visible="false">
-						<label value="Fecha ingreso cuenta:"></label>
-						<datebox id="dtbFechaIngresoCuenta"></datebox>
+						<cell>
+							<label value="Fecha ingreso cuenta:" style="padding-right: 20px;"></label>
+							<datebox id="dtbFechaIngresoCuenta"></datebox>
+						</cell>
+						<cell>
+							<label value="Fecha ingreso SSMC:" style="padding-right: 20px;"></label>
+							<datebox id="dtbFechaIngresoSsmc"></datebox>
+						</cell>
 					</row>
 					<row id="rowObservacion" visible="false">
 						<label value="Observación:"></label>
@@ -275,6 +286,22 @@
 						<doublespinner id="dspnPrestacionesAdicionales"
 							value="0" constraint="min 0">
 						</doublespinner>
+					</row>
+					<row id="rowfechaMemo" visible="false">
+						<label value="Fecha Memo:"></label>
+						<datebox id="dtbFechaMemo"></datebox>
+					</row>
+					<row id="rowNroSisdoc" visible="false">
+						<label value="Nro° nomina SISDOC"></label>
+						<textbox id="txtNroSisdoc"></textbox>
+					</row>
+					<row id="rowfechaNominaSisdoc" visible="false">
+						<label value="Fecha nomina SISDOC:"></label>
+						<datebox id="dtbFechaNominaSisdoc"></datebox>
+					</row>
+					<row id="rowfechaRecepcionMemo" visible="false">
+						<label value="Fecha recepción memo OGCF:"></label>
+						<datebox id="dtbFechaRecepcionMemo"></datebox>
 					</row>
 				</rows>
 			</grid>
@@ -321,7 +348,8 @@
 			</hbox>
 			<hbox widths="50%,50%" width="100%">
 				<div class="alert alert-info" id="divInfoValidacion"
-					visible="false" style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
+					visible="false"
+					style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
 					<label value="Información General"
 						class="titulos-estados">
 					</label>
@@ -343,7 +371,8 @@
 					</label>
 				</div>
 				<div class="alert alert-info" id="divInfoRecepcion"
-					visible="false" style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
+					visible="false"
+					style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
 					<label value="Recepción de la cuenta"
 						class="titulos-estados">
 					</label>
@@ -367,7 +396,8 @@
 			</hbox>
 			<hbox widths="50%,50%" width="100%">
 				<div class="alert alert-info" id="divInfoVisacion"
-					visible="false" style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
+					visible="false"
+					style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
 					<label value="Visación" class="titulos-estados"></label>
 					<separator></separator>
 					<label id="lblInfoVisacion"
@@ -407,26 +437,33 @@
 					</label>
 				</div>
 				<div class="alert alert-info" id="divDocumentos"
-					visible="false" style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
+					visible="false"
+					style=" margin-right: 10px;padding: 10px;margin-bottom: 10px;">
 					<label value="Documentos" class="titulos-estados"></label>
 					<separator></separator>
 					<button label="Ver Informe epicrisis"
-						class="boton-carga-documentos" id="btnVerInformeEpicrisis" style="background: #d9edf7;    color: black;">
+						class="boton-carga-documentos" id="btnVerInformeEpicrisis"
+						style="background: #d9edf7;    color: black;">
 					</button>
 					<separator></separator>
 					<button label="Ver Acta de Valorización"
-						class="boton-carga-documentos" id="btnVerActaValorizacion" style="background: #d9edf7;    color: black;">
+						class="boton-carga-documentos" id="btnVerActaValorizacion"
+						style="background: #d9edf7;    color: black;">
 					</button>
 					<separator></separator>
-				    <button label="Ver Acta de Auditoria Clínico-Financiero"
-						class="boton-carga-documentos" id="btnVerActaAuditoria" style="background: #d9edf7;    color: black;">
+					<button
+						label="Ver Acta de Auditoria Clínico-Financiero"
+						class="boton-carga-documentos" id="btnVerActaAuditoria"
+						style="background: #d9edf7;    color: black;">
 					</button>
 					<separator></separator>
-					 <button label="Ver Memorandum" style="background: #d9edf7;    color: black;"
+					<button label="Ver Memorandum"
+						style="background: #d9edf7;    color: black;"
 						class="boton-carga-documentos" id="btnVerMemorandum">
 					</button>
 					<separator></separator>
-					 <button label="Ver Resolución" style="background: #d9edf7;    color: black;"
+					<button label="Ver Resolución"
+						style="background: #d9edf7;    color: black;"
 						class="boton-carga-documentos" id="btnVerResolucion">
 					</button>
 				</div>

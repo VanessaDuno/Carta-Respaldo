@@ -62,10 +62,10 @@
 	<borderlayout height="100%" style="background-color:#fff;"
 		apply="ssmc.CartaRespaldo.controlador.transacciones.CInicio">
 
-		<north height="182px"
+		<north height="23%"
 			style="background-color: white;margin-left:55px;">
 			<borderlayout style="top:8px; margin-left: 7%;">
-				<north height="122px">
+				<north height="67%">
 					<div style="position: relative;width: 86.8%;
 					">
 						<image id = "imgEncabezado" class= "img-responsive"/>

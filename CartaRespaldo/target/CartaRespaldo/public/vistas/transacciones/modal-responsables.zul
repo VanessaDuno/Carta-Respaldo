@@ -1,5 +1,5 @@
 <zk>
-	<window title="Prestaciones" border="normal" width="50%"
+	<window title="Responsables" border="normal" width="50%"
 		 height = "60%" closable="true" id="wdwModalResponsables" 
 		apply="ssmc.CartaRespaldo.controlador.transacciones.CModalResponsables">
 		<textbox id="txtBusquedaResponsables" placeholder="Buscar..."

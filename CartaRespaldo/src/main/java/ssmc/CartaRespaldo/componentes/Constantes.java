@@ -139,9 +139,14 @@ public class Constantes {
 	public static String codigoBloqueadoRutCargaFueraRango = "01971";
 	public static String codigoBloqueadoDipreca = "01972";
 	public static String codigoBloqueadoCargaDipreca = "01973";
-	public static String codigoBloqueadoCargaAuditoria = "01976";
-
+	public static String codigoBloqueadoCargaAuditoria = "01976";	
 	
+	
+	/** Tramos de edad **/
+	
+	public static String tramo0a14 = "0 - 15";
+	public static String tramo15a60 = "15 - 60";
+	public static String tramo60oMas = "60 - más"; 
 			
 	
 	
